@@ -19,4 +19,6 @@ compile 'com.fasterxml.jackson.dataformat'+
 ':2.9.0'
   
 testCompile 'junit:junit:4.+'
+
+compile 'com.google.guava:guava:23.0'
 }
