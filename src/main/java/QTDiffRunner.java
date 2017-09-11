@@ -21,23 +21,36 @@ public class QTDiffRunner {
       output = output0;
       ByteStreams.copy(QTestDiffExtractor.class.getResourceAsStream("/qdr.bash"), output);
       for (String string : args) {
-        File f = new File(string);
-        JunitReport jr = JunitReader.parse(new FileInputStream(f));
-        processTestCases(jr.testcase);
+        try {
+          File f = new File(string);
+          JunitReport jr = JunitReader.parse(new FileInputStream(f));
+          processTestCases(jr.testcase);
+        } catch (Exception e) {
+          throw new RuntimeException("Error processing file: " + string, e);
+        }
       }
     }
   }
 
   private static void processTestCases(List<TestCase> testcase) throws Exception {
     for (TestCase tc : testcase) {
-      if (tc.systemOut != null) {
-        QTestDiffExtractor qde = new QTestDiffExtractor(tc.systemOut);
-        File file = new File("/tmp/__qde" + (idx++));
-        try (PrintStream patchFile = new PrintStream(file)) {
-          qde.writePatch(patchFile);
-        }
-        output.printf("process \"%s\" \"%s\"\n", qde.getQFile(), file.getAbsolutePath());
+      if (tc.failure==null )
+        continue;
+      if (tc.systemOut == null) {
+        continue;
       }
+      if(!tc.failure.message.startsWith("Client Execution succeeded but contained differences"))
+          continue;
+        try {
+          QTestDiffExtractor qde = new QTestDiffExtractor(tc.systemOut);
+          File file = new File("/tmp/__qde" + (idx++));
+          try (PrintStream patchFile = new PrintStream(file)) {
+            qde.writePatch(patchFile);
+          }
+          output.printf("process \"%s\" \"%s\"\n", qde.getQFile(), file.getAbsolutePath());
+        } catch (Exception e) {
+          throw new RuntimeException("Error processing testcase", e);
+        }
     }
   }
 

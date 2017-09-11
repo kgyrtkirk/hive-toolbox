@@ -14,7 +14,7 @@ public class QTestDiffExtractor {
       throw new RuntimeException("too-long");
     }
 
-    System.out.println(input);
+//    System.out.println(input);
     String[] lines = input.split("\\r?\\n");
 
     for (diffOffset = 0; diffOffset < lines.length; diffOffset++) {
@@ -26,7 +26,10 @@ public class QTestDiffExtractor {
     }
 
     String[] cmdParts = lines[diffOffset].split(" ");
-    int off = cmdParts[3].indexOf("itests/qtest/target");
+    int off = cmdParts[3].indexOf("itests/");
+    if(off<0){
+      throw new RuntimeException("diffline?: "+lines[diffOffset]);
+    }
     qOutName = cmdParts[4].substring(off);
     System.out.println(qOutName);
     allLines = lines;

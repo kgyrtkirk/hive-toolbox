@@ -21,20 +21,24 @@ public class JunitReport {
   public static class Failure {
 
     @JsonProperty
-    String message;
+public    String message;
     @JsonProperty
-    String type;
+    public String type;
     @JacksonXmlText
-    String value;
+    public String value;
 
+  }
+  public static class Skipped{
+public    String message;
   }
 
   public static class TestCase {
 
+    public Skipped skipped;
     public String classname;
     //
     public String name;
-    public double time;
+    public String  time;
     public Failure failure;
     @JacksonXmlElementWrapper(localName = "system-out")
     public String systemOut; 
@@ -47,8 +51,9 @@ public class JunitReport {
     // public String type;
   }
 
+  public String schemaLocation;
   public String name;
-  public double time;
+  public String time;
   public int tests;
   public int errors;
   public int skipped;
