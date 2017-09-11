@@ -1,4 +1,4 @@
-package toolbox;
+package hu.rxd.model.junit;
 
 import java.io.InputStream;
 
