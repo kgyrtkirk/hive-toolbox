@@ -1,8 +1,3 @@
-#!/usr/bin/groovy
-
-@Grab('org.codehaus.groovy.modules.http-builder:http-builder:0.7')
-@Grab('oauth.signpost:signpost-core:1.2.1.2')
-@Grab('oauth.signpost:signpost-commonshttp4:1.2.1.2')
 
 import groovyx.net.http.RESTClient
 import static groovyx.net.http.ContentType.*
