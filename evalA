@@ -1,0 +1,6 @@
+#!/bin/bash
+
+shopt -s expand_aliases
+alias apdiff='git diff `git merge-base HEAD asf/master`'
+
+n="`apdiff $1 | wc -l`" ; if [ "$n" == "0" ];then git add $1;fi;

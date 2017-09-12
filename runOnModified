@@ -1,0 +1,2 @@
+git status --porcelain=1|grep '^ M'|cut -c 4-|xargs -n1 ./evalA
+
