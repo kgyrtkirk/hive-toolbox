@@ -1,0 +1,56 @@
+340c340
+<                       aggregations: compute_stats(key, 'hll'), compute_stats(value1, 'hll'), compute_stats(value2, 'hll')
+---
+>                       aggregations: compute_stats(key, 16), compute_stats(value1, 16), compute_stats(value2, 16)
+343c343
+<                       Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                       Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+347c347
+<                         Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                         Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+349c349
+<                         value expressions: _col0 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:binary>), _col1 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:binary>), _col2 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:binary>)
+---
+>                         value expressions: _col0 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col1 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col2 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+358c358
+<                 Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                 Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+364c364
+<                   Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                   Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+371c371
+<                         columns.types struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>
+---
+>                         columns.types struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>
+738c738
+<                       aggregations: compute_stats(key, 'hll'), compute_stats(value1, 'hll'), compute_stats(value2, 'hll')
+---
+>                       aggregations: compute_stats(key, 16), compute_stats(value1, 16), compute_stats(value2, 16)
+741c741
+<                       Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                       Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+745c745
+<                         Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                         Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+747c747
+<                         value expressions: _col0 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:binary>), _col1 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:binary>), _col2 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:binary>)
+---
+>                         value expressions: _col0 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col1 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col2 (type: struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+756c756
+<                 Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                 Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+762c762
+<                   Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>                   Statistics: Num rows: 1 Data size: 1476 Basic stats: COMPLETE Column stats: NONE
+769c769
+<                         columns.types struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>
+---
+>                         columns.types struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>:struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>

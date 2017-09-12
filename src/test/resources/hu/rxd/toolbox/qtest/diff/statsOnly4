@@ -1,0 +1,28 @@
+103c103
+<                   aggregations: compute_stats(id, 'hll')
+---
+>                   aggregations: compute_stats(id, 16)
+106c106
+<                   Statistics: Num rows: 1 Data size: 424 Basic stats: COMPLETE Column stats: NONE
+---
+>                   Statistics: Num rows: 1 Data size: 476 Basic stats: COMPLETE Column stats: NONE
+110c110
+<                     Statistics: Num rows: 1 Data size: 424 Basic stats: COMPLETE Column stats: NONE
+---
+>                     Statistics: Num rows: 1 Data size: 476 Basic stats: COMPLETE Column stats: NONE
+112c112
+<                     value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>)
+---
+>                     value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+169c169
+<           Statistics: Num rows: 1 Data size: 440 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 480 Basic stats: COMPLETE Column stats: NONE
+175c175
+<             Statistics: Num rows: 1 Data size: 440 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 480 Basic stats: COMPLETE Column stats: NONE
+182c182
+<                   columns.types struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>
+---
+>                   columns.types struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>

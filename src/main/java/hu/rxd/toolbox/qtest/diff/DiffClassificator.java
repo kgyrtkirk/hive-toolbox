@@ -1,3 +1,4 @@
+package hu.rxd.toolbox.qtest.diff;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,10 +34,18 @@ public class DiffClassificator {
           if (string.contains("Statistics: Num rows:")) {
             continue;
           }
-          if (string.contains("value expressions: ") && string.contains(
-              "struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector")) {
+          if ((string.contains("expressions: ") || string.contains("columns.types")) && 
+              (string.contains(
+              "struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector") ||
+                  string.contains("struct<columntype:string,min:bigint,max:bigint,") ||
+                  string.contains(            "struct<columntype:string,min:double,max:double,") ||
+              string.contains("struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint"))) {
             continue;
           }
+          if(string.contains("Stage-") && string.contains("depends on stages")){
+            continue;
+          }
+          
           return false;
           // - aggregations: compute_stats(key, 16), compute_stats(value, 16)
           // + aggregations: compute_stats(key, 'hll'), compute_stats(value, 'hll')

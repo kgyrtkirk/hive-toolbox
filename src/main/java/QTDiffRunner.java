@@ -1,7 +1,6 @@
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.List;
 
@@ -10,6 +9,7 @@ import com.google.common.io.ByteStreams;
 import hu.rxd.model.junit.JunitReader;
 import hu.rxd.model.junit.JunitReport;
 import hu.rxd.model.junit.JunitReport.TestCase;
+import hu.rxd.toolbox.qtest.diff.DiffClassificator;
 
 public class QTDiffRunner {
 

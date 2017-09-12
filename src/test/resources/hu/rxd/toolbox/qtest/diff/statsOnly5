@@ -1,0 +1,20 @@
+108c108
+<                 aggregations: compute_stats(c1, 'hll'), compute_stats(c2, 'hll'), compute_stats(c3, 'hll'), compute_stats(c4, 'hll'), compute_stats(c5, 'hll'), compute_stats(c6, 'hll'), compute_stats(c7, 'hll'), compute_stats(c8, 'hll'), compute_stats(c9, 'hll')
+---
+>                 aggregations: compute_stats(c1, 16), compute_stats(c2, 16), compute_stats(c3, 16), compute_stats(c4, 16), compute_stats(c5, 16), compute_stats(c6, 16), compute_stats(c7, 16), compute_stats(c8, 16), compute_stats(c9, 16)
+111c111
+<                 Statistics: Num rows: 1 Data size: 4064 Basic stats: COMPLETE Column stats: NONE
+---
+>                 Statistics: Num rows: 1 Data size: 4532 Basic stats: COMPLETE Column stats: NONE
+113c113
+<                   expressions: _col0 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col1 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col2 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col3 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col4 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col5 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col6 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col7 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>), _col8 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:binary>)
+---
+>                   expressions: _col0 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col1 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col2 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col3 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col4 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col5 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col6 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col7 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>), _col8 (type: struct<columntype:string,min:double,max:double,countnulls:bigint,numdistinctvalues:bigint,ndvbitvector:string>)
+115c115
+<                   Statistics: Num rows: 1 Data size: 4064 Basic stats: COMPLETE Column stats: NONE
+---
+>                   Statistics: Num rows: 1 Data size: 4532 Basic stats: COMPLETE Column stats: NONE
+118c118
+<                     Statistics: Num rows: 1 Data size: 4064 Basic stats: COMPLETE Column stats: NONE
+---
+>                     Statistics: Num rows: 1 Data size: 4532 Basic stats: COMPLETE Column stats: NONE
