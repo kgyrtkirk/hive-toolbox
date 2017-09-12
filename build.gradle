@@ -4,23 +4,18 @@ apply plugin: 'application'
 
 mainClassName = 'QTDiffRunner'
 
-repositories {
-	mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies{
   compile 'org.codehaus.groovy:groovy-all:2.4.+'
-  
+
   compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7')
   compile('oauth.signpost:signpost-core:1.2.1.2')
   compile('oauth.signpost:signpost-commonshttp4:1.2.1.2')
 
+  compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0'
 
-compile 'com.fasterxml.jackson.dataformat'+
- ':jackson-dataformat-xml'+ // </artifactId>
-':2.9.0'
-  
-testCompile 'junit:junit:4.+'
+  testCompile 'junit:junit:4.+'
 
-compile 'com.google.guava:guava:23.0'
+  compile 'com.google.guava:guava:23.0'
 }
