@@ -5,9 +5,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,7 +18,7 @@ public class DiffClassificatorTest {
 
     List<String> lines = readLines(getClass().getResourceAsStream("/__qde9"));
     String cat = dc.classify(lines);
-    assertEquals("stats", cat);
+    assertEquals("statsOnly", cat);
   }
 
   private List<String> readLines(InputStream is) throws IOException {

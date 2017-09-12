@@ -21,6 +21,9 @@ public class DiffClassificator {
     @Override
     public boolean accept(Iterable<String> diff) {
       for (String string : diff) {
+        if(string.equals("---"))
+          continue;
+          
         if (string.startsWith("+") || string.startsWith("-") || string.startsWith("<")
             || string.startsWith(">")) {
 
