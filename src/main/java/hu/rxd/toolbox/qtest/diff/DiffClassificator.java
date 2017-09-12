@@ -1,5 +1,7 @@
 package hu.rxd.toolbox.qtest.diff;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class DiffClassificator {
@@ -7,7 +9,7 @@ public class DiffClassificator {
 
     String getName();
 
-    boolean accept(Iterable<String> diffLines);
+    boolean accept(DiffObject dio);
   }
 
   List<Classifier> classifiers = new ArrayList<Classifier>();
@@ -20,43 +22,46 @@ public class DiffClassificator {
     }
 
     @Override
-    public boolean accept(Iterable<String> diff) {
-      for (String string : diff) {
-        if(string.equals("---"))
+    public boolean accept(DiffObject dio) {
+      if(dio.getL().size()!=dio.getR().size())
+        return false;
+      
+      Iterator<String> lIter = dio.getL().iterator();
+      Iterator<String> rIter = dio.getR().iterator();
+
+      while(lIter.hasNext()){
+        String strL = lIter.next();
+        String strR = rIter.next();
+        
+        if(classifyLine(strL).equals(classifyLine(strR)))
           continue;
-          
-        if (string.startsWith("+") || string.startsWith("-") || string.startsWith("<")
-            || string.startsWith(">")) {
-
-          if (string.contains("aggregations: compute_stats")) {
-            continue;
-          }
-          if (string.contains("Statistics: Num rows:")) {
-            continue;
-          }
-          if ((string.contains("expressions: ") || string.contains("columns.types")) && 
-              (string.contains(
-              "struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector") ||
-                  string.contains("struct<columntype:string,min:bigint,max:bigint,") ||
-                  string.contains(            "struct<columntype:string,min:double,max:double,") ||
-              string.contains("struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint"))) {
-            continue;
-          }
-          if(string.contains("Stage-") && string.contains("depends on stages")){
-            continue;
-          }
-          
-          return false;
-          // - aggregations: compute_stats(key, 16), compute_stats(value, 16)
-          // + aggregations: compute_stats(key, 'hll'), compute_stats(value, 'hll')
-          // mode: hash
-          // outputColumnNames: _col0, _col1
-          // - Statistics: Num rows: 1 Data size: 968 Basic stats: COMPLETE Column stats: NONE
-          // + Statistics: Num rows: 1 Data size: 864 Basic stats: COMPLETE Column stats: NONE
-
-        }
+        
+        return false;
       }
       return true;
+    }
+
+    private String classifyLine(String string) {
+      if (string.contains("aggregations: compute_stats")) {
+        return "__AGGR_COMPUTE_STATS";
+      }
+      if (string.contains("Statistics: Num rows:")) {
+        return "__STATISTICS";
+      }
+      if ((string.contains("expressions: ") || string.contains("columns.types")) && (string
+          .contains(
+              "struct<columntype:string,maxlength:bigint,sumlength:bigint,count:bigint,countnulls:bigint,bitvector")
+          || string.contains("struct<columntype:string,min:bigint,max:bigint,")
+          || string.contains("struct<columntype:string,min:double,max:double,")
+          || string.contains(
+              "struct<columntype:string,maxlength:bigint,avglength:double,countnulls:bigint,numdistinctvalues:bigint"))) {
+        return "__TYPES";
+      }
+      if (string.contains("Stage-") && string.contains("depends on stages")) {
+        return "__STAGE_DEPS";
+      }
+
+      return string;
     }
   }
 
@@ -64,9 +69,40 @@ public class DiffClassificator {
     classifiers.add(new StatsOnlyChangeClassifier());
   }
 
+  public static class DiffObject {
+
+    private List<String> l = new ArrayList<>();
+    private List<String> r = new ArrayList<>();
+
+    public DiffObject(Iterable<String> diffLines) {
+      for (String string : diffLines) {
+        if (string.equals("---"))
+          continue;
+        if (string.startsWith("-") || string.startsWith("<")) {
+          l.add(string.substring(1));
+
+        }
+        if (string.startsWith("+") || string.startsWith(">")) {
+          r.add(string.substring(1));
+        }
+      }
+    }
+
+    List<String> getL() {
+      return l;
+    }
+
+    List<String> getR() {
+      return r;
+    }
+
+  }
+
   public String classify(Iterable<String> diffLines) {
+
+    DiffObject dio = new DiffObject(diffLines);
     for (Classifier classifier : classifiers) {
-      if (classifier.accept(diffLines)) {
+      if (classifier.accept(dio)) {
         return classifier.getName();
       }
     }

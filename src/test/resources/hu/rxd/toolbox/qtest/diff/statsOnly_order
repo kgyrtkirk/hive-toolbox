@@ -1,0 +1,190 @@
+47c47
+<   Stage-4 depends on stages: Stage-0, Stage-6, Stage-11
+---
+>   Stage-4 depends on stages: Stage-0
+50d49
+<   Stage-9 depends on stages: Stage-1, Stage-6, Stage-11
+53a53
+>   Stage-9 depends on stages: Stage-1
+166c166
+<           aggregations: compute_stats(VALUE._col0, 'hll'), compute_stats(VALUE._col2, 'hll'), compute_stats(VALUE._col3, 'hll')
+---
+>           aggregations: compute_stats(VALUE._col0, 16), compute_stats(VALUE._col2, 16), compute_stats(VALUE._col3, 16)
+169c169
+<           Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+183,184c183,184
+<               Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+<               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>)
+---
+>               Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+>               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+190c190
+<           Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+193c193
+<             Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+199,206d198
+<   Stage: Stage-9
+<     Stats Work
+<       Basic Stats Work:
+<       Column Stats Desc:
+<           Columns: key, val1, val2
+<           Column Types: int, int, int
+<           Table: default.dest2
+< 
+279a272,279
+>   Stage: Stage-9
+>     Stats Work
+>       Basic Stats Work:
+>       Column Stats Desc:
+>           Columns: key, val1, val2
+>           Column Types: int, int, int
+>           Table: default.dest2
+> 
+291c291
+<           aggregations: compute_stats(VALUE._col0, 'hll'), compute_stats(VALUE._col2, 'hll'), compute_stats(VALUE._col3, 'hll')
+---
+>           aggregations: compute_stats(VALUE._col0, 16), compute_stats(VALUE._col2, 16), compute_stats(VALUE._col3, 16)
+294c294
+<           Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+308,309c308,309
+<               Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+<               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>)
+---
+>               Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+>               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+315c315
+<           Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+318c318
+<             Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+414c414
+<   Stage-4 depends on stages: Stage-0, Stage-6, Stage-11
+---
+>   Stage-4 depends on stages: Stage-0
+417d416
+<   Stage-9 depends on stages: Stage-1, Stage-6, Stage-11
+420a420
+>   Stage-9 depends on stages: Stage-1
+533c533
+<           aggregations: compute_stats(VALUE._col0, 'hll'), compute_stats(VALUE._col2, 'hll'), compute_stats(VALUE._col3, 'hll')
+---
+>           aggregations: compute_stats(VALUE._col0, 16), compute_stats(VALUE._col2, 16), compute_stats(VALUE._col3, 16)
+536c536
+<           Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+550,551c550,551
+<               Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+<               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>)
+---
+>               Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+>               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+557c557
+<           Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+560c560
+<             Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+566,573d565
+<   Stage: Stage-9
+<     Stats Work
+<       Basic Stats Work:
+<       Column Stats Desc:
+<           Columns: key, val1, val2
+<           Column Types: int, int, int
+<           Table: default.dest2
+< 
+646a639,646
+>   Stage: Stage-9
+>     Stats Work
+>       Basic Stats Work:
+>       Column Stats Desc:
+>           Columns: key, val1, val2
+>           Column Types: int, int, int
+>           Table: default.dest2
+> 
+658c658
+<           aggregations: compute_stats(VALUE._col0, 'hll'), compute_stats(VALUE._col2, 'hll'), compute_stats(VALUE._col3, 'hll')
+---
+>           aggregations: compute_stats(VALUE._col0, 16), compute_stats(VALUE._col2, 16), compute_stats(VALUE._col3, 16)
+661c661
+<           Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+675,676c675,676
+<               Statistics: Num rows: 1 Data size: 1272 Basic stats: COMPLETE Column stats: NONE
+<               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:binary>)
+---
+>               Statistics: Num rows: 1 Data size: 1428 Basic stats: COMPLETE Column stats: NONE
+>               value expressions: _col0 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col1 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>), _col2 (type: struct<columntype:string,min:bigint,max:bigint,countnulls:bigint,bitvector:string,numbitvectors:int>)
+682c682
+<           Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+685c685
+<             Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+780c780
+<   Stage-3 depends on stages: Stage-0, Stage-4, Stage-6
+---
+>   Stage-3 depends on stages: Stage-0
+782d781
+<   Stage-5 depends on stages: Stage-1, Stage-4, Stage-6
+783a783
+>   Stage-5 depends on stages: Stage-1
+890c890
+<           aggregations: compute_stats(VALUE._col0, 'hll'), compute_stats(VALUE._col2, 'hll'), compute_stats(VALUE._col3, 'hll')
+---
+>           aggregations: compute_stats(VALUE._col0, 16), compute_stats(VALUE._col2, 16), compute_stats(VALUE._col3, 16)
+893c893
+<           Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+896c896
+<             Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+902,909d901
+<   Stage: Stage-5
+<     Stats Work
+<       Basic Stats Work:
+<       Column Stats Desc:
+<           Columns: key, val1, val2
+<           Column Types: int, int, int
+<           Table: default.dest2
+< 
+919a912,919
+>   Stage: Stage-5
+>     Stats Work
+>       Basic Stats Work:
+>       Column Stats Desc:
+>           Columns: key, val1, val2
+>           Column Types: int, int, int
+>           Table: default.dest2
+> 
+930c930
+<           aggregations: compute_stats(VALUE._col0, 'hll'), compute_stats(VALUE._col2, 'hll'), compute_stats(VALUE._col3, 'hll')
+---
+>           aggregations: compute_stats(VALUE._col0, 16), compute_stats(VALUE._col2, 16), compute_stats(VALUE._col3, 16)
+933c933
+<           Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
+936c936
+<             Statistics: Num rows: 1 Data size: 1320 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 1440 Basic stats: COMPLETE Column stats: NONE
