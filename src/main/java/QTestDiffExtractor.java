@@ -1,6 +1,7 @@
 
-
 import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QTestDiffExtractor {
 
@@ -14,7 +15,7 @@ public class QTestDiffExtractor {
       throw new RuntimeException("too-long");
     }
 
-//    System.out.println(input);
+    // System.out.println(input);
     String[] lines = input.split("\\r?\\n");
 
     for (diffOffset = 0; diffOffset < lines.length; diffOffset++) {
@@ -27,8 +28,8 @@ public class QTestDiffExtractor {
 
     String[] cmdParts = lines[diffOffset].split(" ");
     int off = cmdParts[3].indexOf("itests/");
-    if(off<0){
-      throw new RuntimeException("diffline?: "+lines[diffOffset]);
+    if (off < 0) {
+      throw new RuntimeException("diffline?: " + lines[diffOffset]);
     }
     qOutName = cmdParts[4].substring(off);
     System.out.println(qOutName);
@@ -37,9 +38,17 @@ public class QTestDiffExtractor {
   }
 
   public void writePatch(PrintStream patchFile) {
-    for (int i = diffOffset+1; i < allLines.length; i++) {
+    for (int i = diffOffset + 1; i < allLines.length; i++) {
       patchFile.println(allLines[i]);
     }
+  }
+
+  public Iterable<String> getDiffIterable() {
+    List<String> l = new ArrayList<>();
+    for (int i = diffOffset + 1; i < allLines.length; i++) {
+      l.add(allLines[i]);
+    }
+    return l;
   }
 
   public String getQFile() {

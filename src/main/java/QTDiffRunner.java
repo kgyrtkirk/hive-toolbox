@@ -33,6 +33,8 @@ public class QTDiffRunner {
   }
 
   private static void processTestCases(List<TestCase> testcase) throws Exception {
+    DiffClassificator diffClassificator = new DiffClassificator();
+ 
     for (TestCase tc : testcase) {
       if (tc.failure==null )
         continue;
@@ -47,7 +49,8 @@ public class QTDiffRunner {
           try (PrintStream patchFile = new PrintStream(file)) {
             qde.writePatch(patchFile);
           }
-          output.printf("process \"%s\" \"%s\"\n", qde.getQFile(), file.getAbsolutePath());
+          String category=diffClassificator.classify(qde.getDiffIterable());
+          output.printf("process \"%s\" \"%s\" \"%s\"\n", category, qde.getQFile(), file.getAbsolutePath());
         } catch (Exception e) {
           throw new RuntimeException("Error processing testcase", e);
         }
