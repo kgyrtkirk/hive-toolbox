@@ -39,7 +39,7 @@ public    String message;
     //
     public String name;
     public String  time;
-    public Failure failure;
+    public Failure failure,error;
     @JacksonXmlElementWrapper(localName = "system-out")
     public String systemOut; 
     @JacksonXmlElementWrapper(localName = "system-err")

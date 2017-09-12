@@ -41,8 +41,7 @@ public class QTDiffRunner {
       if (tc.systemOut == null) {
         continue;
       }
-      if(!tc.failure.message.startsWith("Client Execution succeeded but contained differences"))
-          continue;
+      if(tc.failure.message.startsWith("Client Execution succeeded but contained differences") || tc.failure.message.contains("QTestUtil.failedDiff(")){
         try {
           QTestDiffExtractor qde = new QTestDiffExtractor(tc.systemOut);
           File file = new File("/tmp/__qde" + (idx++));
@@ -54,7 +53,7 @@ public class QTDiffRunner {
         } catch (Exception e) {
           throw new RuntimeException("Error processing testcase", e);
         }
-    }
+    }}
   }
 
 }
