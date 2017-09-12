@@ -60,6 +60,12 @@ public class DiffClassificator {
       if (string.contains("Stage-") && string.contains("depends on stages")) {
         return "__STAGE_DEPS";
       }
+      
+      if (string.matches("^ *(Map|Reducer) [0-9]+ <- (Map|Reducer) [0-9]+ \\(.*\\)$")) {
+        return "__STAGE_DEPS_TEZ";
+      }
+//      Reducer 2 <- Map 1 (GROUP, 4)
+
 
       return string;
     }

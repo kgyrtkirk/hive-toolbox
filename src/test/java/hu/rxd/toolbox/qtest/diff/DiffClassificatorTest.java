@@ -57,6 +57,13 @@ public class DiffClassificatorTest {
     assertEquals("statsOnly", cat);
   }
   @Test
+  public void statsOnlyStaege2() throws Exception {
+    DiffClassificator dc = new DiffClassificator();
+    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly_stages2"));
+    String cat = dc.classify(lines);
+    assertEquals("statsOnly", cat);
+  }
+  @Test
   public void statsOnlyOrder() throws Exception {
     DiffClassificator dc = new DiffClassificator();
     List<String> lines = readLines(getClass().getResourceAsStream("statsOnly_order"));
