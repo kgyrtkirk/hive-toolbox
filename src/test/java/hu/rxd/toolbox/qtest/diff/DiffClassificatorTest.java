@@ -35,6 +35,7 @@ public class DiffClassificatorTest {
     ret.add(new Object[] { "statsOnly_stages", "statsOnly" });
     ret.add(new Object[] { "statsOnly_stages2", "statsOnly" });
     ret.add(new Object[] { "statsOnly_order", "statsOnly" });
+    ret.add(new Object[] { "statTaskOnly_1", "statTaskOnly" });
     return ret;
   }
 

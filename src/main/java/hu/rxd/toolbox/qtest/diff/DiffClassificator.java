@@ -70,9 +70,41 @@ public class DiffClassificator {
       return string;
     }
   }
+  
+  public static class StatTaskOnlyChangeClassifier implements Classifier {
+
+    @Override
+    public String getName() {
+      return "statTaskOnly";
+    }
+
+    @Override
+    public boolean accept(DiffObject dio) {
+      
+      Iterator<String> lIter = dio.l.iterator();
+      Iterator<String> rIter = dio.r.iterator();
+      
+      while(lIter.hasNext() && rIter.hasNext()) {
+        if(!lIter.next().trim().equals("Stats Work"))
+          return false;
+        if(!rIter.next().trim().equals("Stats-Aggr Operator"))
+          return false;
+        if(!lIter.hasNext())
+          return false;
+        if(!lIter.next().trim().equals("Basic Stats Work:"))
+          return false;
+        
+        
+      }
+      return !lIter.hasNext() && !rIter.hasNext();
+    }
+  }
+
+
 
   public DiffClassificator() {
     classifiers.add(new StatsOnlyChangeClassifier());
+    classifiers.add(new StatTaskOnlyChangeClassifier());
   }
 
   public static class DiffObject {
