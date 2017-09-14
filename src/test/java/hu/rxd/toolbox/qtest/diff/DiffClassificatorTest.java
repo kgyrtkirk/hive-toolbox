@@ -12,8 +12,20 @@ import java.util.List;
 
 import org.junit.Test;
 
+
 public class DiffClassificatorTest {
 
+  
+//  private String fileName;
+//  private String expected;
+//
+//  public DiffClassificatorTest(String fileName,String expected) {
+//    this.fileName = fileName;
+//    this.expected = expected;
+//    
+//  }
+//  
+  
   @Test
   public void statsOnly1() throws Exception {
     DiffClassificator dc = new DiffClassificator();

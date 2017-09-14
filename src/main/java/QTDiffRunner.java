@@ -2,7 +2,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import com.google.common.io.ByteStreams;
 
@@ -15,7 +18,7 @@ public class QTDiffRunner {
 
   private static PrintStream output;
   static int idx = 0;
-
+  static Map<String,Integer>  catCnt=new HashMap<String,Integer>();
   public static void main(String[] args) throws FileNotFoundException, Exception {
     try (PrintStream output0 = new PrintStream("/tmp/_qd")) {
       output = output0;
@@ -29,6 +32,11 @@ public class QTDiffRunner {
           throw new RuntimeException("Error processing file: " + string, e);
         }
       }
+      for (Entry<String, Integer> string : catCnt.entrySet()) {
+        System.out.println(string.getKey() + ": " + string.getValue());
+        
+      }
+      System.out.println();
     }
   }
 
@@ -49,6 +57,7 @@ public class QTDiffRunner {
             qde.writePatch(patchFile);
           }
           String category=diffClassificator.classify(qde.getDiffIterable());
+          catCnt.put(category, catCnt.getOrDefault(category, 0)+1);
           output.printf("process \"%s\" \"%s\" \"%s\"\n", category, qde.getQFile(), file.getAbsolutePath());
         } catch (Exception e) {
           throw new RuntimeException("Error processing testcase", e);

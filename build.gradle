@@ -18,4 +18,7 @@ dependencies{
   testCompile 'junit:junit:4.+'
 
   compile 'com.google.guava:guava:23.0'
+  
+  
+  compile 'com.offbytwo.jenkins:jenkins-client:0.3.7'
 }
