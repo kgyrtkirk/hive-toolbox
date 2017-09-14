@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.common.collect.Lists;
+
 public class DiffClassificator {
   public static interface Classifier {
 
@@ -93,18 +95,38 @@ public class DiffClassificator {
           return false;
         if(!lIter.next().trim().equals("Basic Stats Work:"))
           return false;
-        
-        
       }
       return !lIter.hasNext() && !rIter.hasNext();
     }
   }
 
+  public static class PostHookChangeClassifier implements Classifier {
 
+    @Override
+    public String getName() {
+      return "postHook";
+    }
+
+    @Override
+    public boolean accept(DiffObject dio) {
+      
+      for (List<String> input : Lists.newArrayList(dio.l,dio.r)) {
+        Iterator<String> lIter=input.iterator();
+        while(lIter.hasNext()) {
+          String line = lIter.next();
+          if(line.trim().startsWith("POSTHOOK:") || line.trim().startsWith("PREHOOK:"))
+            continue;
+          return false;
+        }
+      }
+      return true;
+    }
+  }
 
   public DiffClassificator() {
     classifiers.add(new StatsOnlyChangeClassifier());
     classifiers.add(new StatTaskOnlyChangeClassifier());
+    classifiers.add(new PostHookChangeClassifier());
   }
 
   public static class DiffObject {
