@@ -1,5 +1,6 @@
 
 package hu.rxd.toolbox.qtest.diff;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -7,80 +8,48 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 
 public class DiffClassificatorTest {
 
-  
-//  private String fileName;
-//  private String expected;
-//
-//  public DiffClassificatorTest(String fileName,String expected) {
-//    this.fileName = fileName;
-//    this.expected = expected;
-//    
-//  }
-//  
-  
-  @Test
-  public void statsOnly1() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly1"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
+  private String fileName;
+  private String expected;
+
+  @Parameters
+  public static List<Object[]> getParameters() {
+    List<Object[]> ret = new ArrayList<>();
+    ret.add(new Object[] { "statsOnly1", "statsOnly" });
+    ret.add(new Object[] { "statsOnly2", "statsOnly" });
+    ret.add(new Object[] { "statsOnly3", "statsOnly" });
+    ret.add(new Object[] { "statsOnly4", "statsOnly" });
+    ret.add(new Object[] { "statsOnly5", "statsOnly" });
+    ret.add(new Object[] { "statsOnly_stages", "statsOnly" });
+    ret.add(new Object[] { "statsOnly_stages2", "statsOnly" });
+    ret.add(new Object[] { "statsOnly_order", "statsOnly" });
+    return ret;
   }
-  @Test
-  public void statsOnly2() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly2"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
+
+  public DiffClassificatorTest(String fileName, String expected) {
+    this.fileName = fileName;
+    this.expected = expected;
+
   }
+
   @Test
-  public void statsOnly3() throws Exception {
+  public void test() throws Exception {
     DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly3"));
+    List<String> lines = readLines(getClass().getResourceAsStream(fileName));
     String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
-  }
-  @Test
-  public void statsOnly4() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly4"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
-  }
-  @Test
-  public void statsOnly5() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly5"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
-  }
-  @Test
-  public void statsOnlyStaege() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly_stages"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
-  }
-  @Test
-  public void statsOnlyStaege2() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly_stages2"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
-  }
-  @Test
-  public void statsOnlyOrder() throws Exception {
-    DiffClassificator dc = new DiffClassificator();
-    List<String> lines = readLines(getClass().getResourceAsStream("statsOnly_order"));
-    String cat = dc.classify(lines);
-    assertEquals("statsOnly", cat);
+    assertEquals(expected, cat);
   }
 
   private List<String> readLines(InputStream is) throws IOException {
