@@ -49,7 +49,9 @@ public class QTDiffRunner {
       if (tc.systemOut == null) {
         continue;
       }
-      if(tc.failure.message.startsWith("Client Execution succeeded but contained differences") || tc.failure.message.contains("QTestUtil.failedDiff(")){
+      if(tc.failure.message.startsWith("Client Execution succeeded but contained differences") || tc.failure.message.contains("QTestUtil.failedDiff(")
+          || tc.failure.message.startsWith("Client result comparison failed with error code")
+          ){
         try {
           QTestDiffExtractor qde = new QTestDiffExtractor(tc.systemOut);
           File file = new File("/tmp/__qde" + (idx++));
@@ -58,7 +60,12 @@ public class QTDiffRunner {
           }
           String category=diffClassificator.classify(qde.getDiffIterable());
           catCnt.put(category, catCnt.getOrDefault(category, 0)+1);
-          output.printf("process \"%s\" \"%s\" \"%s\"\n", category, qde.getQFile(), file.getAbsolutePath());
+          if (qde.canPatch()) {
+            output.printf("process \"%s\" \"%s\" \"%s\" \"%s\"\n", category, qde.getQFile(),
+                qde.isReverse() ? "-R" : "", file.getAbsolutePath());
+          } else {
+            output.printf("rerun '%s#%s'\n", tc.classname.replaceAll(".*\\.", ""),tc.name);
+          }
         } catch (Exception e) {
           throw new RuntimeException("Error processing testcase", e);
         }

@@ -8,6 +8,7 @@ public class QTestDiffExtractor {
   private String[] allLines;
   private String qOutName;
   private int diffOffset;
+  private boolean reverse;
 
   public QTestDiffExtractor(String input) {
 
@@ -28,8 +29,14 @@ public class QTestDiffExtractor {
 
     String[] cmdParts = lines[diffOffset].split(" ");
     int off = cmdParts[3].indexOf("itests/");
+    reverse=true;
     if (off < 0) {
-      throw new RuntimeException("diffline?: " + lines[diffOffset]);
+      cmdParts=new String[]{cmdParts[0],cmdParts[1],cmdParts[2],cmdParts[4],cmdParts[3]};
+      off = cmdParts[3].indexOf("itests/");
+      reverse=false;
+      if (off < 0) {
+        throw new RuntimeException("diffline?: " + lines[diffOffset]);
+      }
     }
     qOutName = cmdParts[4].substring(off);
     System.out.println(qOutName);
@@ -50,9 +57,16 @@ public class QTestDiffExtractor {
     }
     return l;
   }
+  public boolean isReverse() {
+    return reverse;
+  }
 
   public String getQFile() {
     return qOutName;
+  }
+
+  public boolean canPatch() {
+    return getQFile().endsWith("q.out");
   }
 
 }
