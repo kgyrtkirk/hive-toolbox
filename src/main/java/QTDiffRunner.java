@@ -1,12 +1,12 @@
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
+import com.google.common.base.Function;
 import com.google.common.io.ByteStreams;
 
 import hu.rxd.model.junit.JunitReader;
@@ -24,16 +24,23 @@ public class QTDiffRunner {
     try (PrintStream output0 = new PrintStream("/tmp/_qd")) {
       output = output0;
       ByteStreams.copy(QTestDiffExtractor.class.getResourceAsStream("/qdr.bash"), output);
-      for (String string : args) {
-        try {
-          File f = new File(string);
-          FileInputStream a = new FileInputStream(f);
-          JunitReport jr = JunitReader.parse(a);
-          processTestCases(jr.testcase);
-        } catch (Exception e) {
-          throw new RuntimeException("Error processing file: " + string, e);
+
+      new FileInputStreamDispatcher(args).visit(new Function<InputStream, Void>() {
+
+        @Override
+        public Void apply(InputStream a) {
+          JunitReport jr;
+          try {
+            jr = JunitReader.parse(a);
+            processTestCases(jr.testcase);
+            return null;
+          } catch (Exception e) {
+            throw new RuntimeException(e);
+          }
         }
-      }
+
+      });
+
       for (Entry<String, Integer> string : catCnt.entrySet()) {
         System.out.println(string.getKey() + ": " + string.getValue());
 
