@@ -3,7 +3,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.function.Function;
 
-public class FileInputStreamDispatcher {
+public class FileInputStreamDispatcher implements IInputStreamDispatcher {
 
   private String[] args;
 
@@ -11,6 +11,7 @@ public class FileInputStreamDispatcher {
     this.args = args;
   }
 
+  @Override
   public void visit(Function<InputStream, Void> function) {
     for (String string : args) {
       try {
