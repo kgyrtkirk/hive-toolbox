@@ -18,7 +18,8 @@ public class QTDiffRunner {
 
   private static PrintStream output;
   static int idx = 0;
-  static Map<String,Integer>  catCnt=new HashMap<String,Integer>();
+  static Map<String, Integer> catCnt = new HashMap<String, Integer>();
+
   public static void main(String[] args) throws FileNotFoundException, Exception {
     try (PrintStream output0 = new PrintStream("/tmp/_qd")) {
       output = output0;
@@ -45,33 +46,32 @@ public class QTDiffRunner {
     DiffClassificator diffClassificator = new DiffClassificator();
 
     for (TestCase tc : testcase) {
-      if (tc.failure==null ) {
+      if (tc.failure == null) {
         continue;
       }
       if (tc.systemOut == null) {
         continue;
       }
-      if(tc.failure.message.startsWith("Client Execution succeeded but contained differences") || tc.failure.message.contains("QTestUtil.failedDiff(")
-          || tc.failure.message.startsWith("Client result comparison failed with error code")
-          ){
+      if (tc.failure.message.startsWith("Client Execution succeeded but contained differences") || tc.failure.message.contains("QTestUtil.failedDiff(")
+          || tc.failure.message.startsWith("Client result comparison failed with error code")) {
         try {
           QTestDiffExtractor qde = new QTestDiffExtractor(tc.systemOut);
           File file = new File("/tmp/__qde" + (idx++));
           try (PrintStream patchFile = new PrintStream(file)) {
             qde.writePatch(patchFile);
           }
-          String category=diffClassificator.classify(qde.getDiffIterable());
-          catCnt.put(category, catCnt.getOrDefault(category, 0)+1);
+          String category = diffClassificator.classify(qde.getDiffIterable());
+          catCnt.put(category, catCnt.getOrDefault(category, 0) + 1);
           if (qde.canPatch()) {
-            output.printf("process \"%s\" \"%s\" \"%s\" \"%s\"\n", category, qde.getQFile(),
-                qde.isReverse() ? "-R" : "", file.getAbsolutePath());
+            output.printf("process \"%s\" \"%s\" \"%s\" \"%s\"\n", category, qde.getQFile(), qde.isReverse() ? "-R" : "", file.getAbsolutePath());
           } else {
-            output.printf("rerun '%s#%s'\n", tc.classname.replaceAll(".*\\.", ""),tc.name);
+            output.printf("rerun '%s#%s'\n", tc.classname.replaceAll(".*\\.", ""), tc.name);
           }
         } catch (Exception e) {
           throw new RuntimeException("Error processing testcase", e);
         }
-    }}
+      }
+    }
   }
 
 }
