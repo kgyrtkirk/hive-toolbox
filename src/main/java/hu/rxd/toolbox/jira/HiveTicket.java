@@ -16,9 +16,12 @@
  * limitations under the License.
  */
 
-package hu.rxd.toolbox.qtest.diff;
+package hu.rxd.toolbox.jira;
 
+import java.net.URI;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.compress.utils.Lists;
 import org.junit.Test;
@@ -61,6 +64,18 @@ public class HiveTicket {
       throw new RuntimeException("theres no last qa comment");
     }
     return comments.get(comments.size() - 1);
+  }
+
+  public URI getLastQATestLogsURI() throws Exception {
+    Comment lastQAComment = getLastQAComment();
+
+    String b = lastQAComment.getBody();
+    Pattern p = Pattern.compile("/.*Test logs: ([^ ]+).*/", Pattern.MULTILINE | Pattern.DOTALL);
+    Matcher m = p.matcher(b);
+    if (m.find()) {
+      return new URI(m.group(1) + "/test-results.tar.gz");
+    }
+    throw new RuntimeException("can't extract qa uri from input");
   }
 
 }

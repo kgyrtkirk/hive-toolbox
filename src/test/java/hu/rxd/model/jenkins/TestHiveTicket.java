@@ -18,16 +18,23 @@
 
 package hu.rxd.model.jenkins;
 
+import java.net.URI;
+
 import org.junit.Test;
 
-import hu.rxd.toolbox.qtest.diff.HiveTicket;
+import hu.rxd.toolbox.jira.HiveTicket;
 
 public class TestHiveTicket {
 
   @Test
   public void as() throws Exception {
     HiveTicket t = new HiveTicket("HIVE-16827");
-    System.out.println(t.getLastQAComment());
+    URI u = t.getLastQATestLogsURI();
+    System.out.println(u);
+
+    //    Comment lastQAComment = t.getLastQAComment();
+    //    String b = lastQAComment.getBody();
+    //    System.out.println(b);
 
   }
 

@@ -26,7 +26,8 @@ public class QTDiffRunner {
       for (String string : args) {
         try {
           File f = new File(string);
-          JunitReport jr = JunitReader.parse(new FileInputStream(f));
+          FileInputStream a = new FileInputStream(f);
+          JunitReport jr = JunitReader.parse(a);
           processTestCases(jr.testcase);
         } catch (Exception e) {
           throw new RuntimeException("Error processing file: " + string, e);
@@ -34,7 +35,7 @@ public class QTDiffRunner {
       }
       for (Entry<String, Integer> string : catCnt.entrySet()) {
         System.out.println(string.getKey() + ": " + string.getValue());
-        
+
       }
       System.out.println();
     }
@@ -42,10 +43,11 @@ public class QTDiffRunner {
 
   private static void processTestCases(List<TestCase> testcase) throws Exception {
     DiffClassificator diffClassificator = new DiffClassificator();
- 
+
     for (TestCase tc : testcase) {
-      if (tc.failure==null )
+      if (tc.failure==null ) {
         continue;
+      }
       if (tc.systemOut == null) {
         continue;
       }
