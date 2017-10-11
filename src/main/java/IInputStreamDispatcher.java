@@ -3,6 +3,6 @@ import java.util.function.Function;
 
 public interface IInputStreamDispatcher {
 
-  void visit(Function<InputStream, Void> function);
+  void visit(Function<InputStream, Void> function) throws Exception;
 
 }

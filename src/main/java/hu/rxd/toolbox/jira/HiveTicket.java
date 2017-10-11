@@ -36,7 +36,7 @@ public class HiveTicket {
   private Issue i;
 
   public HiveTicket(String ticketId) throws Exception {
-    i = jira.getIssue("HIVE-16827");
+    i = jira.getIssue(ticketId);
   }
 
   @Test

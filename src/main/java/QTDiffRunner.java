@@ -25,7 +25,8 @@ public class QTDiffRunner {
       output = output0;
       ByteStreams.copy(QTestDiffExtractor.class.getResourceAsStream("/qdr.bash"), output);
 
-      IInputStreamDispatcher isd = new FileInputStreamDispatcher(args);
+      //      IInputStreamDispatcher isd = new FileInputStreamDispatcher(args);
+      IInputStreamDispatcher isd = new LastQAReportInputStreamDispatcher(args[0]);
       isd.visit(new Function<InputStream, Void>() {
 
         @Override
