@@ -1,6 +1,4 @@
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.vfs2.FileFilter;
@@ -12,7 +10,9 @@ import org.apache.commons.vfs2.FileSystemManager;
 import org.apache.commons.vfs2.VFS;
 import org.junit.Test;
 
-import de.schlichtherle.truezip.file.TFile;
+import net.rcarz.jiraclient.Comment;
+import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.JiraClient;
 
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -40,7 +40,7 @@ public class TrialVFSTest {
     FileSystemManager fsManager = VFS.getManager();
     //    fsManager
     String tgz = "tgz:file:///tmp/a.tar.gz";
-//    String tgz = "tgz:file:///tmp/a.tar.gz";
+    //    String tgz = "tgz:file:///tmp/a.tar.gz";
     //    String tgz = "tgz:http://104.198.109.242/logs/PreCommit-HIVE-Build-7213/test-results.tar.gz";
     FileObject jarFile = fsManager.resolveFile(tgz);
     // List the children of the Jar file
@@ -53,7 +53,7 @@ public class TrialVFSTest {
         FileName a = arg0.getFile().getName();
         String bn = a.getBaseName();
         String ext = a.getExtension();
-        return true || bn.startsWith("TEST-") && "xml".equals(ext);
+        return bn.startsWith("TEST-") && "xml".equals(ext);
       }
     };
 
@@ -62,24 +62,29 @@ public class TrialVFSTest {
     for (int i = 0; i < children.length; i++) {
       System.out.println(children[i].getName().getBaseName());
     }
-    List<FileObject> ll=new ArrayList<>();
-    jarFile.findFiles(new FileFilterSelector(fileFilter), true, ll);
-    for (FileObject a : ll) {
-      System.out.println("X" + a);
-    }
 
-    System.out.println("asd");
+    FileObject trRoot = jarFile.getChild("test-results");
+    if (trRoot == null) {
+      throw new RuntimeException("expected a test-results");
+    }
+    int cnt = 0;
+    for (FileObject a : trRoot.findFiles(new FileFilterSelector(fileFilter))) {
+      a.getContent().getInputStream();
+      System.out.println("X" + a);
+      cnt++;
+    }
+    System.out.println("c:" + cnt);
+
   }
 
   @Test
-  public void tt1() {
-    //    TPath dir = new TPath("archive.zip/dir");
-    TFile fd = new TFile("file:///tmp/a.tar.gz");
-    String[] a = fd.list();
-    System.out.println(a);
+  public void u1() throws Exception {
+    JiraClient jira = new JiraClient("https://issues.apache.org/jira");
+    Issue i = jira.getIssue("HIVE-16827");
+    System.out.println(i);
+    List<Comment> comments = i.getComments();
+    Comment c0 = comments.get(comments.size() - 1);
+    System.out.println(c0.getBody());
 
-    //    File dir = new TFile("archive.zip/dir");
-    //    dir.mkdirs(); // don't do this!
   }
-
 }
