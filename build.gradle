@@ -21,4 +21,6 @@ dependencies{
   
   
   compile 'com.offbytwo.jenkins:jenkins-client:0.3.7'
+  
+  compile group: 'org.apache.commons', name: 'commons-vfs2', version: '2.1'
 }
