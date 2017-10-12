@@ -3,11 +3,8 @@ package hu.rxd.model.junit;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlValue;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlText;
 
@@ -41,16 +38,17 @@ public    String message;
     public String  time;
     public Failure failure,error;
     @JacksonXmlElementWrapper(localName = "system-out")
-    public String systemOut; 
+    public String systemOut;
     @JacksonXmlElementWrapper(localName = "system-err")
-    public String systemErr; 
-    
+    public String systemErr;
+
     String message;
     // public String value;
     // public String message;
     // public String type;
   }
 
+  public String noNamespaceSchemaLocation;
   public String schemaLocation;
   public String name;
   public String time;
