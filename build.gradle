@@ -9,16 +9,37 @@ repositories { mavenCentral() }
 dependencies{
   compile 'org.codehaus.groovy:groovy-all:2.4.+'
 
+// almost raw - old adjust_patch
   compile('org.codehaus.groovy.modules.http-builder:http-builder:0.7')
   compile('oauth.signpost:signpost-core:1.2.1.2')
   compile('oauth.signpost:signpost-commonshttp4:1.2.1.2')
 
+
   compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0'
 
-  testCompile 'junit:junit:4.+'
+  testCompile 'junit:junit:4.12'
 
   compile 'com.google.guava:guava:23.0'
-  
+
+compile 'net.rcarz:jira-client:0.5'
   
   compile 'com.offbytwo.jenkins:jenkins-client:0.3.7'
+  
+//  compile group: 'org.apache.commons', name: 'commons-vfs', version: '1.+'
+// https://mvnrepository.com/artifact/org.apache.commons/commons-vfs2
+compile group: 'org.apache.commons', name: 'commons-vfs2', version: '2.+'
+compile group: 'org.apache.commons', name: 'commons-compress', version: '1.+'
+compile group: 'commons-codec', name: 'commons-codec', version: '1.+'
+compile group: 'commons-net', name: 'commons-net', version: '3.+'
+
+compile 'com.jcraft:jsch:0.1.53'	
+
+
+compile 'de.schlichtherle.truezip:truezip-file:7.7.10'
+compile 'de.schlichtherle.truezip:truezip-path:7.7.10'
+compile 'de.schlichtherle.truezip:truezip-driver-tar:7.7.10'
+compile 'de.schlichtherle.truezip:truezip-driver-http:7.7.10'
+compile 'de.schlichtherle.truezip:truezip:7.7.10'
+compile 'de.schlichtherle.truezip:truezip-kernel:7.7.10'
+
 }
