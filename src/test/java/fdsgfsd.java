@@ -26,7 +26,9 @@ public class fdsgfsd {
 
   @Test
   public void tC() throws Exception {
-    new CachedURL(new URL("http://104.198.109.242/logs/PreCommit-HIVE-Build-7247/test-results.tar.gz"));
+    URL url = new URL("http://104.198.109.242/logs/PreCommit-HIVE-Build-7322/test-results.tar.gz");
+    URL u2 = new CachedURL(url).getURL();
+
   }
 
   @Test
