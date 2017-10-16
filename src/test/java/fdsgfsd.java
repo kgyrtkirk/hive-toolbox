@@ -4,6 +4,8 @@ import java.util.function.Function;
 
 import org.junit.Test;
 
+import hu.rxd.toolbox.qtest.diff.CachedURL;
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file

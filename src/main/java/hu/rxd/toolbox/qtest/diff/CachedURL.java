@@ -1,3 +1,4 @@
+package hu.rxd.toolbox.qtest.diff;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
