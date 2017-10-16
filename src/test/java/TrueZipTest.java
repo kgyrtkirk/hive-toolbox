@@ -7,6 +7,7 @@ import org.junit.Test;
 import de.schlichtherle.truezip.file.TArchiveDetector;
 import de.schlichtherle.truezip.file.TFile;
 import de.schlichtherle.truezip.file.TFileInputStream;
+import de.schlichtherle.truezip.nio.file.TPath;
 
 public class TrueZipTest {
 
@@ -18,7 +19,8 @@ public class TrueZipTest {
       //      zipFile = new TFile(slave.getRoots().getFile(path), new TArchiveDetector("zip", new CheckedZipDriver(IOPoolLocator.SINGLETON)));
       String tgz = "http://104.198.109.242/logs/PreCommit-HIVE-Build-7247/test-results.tar.gz";
       //"/tmp/a.tar.gz"
-      zipFile = new TFile(new URI(tgz));
+      TPath p = new TPath(new URI(tgz));
+      //      p.toNonArchivePath()
       TFile[] zipEntries = zipFile.listFiles(TArchiveDetector.NULL);
       if ((zipEntries == null) || (zipEntries.length == 0)) {
         throw new RuntimeException("err");
