@@ -24,7 +24,7 @@ public class DiffClassificatorTest {
   private String fileName;
   private String expected;
 
-  @Parameters
+  @Parameters(name = "{0}")
   public static List<Object[]> getParameters() {
     List<Object[]> ret = new ArrayList<>();
     ret.add(new Object[] { "statsOnly1", "statsOnly" });
@@ -37,6 +37,10 @@ public class DiffClassificatorTest {
     ret.add(new Object[] { "statsOnly_order", "statsOnly" });
     ret.add(new Object[] { "statTaskOnly_1", "statTaskOnly" });
     ret.add(new Object[] { "empty_1", "empty" });
+    ret.add(new Object[] { "zStats_1", "zStats" });
+    ret.add(new Object[] { "zStatsEst_1", "zStatsEst" });
+    //    ret.add(new Object[] { "zStatsEst_2", "zStatsEst" });
+    ret.add(new Object[] { "taskName_1", "taskName" });
     return ret;
   }
 

@@ -3,6 +3,8 @@ package hu.rxd.toolbox.qtest.diff;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import com.google.common.collect.Lists;
 
@@ -127,6 +129,81 @@ public class DiffClassificator {
 
   }
 
+  public static class StatsDisappearClassifier implements Classifier {
+
+    private String c = "";
+
+    @Override
+    public String getName() {
+      return "StatsDisappear" + c;
+    }
+
+    @Override
+    public boolean accept(DiffObject dio) {
+      //      if (dio.getL().size() != 0) {
+      //        return false;
+      //      }
+      Predicate<String> p = Pattern.compile("^\\s*(numRows|rawDataSize)\\s+\\d+\\s*$").asPredicate();
+      Iterator<String> itL = dio.getL().iterator();
+      for (String r : dio.getR()) {
+        if (p.test(r)) {
+          continue;
+        }
+        if (itL.hasNext()) {
+          c = "Est";
+          String l = itL.next();
+          //          Statistics: Num rows: 26 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
+          String l1 = l.replaceAll("Num rows:\\s+\\d+", "roes: __ROWS__");
+          String r1 = r.replaceAll("Num rows:\\s+\\d+", "roes: __ROWS__");
+          if (l1.equals(r1)) {
+            continue;
+          }
+        }
+
+        return false;
+      }
+      return true;
+    }
+  }
+
+  public static class ZeroStatsDisappearClassifier implements Classifier {
+
+    private String c = "";
+
+    @Override
+    public String getName() {
+      return "zStats" + c;
+    }
+
+    @Override
+    public boolean accept(DiffObject dio) {
+      //      if (dio.getL().size() != 0) {
+      //        return false;
+      //      }
+      Predicate<String> p = Pattern.compile("^\\s*(numRows|rawDataSize)\\s+0\\s*$").asPredicate();
+      Iterator<String> itL = dio.getL().iterator();
+      for (String r : dio.getR()) {
+        if (p.test(r)) {
+          continue;
+        }
+        if (itL.hasNext()) {
+          c = "Est";
+          String l = itL.next();
+          //          Statistics: Num rows: 26 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
+          String l1 = l.replaceAll("Num rows:\\s+\\d+", "roes: __ROWS__");
+          String r1 = r.replaceAll("Num rows:\\s+\\d+", "roes: __ROWS__");
+          if (l1.equals(r1)) {
+            continue;
+          } else {
+            int asd = 1;
+          }
+        }
+        return false;
+      }
+      return true;
+    }
+  }
+
   public static class PostHookChangeClassifier implements Classifier {
 
     @Override
@@ -151,12 +228,43 @@ public class DiffClassificator {
     }
   }
 
+  public static class StatsTaskRenameClassifier implements Classifier {
+
+    @Override
+    public String getName() {
+      return "taskName";
+    }
+
+    @Override
+    public boolean accept(DiffObject dio) {
+      for (List<String> input : Lists.newArrayList(dio.l,dio.r)) {
+        Iterator<String> lIter=input.iterator();
+        while(lIter.hasNext()) {
+          String line = lIter.next();
+          if (!line.matches("\\s*RUN:\\s+Stage-\\d+:(COLUMN)?STATS\\s*")) {
+            return false;
+          }
+
+        }
+      }
+      return true;
+    }
+  }
+
+  //  > RUN: Stage-3:COLUMNSTATS
+  //  < RUN: Stage-3:STATS
+
   public DiffClassificator() {
     classifiers.add(new StatsOnlyChangeClassifier());
     classifiers.add(new StatTaskOnlyChangeClassifier());
     classifiers.add(new PostHookChangeClassifier());
     classifiers.add(new EmptyLineRemovalClassifier());
+    classifiers.add(new ZeroStatsDisappearClassifier());
+    classifiers.add(new StatsDisappearClassifier());
+    classifiers.add(new StatsTaskRenameClassifier());
   }
+
+
 
   public static class DiffObject {
 
@@ -178,10 +286,15 @@ public class DiffClassificator {
       }
     }
 
+    // these are in reverse order; fix upstream? or just fix for myself?
+    // however...beware: L is the modified/new; R is the etalon
+
+    @Deprecated
     List<String> getL() {
       return l;
     }
 
+    @Deprecated
     List<String> getR() {
       return r;
     }

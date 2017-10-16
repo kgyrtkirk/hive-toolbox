@@ -1,0 +1,22 @@
+120a121
+>                     numRows 0
+122a124
+>                     rawDataSize 0
+164a167
+>                     numRows 0
+166a170
+>                     rawDataSize 0
+222c226
+<             Statistics: Num rows: 26 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
+227c231
+<               Statistics: Num rows: 26 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
+---
+>               Statistics: Num rows: 1 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
+293a298,299
+>               numRows 0
+>               rawDataSize 0
+312a319,320
+>                 numRows 0
+>                 rawDataSize 0
