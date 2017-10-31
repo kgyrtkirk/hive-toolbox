@@ -1,5 +1,7 @@
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
+import java.net.URL;
 import java.util.function.Function;
 
 import hu.rxd.toolbox.jira.HiveTicket;
@@ -17,7 +19,17 @@ public class LastQAReportInputStreamDispatcher implements IInputStreamDispatcher
 
   @Override
   public void visit(Function<InputStream, Void> function) throws Exception {
-    new TarGzXL(new CachedURL(qaLogs.toURL()).getURL()).visit(function);
+    URL url = null;
+    try {
+      url = new CachedURL(qaLogs.toURL()).getURL();
+    } catch (FileNotFoundException fe) {
+      System.out.println("not found at QA");
+      String p = qaLogs.getPath();
+      String id = p.replaceAll("[^0-9]", "");
+      URI u2 = new URI(String.format("http://demeter/ptest-results/test-results.%s.tar.gz", id));
+      url = new CachedURL(u2.toURL()).getURL();
+    }
+    new TarGzXL(url).visit(function);
   }
 
 }
