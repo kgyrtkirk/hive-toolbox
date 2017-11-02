@@ -77,6 +77,47 @@ public class DiffClassificator {
     }
   }
 
+  public static class StatsPCChangeClassifier implements Classifier {
+
+    @Override
+    public String getName() {
+      return "statsPC";
+    }
+
+    @Override
+    public boolean accept(DiffObject dio) {
+      if (dio.getL().size() != dio.getR().size()) {
+        return false;
+      }
+
+      Iterator<String> lIter = dio.getL().iterator();
+      Iterator<String> rIter = dio.getR().iterator();
+
+      while (lIter.hasNext()) {
+        String strL = lIter.next().trim();
+        String strR = rIter.next().trim();
+
+        if (!(strL.startsWith("Statistics: Num rows:") && strR.startsWith("Statistics: Num rows:"))) {
+          return false;
+        }
+        String[] pL = strL.split(":");
+        String[] pR = strR.split(":");
+        if (!(pL.length == pR.length && pL.length == 6)) {
+          return false;
+        }
+        for (int i = 0; i < pL.length; i++) {
+          if (i != 4 && !pL[i].equals(pR[i])) {
+            return false;
+          }
+        }
+        if (!(pR[4].trim().startsWith("COMPLETE") && pL[4].trim().startsWith("PARTIAL"))) {
+          return false;
+        }
+      }
+      return true;
+    }
+  }
+
   public static class StatTaskOnlyChangeClassifier implements Classifier {
 
     @Override
@@ -255,6 +296,7 @@ public class DiffClassificator {
   //  < RUN: Stage-3:STATS
 
   public DiffClassificator() {
+    classifiers.add(new StatsPCChangeClassifier());
     classifiers.add(new StatsOnlyChangeClassifier());
     classifiers.add(new StatTaskOnlyChangeClassifier());
     classifiers.add(new PostHookChangeClassifier());

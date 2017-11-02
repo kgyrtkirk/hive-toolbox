@@ -1,0 +1,40 @@
+174c174
+<                 Statistics: Num rows: 1155 Data size: 4620 Basic stats: PARTIAL Column stats: NONE
+---
+>                 Statistics: Num rows: 1155 Data size: 4620 Basic stats: COMPLETE Column stats: NONE
+179c179
+<                   Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>                   Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+183c183
+<                     Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>                     Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+248c248
+<           Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+254c254
+<             Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+441c441
+<                 Statistics: Num rows: 755 Data size: 3025 Basic stats: PARTIAL Column stats: NONE
+---
+>                 Statistics: Num rows: 755 Data size: 3025 Basic stats: COMPLETE Column stats: NONE
+446c446
+<                   Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>                   Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+450c450
+<                     Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>                     Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+515c515
+<           Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>           Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
+521c521
+<             Statistics: Num rows: 1 Data size: 8 Basic stats: PARTIAL Column stats: NONE
+---
+>             Statistics: Num rows: 1 Data size: 8 Basic stats: COMPLETE Column stats: NONE
