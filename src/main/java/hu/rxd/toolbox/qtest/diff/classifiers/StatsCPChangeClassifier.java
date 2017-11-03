@@ -23,11 +23,11 @@ import java.util.Iterator;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.Classifier;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.DiffObject;
 
-public class StatsPCChangeClassifier implements Classifier {
+public class StatsCPChangeClassifier implements Classifier {
 
   @Override
   public String getName() {
-    return "statsPC";
+    return "statsCP";
   }
 
   @Override
@@ -56,7 +56,7 @@ public class StatsPCChangeClassifier implements Classifier {
           return false;
         }
       }
-      if (!(pR[4].trim().startsWith("PARTIAL") && pL[4].trim().startsWith("COMPLETE"))) {
+      if (!(pR[4].trim().startsWith("COMPLETE") && pL[4].trim().startsWith("PARTIAL"))) {
         return false;
       }
     }
