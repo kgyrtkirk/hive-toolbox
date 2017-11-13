@@ -76,6 +76,7 @@ public class QTDiffRunner {
           } else {
             output.printf("rerun '%s#%s'\n", tc.classname.replaceAll(".*\\.", ""), tc.name);
           }
+          output.printf("rerunAll '%s#%s'\n", tc.classname.replaceAll(".*\\.", ""), tc.name);
         } catch (Exception e) {
           throw new RuntimeException("Error processing testcase", e);
         }

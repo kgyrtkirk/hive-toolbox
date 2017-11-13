@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import hu.rxd.toolbox.qtest.diff.DiffClassificator;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.Classifier;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.DiffObject;
 
@@ -40,23 +39,14 @@ public class ZeroStatsDisappearClassifier implements Classifier {
     //      if (dio.getL().size() != 0) {
     //        return false;
     //      }
+    if (dio.getL().size() != dio.getR().size()) {
+      return false;
+    }
     Predicate<String> p = Pattern.compile("^\\s*(numRows|rawDataSize)\\s+0\\s*$").asPredicate();
     Iterator<String> itL = dio.getL().iterator();
     for (String r : dio.getR()) {
       if (p.test(r)) {
         continue;
-      }
-      if (itL.hasNext()) {
-        c = "Est";
-        String l = itL.next();
-        //          Statistics: Num rows: 26 Data size: 2750 Basic stats: COMPLETE Column stats: NONE
-        String l1 = l.replaceAll("Num rows:\\s+\\d+", "roes: __ROWS__");
-        String r1 = r.replaceAll("Num rows:\\s+\\d+", "roes: __ROWS__");
-        if (l1.equals(r1)) {
-          continue;
-        } else {
-          int asd = 1;
-        }
       }
       return false;
     }

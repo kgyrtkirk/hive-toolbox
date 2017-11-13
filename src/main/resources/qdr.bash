@@ -35,9 +35,15 @@ function rerun(){
 	else
 		K="$1"
 	fi
-	echo "time mvn install -Dmaven.surefire.plugin.version=2.19.1 -Pitests -q '-Dtest=$K'"
+	echo "time mvn install -Pitests -Dtest.output.overwrite -q '-Dtest=$K'"
 }
 
+
+function rerunAll() {
+        if [ "$ACCEPT_CAT" == "RERUN" ];then
+                rerun "$@"
+        fi
+}
 
 #===
 ##

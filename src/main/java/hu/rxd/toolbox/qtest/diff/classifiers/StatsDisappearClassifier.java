@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
-import hu.rxd.toolbox.qtest.diff.DiffClassificator;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.Classifier;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.DiffObject;
 
@@ -40,6 +39,10 @@ public class StatsDisappearClassifier implements Classifier {
     //      if (dio.getL().size() != 0) {
     //        return false;
     //      }
+    if (dio.getL().size() != dio.getR().size()) {
+      return false;
+    }
+
     Predicate<String> p = Pattern.compile("^\\s*(numRows|rawDataSize)\\s+\\d+\\s*$").asPredicate();
     Iterator<String> itL = dio.getL().iterator();
     for (String r : dio.getR()) {
