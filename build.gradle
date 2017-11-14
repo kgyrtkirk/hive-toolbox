@@ -16,6 +16,7 @@ dependencies{
 
 
   compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0'
+  compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.0'
 
   testCompile 'junit:junit:4.12'
 

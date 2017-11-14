@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.junit.Test;
 
 import com.google.common.collect.ImmutableCollection;
@@ -24,8 +22,9 @@ public class MXJenkinQueuePTest {
     // JenkinsQueue jq = om.readValue(is, JenkinsQueue.class);
   }
 
-//  @Test
+  @Test
   public void asf() throws Exception {
+    ToolboxSettings.instance();
 
     JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"));
     List<QueueItem> items = js.getQueue().getItems();
@@ -69,8 +68,9 @@ public class MXJenkinQueuePTest {
   private Map<String, String> toMap(String params) {
     Map<String, String> ret = new HashMap<>();
     for (String part : params.split("\n")) {
-      if (part.length() == 0)
+      if (part.length() == 0) {
         continue;
+      }
       String[] p = part.split("=");
       if (p.length != 2) {
         throw new RuntimeException();
@@ -84,9 +84,11 @@ public class MXJenkinQueuePTest {
   private List<QueueItem> filterHive(List<QueueItem> items) {
     List<QueueItem> ret = new ArrayList<>();
     for (QueueItem queueItem : items) {
-      if (queueItem != null && queueItem.getTask() != null && queueItem.getTask().getName() != null)
-        if (queueItem.getTask().getName().equals("PreCommit-HIVE-Build"))
+      if (queueItem != null && queueItem.getTask() != null && queueItem.getTask().getName() != null) {
+        if (queueItem.getTask().getName().equals("PreCommit-HIVE-Build")) {
           ret.add(queueItem);
+        }
+      }
     }
     return ret;
   }
