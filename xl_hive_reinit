@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+banner clean
+git clean -dfx
+C="${1:-ql}"
+banner install
+MOPTS="-DskipTests -DskipSparkTests -Pitests -T9 -pl $C"
+time mvn source:jar install $MOPTS -am -q
+banner eclipse
+time mvn eclipse:eclipse $MOPTS -B
+banner ok
