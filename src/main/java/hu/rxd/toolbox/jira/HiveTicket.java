@@ -19,6 +19,7 @@
 package hu.rxd.toolbox.jira;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -27,8 +28,10 @@ import java.util.regex.Pattern;
 import org.apache.commons.compress.utils.Lists;
 import org.junit.Test;
 
+import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.Comment;
 import net.rcarz.jiraclient.Issue;
+import net.rcarz.jiraclient.Issue.SearchResult;
 import net.rcarz.jiraclient.JiraClient;
 
 public class HiveTicket {
@@ -37,6 +40,9 @@ public class HiveTicket {
   static JiraClient jira = new JiraClient("https://issues.apache.org/jira");
   private Issue i;
 
+  public HiveTicket(Issue i0) throws Exception {
+    i = i0;
+  }
   public HiveTicket(String ticketId) throws Exception {
     i = jira.getIssue(ticketId);
   }
@@ -89,6 +95,19 @@ public class HiveTicket {
     return comments.get(comments.size() - 1);
   }
 
+  public Attachment getLastAttachment() {
+    Attachment ret = null;
+    for (Attachment a : i.getAttachments()) {
+      if (ret == null || ret.getCreatedDate().before(a.getCreatedDate())) {
+        ret = a;
+      }
+    }
+    if (ret == null) {
+      throw new RuntimeException("theres no last attachment!");
+    }
+    return ret;
+  }
+
   public URI getLastQATestLogsURI() throws Exception {
     Comment lastQAComment = getLastQAComment();
 
@@ -99,6 +118,24 @@ public class HiveTicket {
       return new URI(m.group(1) + "/test-results.tar.gz");
     }
     throw new RuntimeException("can't extract qa uri from input");
+  }
+
+  public static List<HiveTicket> getMatchingTickets(String jqlSearchStr) throws Exception {
+    List<HiveTicket> ret=new ArrayList<>();
+    SearchResult issues = jira.searchIssues(jqlSearchStr);
+    for (Issue i0 : issues.issues) {
+      ret.add(new HiveTicket(i0));
+    }
+    return ret;
+  }
+
+  @Override
+  public String toString() {
+    return String.format("%s: %s", i.getKey(), i.getSummary());
+  }
+
+  public Issue getIssue() {
+    return i;
   }
 
 }

@@ -7,6 +7,7 @@ import org.junit.Test;
 import hu.rxd.model.junit.JunitReader;
 import hu.rxd.model.junit.JunitReport;
 import hu.rxd.model.junit.JunitReport.TestCase;
+import hu.rxd.toolbox.qtest.QTestDiffExtractor;
 
 public class ExtractDiffFX1Test {
 

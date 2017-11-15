@@ -2,7 +2,7 @@ apply plugin: 'groovy'
 apply plugin: 'eclipse'
 apply plugin: 'application'
 
-mainClassName = 'QTDiffRunner'
+mainClassName = 'hu.rxd.toolbox.Toolbox'
 
 repositories { mavenCentral() }
 

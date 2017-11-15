@@ -1,3 +1,4 @@
+package hu.rxd.toolbox.qtest;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.function.Function;

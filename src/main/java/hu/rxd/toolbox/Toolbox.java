@@ -16,10 +16,27 @@
  * limitations under the License.
  */
 
-public class VZs1 {
+package hu.rxd.toolbox;
 
-  public static void main(String[] args) {
-    System.out.println("asd");
+import java.io.FileNotFoundException;
+
+import hu.rxd.toolbox.qtest.QTDiffRunner;
+
+public class Toolbox {
+
+  public static void main(String[] args) throws FileNotFoundException, Exception {
+
+    if (args[0].startsWith("HIVE")) {
+      QTDiffRunner.main(args);
+      return;
+    }
+    if (args[0].startsWith("U")) {
+      JenkinBumper jb = new JenkinBumper();
+      jb.bump();
+
+      return;
+    }
+
   }
 
 }

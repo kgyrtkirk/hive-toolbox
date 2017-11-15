@@ -1,12 +1,4 @@
-import java.io.InputStream;
-import java.net.URL;
-import java.util.function.Function;
-
-import org.junit.Test;
-
-import hu.rxd.toolbox.qtest.TarGzXL;
-import hu.rxd.toolbox.qtest.diff.CachedURL;
-
+package hu.rxd.toolbox.qtest;
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -25,30 +17,10 @@ import hu.rxd.toolbox.qtest.diff.CachedURL;
  * limitations under the License.
  */
 
-public class fdsgfsd {
+public class VZs1 {
 
-  @Test
-  public void tC() throws Exception {
-    URL url = new URL("http://104.198.109.242/logs/PreCommit-HIVE-Build-7322/test-results.tar.gz");
-    URL u2 = new CachedURL(url).getURL();
-
+  public static void main(String[] args) {
+    System.out.println("asd");
   }
 
-  @Test
-  public void aa() throws Exception {
-    TarGzXL aa = new TarGzXL(new URL("file:///tmp/a.tar.gz"));
-    //    TarGzXL aa = new TarGzXL();
-    aa.visit(new Fn());
-
-  }
-
-  class Fn implements Function<InputStream, Void> {
-
-    @Override
-    public Void apply(InputStream t) {
-      //      System.out.println(t);
-      return null;
-    }
-
-  }
 }
