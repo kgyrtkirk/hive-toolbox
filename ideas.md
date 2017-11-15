@@ -15,3 +15,11 @@
 * hive-reinit
 
 * rename project to ?
+
+
+* sort diffs by size; could enable to show similar diffs after each other
+
+
+LESS=' -R'
+LESSOPEN='|pygmentize %s'
+

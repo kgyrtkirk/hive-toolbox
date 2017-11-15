@@ -43,3 +43,31 @@ function llq() {
 	echo "$q"
 	ll $q
 }
+
+
+function ll() {
+	local F="$1"
+	find . -name "$F" > /tmp/.llt
+	local N="`cat /tmp/.llt|wc -l`"
+	local O="`cat /tmp/.llt|head -n1`"
+	case "$N" in
+		0)
+			echo "Zarro files found?! >$F<"
+			return 1
+		;;
+		*)
+			(
+			echo "@@@ $N matches @@@"
+			cat /tmp/.llt
+			echo "@@@ showing $O"
+			cat $O
+			) | less
+		;;
+		1)
+			(
+			echo "@@@ showing $O"
+			cat $O
+			) | less
+		;;	
+	esac
+}

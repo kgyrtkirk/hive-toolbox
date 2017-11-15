@@ -18,6 +18,14 @@ function process(){
 #		echo "patch? (y to apply):"
 #		read
 #		if [ "$REPLY" = "y" ];then
+			RR="-R"
+			[ "$PATCH_OPTS" == "-R" ] && RR=""
+			export RR
+#			(
+#				set +e
+#				patch -f $RR "$FILE" < "$DIFF_FILE"
+#				patch -f $RR "$FILE" < "$DIFF_FILE"
+#			)
 				patch -f $PATCH_OPTS "$FILE" < "$DIFF_FILE"
 #		fi
 		else
