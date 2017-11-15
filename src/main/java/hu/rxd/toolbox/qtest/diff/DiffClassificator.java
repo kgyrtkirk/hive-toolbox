@@ -3,6 +3,7 @@ package hu.rxd.toolbox.qtest.diff;
 import java.util.ArrayList;
 import java.util.List;
 
+import hu.rxd.toolbox.qtest.diff.classifiers.ColumnStatsAccurateOnly;
 import hu.rxd.toolbox.qtest.diff.classifiers.EmptyLineRemovalClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.PostHookChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatTaskOnlyChangeClassifier;
@@ -33,6 +34,7 @@ public class DiffClassificator {
     classifiers.add(new ZeroStatsDisappearClassifier());
     classifiers.add(new StatsDisappearClassifier());
     classifiers.add(new StatsTaskRenameClassifier());
+    classifiers.add(new ColumnStatsAccurateOnly());
   }
 
   public static class DiffObject {

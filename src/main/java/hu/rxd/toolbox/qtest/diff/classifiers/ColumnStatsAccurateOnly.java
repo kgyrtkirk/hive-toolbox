@@ -16,34 +16,36 @@
  * limitations under the License.
  */
 
-package hu.rxd.model.jenkins;
+package hu.rxd.toolbox.qtest.diff.classifiers;
 
-import java.io.IOException;
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
+import java.util.List;
 
-import com.offbytwo.jenkins.JenkinsServer;
-import com.offbytwo.jenkins.model.JobWithDetails;
+import com.google.common.collect.Lists;
 
-public class HiveJenkinsX {
+import hu.rxd.toolbox.qtest.diff.DiffClassificator.Classifier;
+import hu.rxd.toolbox.qtest.diff.DiffClassificator.DiffObject;
 
-  public static void main(String[] args) throws IOException {
-    add("17934");
+public class ColumnStatsAccurateOnly implements Classifier {
+
+  @Override
+  public String getName() {
+    return "ColStatsAcc";
   }
 
-
-  private static void add(String string) throws IOException {
-    ToolboxSettings ts = ToolboxSettings.instance();
-    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"), ts.getJenkinsUser(), ts.getJenkinsPass());
-    //    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"));
-
-    JobWithDetails j = js.getJob("PreCommit-HIVE-Build");
-    Map map = new HashMap<>();
-    map.put("ISSUE_NUM", string);
-
-    j.build(map, true);
+  @Override
+  public boolean accept(DiffObject dio) {
+    for (List<String> input : Lists.newArrayList(dio.l, dio.r)) {
+      Iterator<String> lIter = input.iterator();
+      while (lIter.hasNext()) {
+        String line = lIter.next();
+        if (line.trim().startsWith("COLUMN_STATS_ACCURATE")) {
+          continue;
+        }
+        return false;
+      }
+    }
+    return true;
   }
-
 
 }

@@ -19,6 +19,7 @@
 package hu.rxd.toolbox.jira;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,6 +33,7 @@ import net.rcarz.jiraclient.JiraClient;
 
 public class HiveTicket {
 
+  private static final String HIVEQA = "hiveqa";
   static JiraClient jira = new JiraClient("https://issues.apache.org/jira");
   private Issue i;
 
@@ -58,8 +60,29 @@ public class HiveTicket {
     return ret;
   }
 
+  public List<Comment> getCommentsContaining(String substr) {
+    List<Comment> ret = Lists.newArrayList();
+    for (Comment comment : i.getComments()) {
+      if (comment.getBody().contains(substr)) {
+        ret.add(comment);
+      }
+    }
+    return ret;
+  }
+
+  public Comment getReviewComments() {
+    List<Comment> comments = getCommentsContaining("+1");
+    for (Iterator<Comment> iterator = comments.iterator(); iterator.hasNext();) {
+      Comment comment = iterator.next();
+      if (comment.getAuthor().getName().equals(HIVEQA)) {
+        iterator.remove();
+      }
+    }
+    return comments.get(comments.size() - 1);
+  }
+
   public Comment getLastQAComment() {
-    List<Comment> comments = getCommentsByName("hiveqa");
+    List<Comment> comments = getCommentsByName(HIVEQA);
     if (comments.size() == 0) {
       throw new RuntimeException("theres no last qa comment");
     }
