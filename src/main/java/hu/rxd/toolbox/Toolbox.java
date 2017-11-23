@@ -19,15 +19,28 @@
 package hu.rxd.toolbox;
 
 import java.io.FileNotFoundException;
+import java.net.URL;
 
+import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
+import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
+import hu.rxd.toolbox.qtest.LocalizedZipDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
 
 public class Toolbox {
 
   public static void main(String[] args) throws FileNotFoundException, Exception {
 
+    if (args[0].startsWith("http")) {
+      IInputStreamDispatcher isd = new LocalizedZipDispatcher(new URL(args[0]));
+      QTDiffRunner.processTestXmls(isd);
+
+      return;
+    }
+
     if (args[0].startsWith("HIVE")) {
-      QTDiffRunner.main(args);
+      IInputStreamDispatcher isd = new LastQAReportInputStreamDispatcher(args[0]);
+      QTDiffRunner.processTestXmls(isd);
+
       return;
     }
     if (args[0].startsWith("U")) {

@@ -2,6 +2,7 @@ package hu.rxd.toolbox.qtest;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
@@ -23,13 +24,18 @@ public class QTDiffRunner {
   static Map<String, Integer> catCnt = new HashMap<String, Integer>();
 
   public static void main(String[] args) throws FileNotFoundException, Exception {
+    IInputStreamDispatcher isd = new LastQAReportInputStreamDispatcher(args[0]);
+
+    processTestXmls(isd);
+  }
+
+  public static void processTestXmls(IInputStreamDispatcher testResultsDispatcher) throws IOException, Exception, FileNotFoundException {
     try (PrintStream output0 = new PrintStream("/tmp/_qd")) {
       output = output0;
       ByteStreams.copy(QTestDiffExtractor.class.getResourceAsStream("/qdr.bash"), output);
 
       //      IInputStreamDispatcher isd = new FileInputStreamDispatcher(args);
-      IInputStreamDispatcher isd = new LastQAReportInputStreamDispatcher(args[0]);
-      isd.visit(new Function<InputStream, Void>() {
+      testResultsDispatcher.visit(new Function<InputStream, Void>() {
 
         @Override
         public Void apply(InputStream a) {
