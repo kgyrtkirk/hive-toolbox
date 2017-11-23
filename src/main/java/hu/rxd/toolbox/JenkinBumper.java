@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import hu.rxd.toolbox.jira.HiveTicket;
 import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.Comment;
+import net.rcarz.jiraclient.JiraException;
 
 public class JenkinBumper {
 
@@ -50,7 +51,7 @@ public class JenkinBumper {
 
   }
 
-  private boolean needsTestRun(HiveTicket t) {
+  private boolean needsTestRun(HiveTicket t) throws JiraException {
     Attachment lastA = null;
     Comment lastQAComment = null;
     try {

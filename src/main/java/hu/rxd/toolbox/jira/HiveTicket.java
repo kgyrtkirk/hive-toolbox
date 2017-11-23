@@ -33,6 +33,7 @@ import net.rcarz.jiraclient.Comment;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.Issue.SearchResult;
 import net.rcarz.jiraclient.JiraClient;
+import net.rcarz.jiraclient.JiraException;
 
 public class HiveTicket {
 
@@ -95,8 +96,9 @@ public class HiveTicket {
     return comments.get(comments.size() - 1);
   }
 
-  public Attachment getLastAttachment() {
+  public Attachment getLastAttachment() throws JiraException {
     Attachment ret = null;
+    i.refresh("*all");
     for (Attachment a : i.getAttachments()) {
       if (ret == null || ret.getCreatedDate().before(a.getCreatedDate())) {
         ret = a;

@@ -27,8 +27,8 @@ public class LastQAReportInputStreamDispatcher implements IInputStreamDispatcher
       System.out.println("not found at QA");
       String p = qaLogs.getPath();
       String id = p.replaceAll("[^0-9]", "");
-      URI u2 = new URI(String.format("http://localhost:8080/ptest-results/test-results.%s.tar.gz", id));
-//      URI u2 = new URI(String.format("http://demeter/ptest-results/test-results.%s.tar.gz", id));
+//      URI u2 = new URI(String.format("http://localhost:8080/ptest-results/test-results.%s.tar.gz", id));
+      URI u2 = new URI(String.format("http://demeter/ptest-results/test-results.%s.tar.gz", id));
       url = new CachedURL(u2.toURL()).getURL();
     }
     new TarGzXL(url).visit(function);
