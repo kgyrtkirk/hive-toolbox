@@ -38,14 +38,16 @@ import net.rcarz.jiraclient.JiraException;
 public class HiveTicket {
 
   private static final String HIVEQA = "hiveqa";
-  static JiraClient jira = new JiraClient("https://issues.apache.org/jira");
+  public static JiraClient jira = new JiraClient("https://issues.apache.org/jira");
   private Issue i;
 
   public HiveTicket(Issue i0) throws Exception {
-    i = i0;
+    this(i0.getKey());
   }
+
   public HiveTicket(String ticketId) throws Exception {
-    i = jira.getIssue(ticketId);
+    //    i = jira.getIssue(ticketId);
+    i = jira.getIssue(ticketId, "*all", "schema,editmeta");
   }
 
   @Test
@@ -98,7 +100,7 @@ public class HiveTicket {
 
   public Attachment getLastAttachment() throws JiraException {
     Attachment ret = null;
-    i.refresh("*all");
+    //    i.refresh("*all");
     for (Attachment a : i.getAttachments()) {
       if (ret == null || ret.getCreatedDate().before(a.getCreatedDate())) {
         ret = a;
