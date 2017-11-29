@@ -11,6 +11,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import hu.rxd.toolbox.qtest.diff.CachedURL;
+
 public class JenkinsTestResultsReader {
 
 	public static TestResults parseTestResults(InputStream jsonStream)
@@ -34,7 +36,8 @@ public class JenkinsTestResultsReader {
 	 * @throws Exception
 	 */
 	public static TestResults fromJenkinsBuild(String buildURL) throws Exception {
-		URL u = new URL(buildURL + "/testReport/api/json?pretty=true&tree=suites[cases[className,name,duration,status]]");
+    URL u0 = new URL(buildURL + "/testReport/api/json?pretty=true&tree=suites[cases[className,name,duration,status]]");
+    URL u = new CachedURL(u0).getURL();
 		try (InputStream jsonStream = u.openStream()) {
 			return parseTestResults(jsonStream);
 		}
@@ -42,7 +45,7 @@ public class JenkinsTestResultsReader {
 
   public static void main(String[] args) throws Exception {
     String url = "https://builds.apache.org/job/PreCommit-HIVE-Build/8020/";
-    fromJenkinsBuild(url);
+    TestResults res = fromJenkinsBuild(url);
   }
 
 
