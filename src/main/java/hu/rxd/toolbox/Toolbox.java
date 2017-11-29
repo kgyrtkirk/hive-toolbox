@@ -19,8 +19,10 @@
 package hu.rxd.toolbox;
 
 import java.io.FileNotFoundException;
+import java.io.PrintStream;
 import java.net.URL;
 
+import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LocalizedZipDispatcher;
@@ -48,6 +50,18 @@ public class Toolbox {
       jb.bump();
 
       return;
+    }
+
+    if (args[0].startsWith("RERUN")) {
+      String url = args[2];
+      TestEntries res = TestEntries.fromJenkinsBuild(url);
+      TestEntries res2 = res.filterFailed().limit(400);
+      System.out.println(res2);
+      String pat = res2.getSimpleMavenTestPattern();
+      System.out.println("pat len:" + pat.length());
+      try (PrintStream ps = new PrintStream(args[1])) {
+        ps.println(pat);
+      }
     }
 
   }

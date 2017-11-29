@@ -103,4 +103,9 @@ public class TestEntries {
     return entries;
   }
 
+  @Override
+  public String toString() {
+    return String.format("TestEntries; %d", entries.size());
+  }
+
 }
