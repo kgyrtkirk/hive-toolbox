@@ -52,7 +52,8 @@ public class TestEntries {
   public TestEntries filterFailed() {
     List<TestEntry> ret = new ArrayList<>();
     for (TestEntry entry : entries) {
-      if (!entry.isPassed()) {
+
+      if (entry.isFailed()) {
         ret.add(entry);
       }
     }

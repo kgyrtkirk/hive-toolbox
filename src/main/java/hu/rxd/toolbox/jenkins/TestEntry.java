@@ -7,6 +7,22 @@ import java.util.Comparator;
  */
 public class TestEntry {
 
+  public static enum Status {
+    PASSED,
+    REGRESSION,
+    FAILED,
+    FIXED,
+    SKIPPED;
+
+    boolean isFailed() {
+      return this == REGRESSION || this == FAILED;
+    }
+
+    boolean isPassed() {
+      return this == PASSED || this == FIXED;
+    }
+
+  }
   public static final Comparator<? super TestEntry> LABEL_COMPARATOR = new Comparator<TestEntry>() {
 
     @Override
@@ -18,12 +34,12 @@ public class TestEntry {
   private double duration;
   private String className;
   private String methodName;
-  private String status;
+  private Status status;
 
   public TestEntry(String className, String methodName, double duration, String status) {
     this.duration = duration;
     this.methodName = methodName;
-    this.status = status;
+    this.status = Status.valueOf(status);
     this.className = className.replace('.', '/') + ".class";
     // label = className.replaceAll(".*\\.", "") + "#" + methodName;
     label = className + "#" + methodName;
@@ -31,7 +47,7 @@ public class TestEntry {
 
   @Override
   public String toString() {
-    return String.format("%s  %d", label, duration);
+    return String.format("%s  %s %s", label, duration, status);
   }
 
   /**
@@ -48,11 +64,11 @@ public class TestEntry {
   }
 
   public boolean isFailed() {
-    return "FAILED".equals(status);
+    return status.isFailed();
   }
 
   public boolean isPassed() {
-    return "PASSED".equals(status);
+    return status.isPassed();
   }
 
 }
