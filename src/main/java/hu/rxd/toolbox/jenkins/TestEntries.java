@@ -20,15 +20,15 @@ package hu.rxd.toolbox.jenkins;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Joiner;
 
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 
@@ -60,7 +60,9 @@ public class TestEntries {
     String url = "https://builds.apache.org/job/PreCommit-HIVE-Build/8020/";
     TestEntries res = fromJenkinsBuild(url);
     TestEntries res2 = res.filterFailed().limit(400);
-    res2.writeAsSimpleMavenTestPattern(System.out);
+    String pat = res2.getSimpleMavenTestPattern();
+    System.out.println(pat);
+    System.out.println("|pat|=" + pat.length());
     System.out.println(res.entries.size());
     System.out.println(res2.entries.size());
   }
@@ -85,11 +87,20 @@ public class TestEntries {
     return new TestEntries(ret);
   }
 
-  public void writeAsSimpleMavenTestPattern(OutputStream os) {
-    PrintStream ps = new PrintStream(os);
+  public String getSimpleMavenTestPattern() {
+    List<String> labels = new LinkedList<>();
     for (TestEntry testEntry : entries) {
-      ps.println(testEntry.getLabel());
+      labels.add(testEntry.getLabel());
     }
+    return Joiner.on(",").join(labels);
+  }
+
+  public String getSimpleMavenTestPattern2() {
+    List<String> labels = new LinkedList<>();
+    for (TestEntry testEntry : entries) {
+      labels.add(testEntry.getLabel());
+    }
+    return Joiner.on(",").join(labels);
   }
 
   private static TestResults parseTestResults(InputStream jsonStream) throws IOException, JsonParseException, JsonMappingException {
