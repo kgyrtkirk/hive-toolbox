@@ -8,15 +8,13 @@ import java.util.Properties;
 
 import com.google.common.base.Joiner;
 
-import hu.rxd.toolbox.jenkins.TestResults.Entry;
-
 public class FailedTestCasesFilter {
 
-  public List<Entry> entries;
+  public List<TestEntry> entries;
 
   public FailedTestCasesFilter(String buildUrl) throws Exception {
     TestResults results = JenkinsTestResultsReader.fromJenkinsBuild(buildUrl);
-    entries = new LinkedList<>(TestResults.testEntries(results));
+    entries = new LinkedList<>(JenkinsTestResultsReader.testEntries(results));
 
   }
 
@@ -26,7 +24,7 @@ public class FailedTestCasesFilter {
 
   FailedTestCasesFilter filterFailed() {
     // Collections2.filter(entries, predicate)
-    Iterator<Entry> it = entries.iterator();
+    Iterator<TestEntry> it = entries.iterator();
     while (it.hasNext()) {
       if (it.next().isPassed()) {
         it.remove();
@@ -62,7 +60,7 @@ public class FailedTestCasesFilter {
 
     List<String> testLabels = new LinkedList<>();
     double totalTime = 0.0;
-    for (Entry entry : entries) {
+    for (TestEntry entry : entries) {
       totalTime += entry.getDuration();
       testLabels.add(entry.getLabel());
     }

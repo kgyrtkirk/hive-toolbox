@@ -6,6 +6,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -15,38 +17,47 @@ import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class JenkinsTestResultsReader {
 
-	public static TestResults parseTestResults(InputStream jsonStream)
-			throws IOException, JsonParseException, JsonMappingException {
-		ObjectMapper mapper = new ObjectMapper();
-		TestResults results = mapper.readValue(jsonStream, TestResults.class);
-		return results;
-	}
+  public static TestResults parseTestResults(InputStream jsonStream) throws IOException, JsonParseException, JsonMappingException {
+    ObjectMapper mapper = new ObjectMapper();
+    TestResults results = mapper.readValue(jsonStream, TestResults.class);
+    return results;
+  }
 
-	public static TestResults fromFile(File f) throws Exception {
-		try (InputStream fis = new FileInputStream(f)) {
-			return parseTestResults(fis);
-		}
-	}
+  public static TestResults fromFile(File f) throws Exception {
+    try (InputStream fis = new FileInputStream(f)) {
+      return parseTestResults(fis);
+    }
+  }
 
-	/**
-	 * example buildURL: http://j1:8080/job/tmp_kx_2/lastCompletedBuild/
-	 *
-	 * @param buildURL
-	 * @return
-	 * @throws Exception
-	 */
-	public static TestResults fromJenkinsBuild(String buildURL) throws Exception {
+  /**
+   * example buildURL: http://j1:8080/job/tmp_kx_2/lastCompletedBuild/
+   *
+   * @param buildURL
+   * @return
+   * @throws Exception
+   */
+  public static TestResults fromJenkinsBuild(String buildURL) throws Exception {
     URL u0 = new URL(buildURL + "/testReport/api/json?pretty=true&tree=suites[cases[className,name,duration,status]]");
     URL u = new CachedURL(u0).getURL();
-		try (InputStream jsonStream = u.openStream()) {
-			return parseTestResults(jsonStream);
-		}
-	}
+    try (InputStream jsonStream = u.openStream()) {
+      return parseTestResults(jsonStream);
+    }
+  }
+
+  public static List<TestEntry> testEntries(TestResults results) {
+    List<TestEntry> entries = new ArrayList<TestEntry>();
+
+    for (TestResults.Suite s : results.suites) {
+      for (TestResults.Suite.Case c : s.cases) {
+        entries.add(new TestEntry(c.className, c.name, c.duration, (c.status)));
+      }
+    }
+    return entries;
+  }
 
   public static void main(String[] args) throws Exception {
     String url = "https://builds.apache.org/job/PreCommit-HIVE-Build/8020/";
     TestResults res = fromJenkinsBuild(url);
   }
-
 
 }
