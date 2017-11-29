@@ -20,6 +20,8 @@ package hu.rxd.toolbox.jenkins;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,13 @@ import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class TestEntries {
 
+  private List<TestEntry> entries;
+
+  private TestEntries(List<TestEntry> entries) {
+    this.entries = entries;
+  }
+
+
   /**
    * example buildURL: http://j1:8080/job/tmp_kx_2/lastCompletedBuild/
    *
@@ -39,11 +48,47 @@ public class TestEntries {
    * @return
    * @throws Exception
    */
-  public static List<TestEntry> fromJenkinsBuild(String buildURL) throws Exception {
+  public static TestEntries fromJenkinsBuild(String buildURL) throws Exception {
     URL u0 = new URL(buildURL + "/testReport/api/json?pretty=true&tree=suites[cases[className,name,duration,status]]");
     URL u = new CachedURL(u0).getURL();
     try (InputStream jsonStream = u.openStream()) {
-      return testEntries(parseTestResults(jsonStream));
+      return new TestEntries(testEntries(parseTestResults(jsonStream)));
+    }
+  }
+
+  public static void main(String[] args) throws Exception {
+    String url = "https://builds.apache.org/job/PreCommit-HIVE-Build/8020/";
+    TestEntries res = fromJenkinsBuild(url);
+    TestEntries res2 = res.filterFailed().limit(400);
+    res2.writeAsSimpleMavenTestPattern(System.out);
+    System.out.println(res.entries.size());
+    System.out.println(res2.entries.size());
+  }
+
+  public TestEntries filterFailed() {
+    List<TestEntry> ret = new ArrayList<>();
+    for (TestEntry entry : entries) {
+      if (!entry.isPassed()) {
+        ret.add(entry);
+      }
+    }
+    return new TestEntries(ret);
+  }
+
+  public TestEntries limit(int max) {
+    List<TestEntry> ret = new ArrayList<>();
+    if (entries.size() > max) {
+      throw new RuntimeException(String.format("is everything working fine? orig:%d max:%d", entries.size(), max));
+//      System.err.printf("limiting test list from %d to contain %d elements", entries.size(), max);
+    }
+    ret.addAll(entries);
+    return new TestEntries(ret);
+  }
+
+  public void writeAsSimpleMavenTestPattern(OutputStream os) {
+    PrintStream ps = new PrintStream(os);
+    for (TestEntry testEntry : entries) {
+      ps.println(testEntry.getLabel());
     }
   }
 
@@ -53,7 +98,7 @@ public class TestEntries {
     return results;
   }
 
-  public static List<TestEntry> testEntries(TestResults results) {
+  private static List<TestEntry> testEntries(TestResults results) {
     List<TestEntry> entries = new ArrayList<TestEntry>();
 
     for (TestResults.Suite s : results.suites) {
@@ -62,12 +107,6 @@ public class TestEntries {
       }
     }
     return entries;
-  }
-
-  public static void main(String[] args) throws Exception {
-    String url = "https://builds.apache.org/job/PreCommit-HIVE-Build/8020/";
-    List<TestEntry> res = fromJenkinsBuild(url);
-    System.out.println(res.size());
   }
 
 }
