@@ -1,3 +1,9 @@
+#
+# usage: source li-nav.bash
+#
+# Stuff for editing huge amount of .q.out diffs
+# Use li_init, li_file, li_next and li_prev
+#
 
 function li_init() {
 	git status --porcelain=1|grep '^ M'|cut -c 3- > li
