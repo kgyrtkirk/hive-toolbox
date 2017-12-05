@@ -74,7 +74,7 @@ I keep forgetting stuff I found usefull..so I'll make notes here if I don't forg
 * ##### colorize less using pygmentize
 
   ```bash
-LESS=' -R'
-LESSOPEN='|pygmentize %s'
-```
+  LESS=' -R'
+  LESSOPEN='|pygmentize %s'
+  ```
 
