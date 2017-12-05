@@ -1,6 +1,0 @@
-#!/bin/bash
-
-shopt -s expand_aliases
-alias apdiff='git diff asf/master..HEAD'
-
-n="`apdiff $1 | wc -l`" ; if [ "$n" == "0" ];then git add $1;fi;
