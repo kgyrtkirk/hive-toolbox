@@ -7,6 +7,7 @@ import hu.rxd.toolbox.qtest.diff.classifiers.ColumnStatsAccurateOnly;
 import hu.rxd.toolbox.qtest.diff.classifiers.EmptyLineRemovalClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.PostHookChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatTaskOnlyChangeClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.StatsDS10XClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsDisappearClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsNPChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsOnlyChangeClassifier;
@@ -25,6 +26,7 @@ public class DiffClassificator {
   List<Classifier> classifiers = new ArrayList<Classifier>();
 
   public DiffClassificator() {
+    classifiers.add(new StatsDS10XClassifier());
     classifiers.add(new StatsNPChangeClassifier());
     classifiers.add(new StatsPCChangeClassifier());
     classifiers.add(new StatsOnlyChangeClassifier());
