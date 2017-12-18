@@ -75,11 +75,32 @@ background-color: lightblue;
        return jiraSearch(kwPart + "\nand project = hive order by updated desc");
     }
 
-    function reExecCall(testInfo){
-        var args=[
+    function getTestOpts(testInfo) {
+        // FIXME: possibly remove mavenPattern from testInfo
+        // ultimate: https://api.github.com/search/code?q=filename:TestCliDriver.java+repo:apache/hive
+        var testOpts='-Dtest={0}'.format(testInfo.mavenPattern);
+        if(testInfo.testClassFull.toLowerCase().indexOf("spark") == -1) {
+            testOpts+="\n-DskipSparkTests";
+        }
+        switch(testInfo.testClass){
+            case "TestCliDriver":
+            case "TestNegativeCliDriver":
+            case "TestMiniLlapCliDriver":
+            case "TestMiniLlapLocalCliDriver":
+                testOpts+="\n-pl itests/qtest";
+                break;
+            default:
+        }
+        return testOpts;
+    }
 
-            ];
-        var u=URI('http://sust-j3.duckdns.org:8080/view/hive/job/hive-check/parambuild/').search(args);
+    function buildJobInvocationUri(jobName,testInfo) {
+        var testOpts=getTestOpts(testInfo);
+        var args={
+            KEYWORD: 'R[{0}]'.format(testInfo.mavenPattern),
+            M_TEST_OPTS: testOpts
+        };
+        var u=URI('http://sust-j3.duckdns.org:8080/view/hive/job/{0}/parambuild/'.format(jobName)).search(args);
         return u;
     }
 
@@ -90,6 +111,7 @@ background-color: lightblue;
         ret.testMethod=tparts.pop();
         ret.testClassFull=tparts.join(".");
         ret.testClass=tparts.pop();
+        ret.mavenPattern='{0}#{1}'.format(ret.testClass,ret.testMethod);
         ret.keywords.push(ret.testClass);
         var p = ret.testMethod.replace("]","").split(/\[/);
         if(p.size() == 2 ){
@@ -107,7 +129,8 @@ background-color: lightblue;
 
         var newLinks=[
             createLink("L",relatedTicketsSearch(testInfo)),
-            createLink("R",reExecCall(testInfo)),
+            createLink("R",buildJobInvocationUri('hive-check',testInfo)),
+            createLink("B",buildJobInvocationUri('hive-bisect',testInfo)),
             ];
         newLinks.each(function (item) {
             item.insertBefore(testLink);
