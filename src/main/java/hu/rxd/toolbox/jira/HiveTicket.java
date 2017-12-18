@@ -42,6 +42,7 @@ public class HiveTicket {
   private Issue i;
 
   public HiveTicket(Issue i0) throws Exception {
+    //    i = i0;
     this(i0.getKey());
   }
 
@@ -79,7 +80,7 @@ public class HiveTicket {
     return ret;
   }
 
-  public Comment getReviewComments() {
+  public List<Comment> getReviewComments() {
     List<Comment> comments = getCommentsContaining("+1");
     for (Iterator<Comment> iterator = comments.iterator(); iterator.hasNext();) {
       Comment comment = iterator.next();
@@ -87,7 +88,7 @@ public class HiveTicket {
         iterator.remove();
       }
     }
-    return comments.get(comments.size() - 1);
+    return comments;
   }
 
   public Comment getLastQAComment() {
@@ -140,6 +141,11 @@ public class HiveTicket {
 
   public Issue getIssue() {
     return i;
+  }
+
+  public boolean canBeSubmitted() {
+    // FIXME: needs check for latest QA run
+    return (getReviewComments().size() > 0);
   }
 
 }
