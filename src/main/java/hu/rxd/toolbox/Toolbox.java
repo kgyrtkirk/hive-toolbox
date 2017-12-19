@@ -18,9 +18,16 @@
 
 package hu.rxd.toolbox;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import com.google.common.base.Joiner;
 
 import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
@@ -61,6 +68,58 @@ public class Toolbox {
       System.out.println("pat len:" + pat.length());
       try (PrintStream ps = new PrintStream(args[1])) {
         ps.println(pat);
+      }
+      return;
+    }
+
+    //      tmp/jobL.properties tmp/jobR.properties "$QFILE_TARGET" "$QFILE_ALL"
+    if(args[0].equals("QF_SPLIT")) {
+      // FIXME: ugly crap!
+      File outFileL = new File(args[1]);
+      File outFileR = new File(args[2]);
+      String ducks = args[3].trim();
+      String victim = args[4].trim();
+
+      String[] parts0 = ducks.split("[ ,\n]+");
+      List<String> p = new ArrayList<>();
+      p.addAll(Arrays.asList(parts0));
+      while (p.contains("")) {
+        p.remove("");
+      }
+      while (p.contains(victim)) {
+        p.remove(victim);
+      }
+
+      if (p.size() < 2) {
+        throw new RuntimeException("I guess we are finished |valid_ducks| < 2 ; " + p);
+      }
+
+      Random rnd = new Random(System.currentTimeMillis());
+      List<String> outL = new ArrayList<>();
+      List<String> outR = new ArrayList<>();
+      for (String candidate : p) {
+        boolean destL = rnd.nextBoolean();
+        if (outL.isEmpty()) {
+          destL = true;
+        }
+        if (outR.isEmpty()) {
+          destL = false;
+        }
+        if (destL) {
+          outL.add(candidate);
+        } else {
+          outR.add(candidate);
+        }
+      }
+
+      outL.add(victim);
+      outR.add(victim);
+
+      try (PrintStream psL = new PrintStream(outFileL)) {
+        psL.println(Joiner.on(",").join(outL));
+      }
+      try (PrintStream psR = new PrintStream(outFileR)) {
+        psR.println(Joiner.on(",").join(outR));
       }
       return;
     }
