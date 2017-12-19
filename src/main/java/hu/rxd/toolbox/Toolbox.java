@@ -62,8 +62,10 @@ public class Toolbox {
       try (PrintStream ps = new PrintStream(args[1])) {
         ps.println(pat);
       }
+      return;
     }
 
+    throw new RuntimeException("don't know what to do!?");
   }
 
 }
