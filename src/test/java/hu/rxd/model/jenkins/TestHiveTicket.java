@@ -45,7 +45,8 @@ public class TestHiveTicket {
   public void as2() throws Exception {
     //    HiveTicket t = new HiveTicket("HIVE-16827");
     //    Attachment u = t.getLastAttachment();
-    Issue ii = HiveTicket.jira.getIssue("SLING-2720");
+    //    Issue ii = HiveTicket.jira.getIssue("SLING-2720");
+    Issue ii = HiveTicket.jira.getIssue("HIVE-13567");
     System.out.println(ii.getAttachments().size());
 
     //    Comment lastQAComment = t.getLastQAComment();

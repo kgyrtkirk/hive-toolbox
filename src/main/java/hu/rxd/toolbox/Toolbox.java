@@ -32,7 +32,7 @@ import com.google.common.base.Joiner;
 import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
-import hu.rxd.toolbox.qtest.LocalizedZipDispatcher;
+import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
 
 public class Toolbox {
@@ -40,7 +40,7 @@ public class Toolbox {
   public static void main(String[] args) throws FileNotFoundException, Exception {
 
     if (args[0].startsWith("http")) {
-      IInputStreamDispatcher isd = new LocalizedZipDispatcher(new URL(args[0]));
+      IInputStreamDispatcher isd = new LocalizedArchiveDispatcher(new URL(args[0]));
       QTDiffRunner.processTestXmls(isd);
 
       return;
