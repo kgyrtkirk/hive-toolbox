@@ -24,7 +24,7 @@ public class DiffClassificatorTest {
   private String fileName;
   private String expected;
 
-  @Parameters
+  @Parameters(name = "{0}")
   public static List<Object[]> getParameters() {
     List<Object[]> ret = new ArrayList<>();
     ret.add(new Object[] { "statsOnly1", "statsOnly" });
