@@ -1,0 +1,16 @@
+65c65
+< PREHOOK: Output: hdfs://### HDFS PATH ###
+---
+> #### A masked pattern was here ####
+79c79
+< POSTHOOK: Output: hdfs://### HDFS PATH ###
+---
+> #### A masked pattern was here ####
+182c182
+< PREHOOK: Output: hdfs://### HDFS PATH ###
+---
+> #### A masked pattern was here ####
+207c207
+< POSTHOOK: Output: hdfs://### HDFS PATH ###
+---
+> #### A masked pattern was here ####
