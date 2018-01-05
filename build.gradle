@@ -22,7 +22,9 @@ dependencies{
 
   compile 'com.google.guava:guava:23.0'
 
-compile 'net.rcarz:jira-client:0.5'
+  compile('net.rcarz:jira-client:0.5') {
+    exclude group: 'junit'
+  }
   
   compile 'com.offbytwo.jenkins:jenkins-client:0.3.7'
   
