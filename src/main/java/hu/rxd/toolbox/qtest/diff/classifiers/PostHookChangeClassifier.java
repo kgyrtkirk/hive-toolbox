@@ -23,7 +23,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import hu.rxd.toolbox.qtest.diff.DiffClassificator;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.Classifier;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.DiffObject;
 
