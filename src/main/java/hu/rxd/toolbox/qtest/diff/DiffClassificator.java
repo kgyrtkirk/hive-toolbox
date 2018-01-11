@@ -5,6 +5,7 @@ import java.util.List;
 
 import hu.rxd.toolbox.qtest.diff.classifiers.ColumnStatsAccurateOnly;
 import hu.rxd.toolbox.qtest.diff.classifiers.EmptyLineRemovalClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.MaskRemovalClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.PostHookChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatTaskOnlyChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsDS10XClassifier;
@@ -37,6 +38,7 @@ public class DiffClassificator {
     classifiers.add(new StatsDisappearClassifier());
     classifiers.add(new StatsTaskRenameClassifier());
     classifiers.add(new ColumnStatsAccurateOnly());
+    classifiers.add(new MaskRemovalClassifier("#### A masked pattern was here ####"));
   }
 
   public static class DiffObject {
