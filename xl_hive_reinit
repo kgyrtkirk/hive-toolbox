@@ -5,8 +5,8 @@ banner clean
 git clean -dfx
 C="${1:-ql}"
 banner install
-MOPTS="-DskipTests -DXskipSparkTests -Pitests -T9 -pl $C"
+MOPTS="-DskipTests -DXskipSparkTests -Pitests"
 time mvn source:jar install $MOPTS -am -q
 banner eclipse
-time mvn eclipse:eclipse $MOPTS -B
+time mvn eclipse:eclipse $MOPTS -B -pl $C
 banner ok
