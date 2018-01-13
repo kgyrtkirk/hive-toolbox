@@ -14,6 +14,8 @@ import hu.rxd.toolbox.qtest.diff.classifiers.StatsNPChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsOnlyChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsPCChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsTaskRenameClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.TextMatchClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.WhitespaceChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.ZeroStatsDisappearClassifier;
 
 public class DiffClassificator {
@@ -39,6 +41,8 @@ public class DiffClassificator {
     classifiers.add(new StatsTaskRenameClassifier());
     classifiers.add(new ColumnStatsAccurateOnly());
     classifiers.add(new MaskRemovalClassifier("#### A masked pattern was here ####"));
+    classifiers.add(new WhitespaceChangeClassifier());
+    classifiers.add(new TextMatchClassifier("Map local work exhausted memory"));
   }
 
   public static class DiffObject {

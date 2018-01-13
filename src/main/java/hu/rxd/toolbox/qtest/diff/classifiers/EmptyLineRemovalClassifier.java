@@ -18,7 +18,6 @@
 
 package hu.rxd.toolbox.qtest.diff.classifiers;
 
-import hu.rxd.toolbox.qtest.diff.DiffClassificator;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.Classifier;
 import hu.rxd.toolbox.qtest.diff.DiffClassificator.DiffObject;
 
