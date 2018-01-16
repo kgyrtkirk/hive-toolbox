@@ -26,6 +26,8 @@ import java.util.Map;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.JobWithDetails;
 
+import hu.rxd.toolbox.jira.ToolboxSettings;
+
 public class HiveJenkinsX {
 
   public static void main(String[] args) throws IOException {

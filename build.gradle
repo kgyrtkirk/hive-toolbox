@@ -50,4 +50,9 @@ compile 'de.schlichtherle.truezip:truezip-kernel:7.7.10'
 compile 'org.slf4j:slf4j-simple:1.7.25'
 
 compile 'hu.rxd:lexirex:+'
+// https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
+compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.10.0.201712302008-r'
+
 }
+
+

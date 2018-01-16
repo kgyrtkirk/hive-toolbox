@@ -30,6 +30,7 @@ import java.util.Random;
 import com.google.common.base.Joiner;
 
 import hu.rxd.toolbox.jenkins.TestEntries;
+import hu.rxd.toolbox.jira.HiveTicket;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
@@ -69,6 +70,13 @@ public class Toolbox {
       try (PrintStream ps = new PrintStream(args[1])) {
         ps.println(pat);
       }
+      return;
+    }
+
+    if (args[0].equals("applicator")) {
+      Applicator applicator = new Applicator(new HiveTicket(args[1]));
+
+      //      FileRepositoryBuilder builder = new FileRepositoryBuilder();
       return;
     }
 

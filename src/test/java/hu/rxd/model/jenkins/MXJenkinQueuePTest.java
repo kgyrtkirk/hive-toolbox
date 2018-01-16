@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableMultimap;
 import com.offbytwo.jenkins.JenkinsServer;
 import com.offbytwo.jenkins.model.QueueItem;
 
+import hu.rxd.toolbox.jira.ToolboxSettings;
+
 public class MXJenkinQueuePTest {
   @Test
   public void tx19() throws Exception {

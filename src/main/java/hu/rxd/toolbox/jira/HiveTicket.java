@@ -26,8 +26,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.compress.utils.Lists;
-import org.junit.Test;
-
 import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.Comment;
 import net.rcarz.jiraclient.Issue;
@@ -51,14 +49,14 @@ public class HiveTicket {
     i = jira.getIssue(ticketId, "*all", "schema,editmeta");
   }
 
-  @Test
-  public void u1() throws Exception {
-    System.out.println(i);
-    List<Comment> comments = i.getComments();
-    Comment c0 = comments.get(comments.size() - 1);
-    System.out.println(c0.getBody());
-
-  }
+  //  @Test
+  //  public void u1() throws Exception {
+  //    System.out.println(i);
+  //    List<Comment> comments = i.getComments();
+  //    Comment c0 = comments.get(comments.size() - 1);
+  //    System.out.println(c0.getBody());
+  //
+  //  }
 
   public List<Comment> getCommentsByName(String name) {
     List<Comment> ret = Lists.newArrayList();

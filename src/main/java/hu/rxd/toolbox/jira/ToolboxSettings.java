@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package hu.rxd.model.jenkins;
+package hu.rxd.toolbox.jira;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,13 @@ public class ToolboxSettings {
     public String password;
   }
 
+  public static class JiraSettings {
+    public String userid;
+  }
+
   public static class DataClass {
     public JenkinsSettings jenkins = new JenkinsSettings();
+    public JiraSettings jira = new JiraSettings();
   }
 
   private static ToolboxSettings i;
@@ -72,6 +77,13 @@ public class ToolboxSettings {
     dc.jenkins.username = "asd";
     om.writeValue(System.out, dc);
     System.out.println(instance());
+  }
+
+  public String getJiraUserId() {
+    if (dataClass.jira.userid == null) {
+      throw new RuntimeException("dataClass.jira.userid is unset");
+    }
+    return dataClass.jira.userid;
   }
 
 }
