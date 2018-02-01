@@ -37,8 +37,8 @@ public class DiffClassificatorTest {
     ret.add(new Object[] { "statsOnly_order", "statsOnly" });
     ret.add(new Object[] { "statTaskOnly_1", "statTaskOnly" });
     ret.add(new Object[] { "empty_1", "empty" });
-    ret.add(new Object[] { "zStats_1", "zStats" });
-    ret.add(new Object[] { "zStatsEst_1", "zStatsEst" });
+//    ret.add(new Object[] { "zStats_1", "zStats" });
+  //  ret.add(new Object[] { "zStatsEst_1", "zStatsEst" });
     //    ret.add(new Object[] { "zStatsEst_2", "zStatsEst" });
     ret.add(new Object[] { "taskName_1", "taskName" });
     //    ret.add(new Object[] { "statsPC_1", "statsPC" });
