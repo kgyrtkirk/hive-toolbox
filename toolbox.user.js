@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         hu.rxd.hive.toolbox
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  adds some things...
 // @author       kirk
 // @match        https://issues.apache.org/jira/browse/**
 // @match        https://builds.apache.org/job/PreCommit-HIVE-Build/*/testReport/
 // @match        http://sust-j3.duckdns.org:8080/**/*hive*/*/testReport/**
+// @match        http://sustaining-jenkins.eng.hortonworks.com:8080/**/*hive*/*/testReport/**
 // @grant        none
 // @require http://code.jquery.com/jquery-latest.js
 // @require https://bowercdn.net/c/urijs-1.18.1/src/URI.min.js
@@ -99,7 +100,7 @@ background-color: lightblue;
             KEYWORD: 'R[{0}]'.format(testInfo.mavenPattern),
             M_TEST_OPTS: testOpts
         };
-        var u=URI('http://sust-j3.duckdns.org:8080/view/hive/job/{0}/parambuild/'.format(jobName)).search(args);
+        var u=URI('http://sustaining-jenkins.eng.hortonworks.com:8080/view/hive/job/{0}/parambuild/'.format(jobName)).search(args);
         return u;
     }
 
