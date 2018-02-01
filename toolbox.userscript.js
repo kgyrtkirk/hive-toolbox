@@ -4,6 +4,7 @@
 // @version      0.1
 // @description  adds some things...
 // @author       kirk
+// @match        https://issues.apache.org/jira/browse/**
 // @match        https://builds.apache.org/job/PreCommit-HIVE-Build/*/testReport/
 // @match        http://sust-j3.duckdns.org:8080/**/*hive*/*/testReport/**
 // @grant        none
@@ -11,11 +12,9 @@
 // @require https://bowercdn.net/c/urijs-1.18.1/src/URI.min.js
 // ==/UserScript==
 
-
-
-
 (function() {
     'use strict';
+
     // credit:    https://stackoverflow.com/a/4673436/1525291
     if (!String.prototype.format) {
         String.prototype.format = function() {
@@ -141,5 +140,13 @@ background-color: lightblue;
     $("tr:has( > td > a[title='Show details'])").each( function() {
         processFailureRow(this);
     });
+
+
+    function collapseQAComments(){
+        $(".activity-comment:has(a[rel=hiveqa]):not(:last)")
+        .removeClass("extended")
+        .addClass("collapsed");
+    }
+    collapseQAComments();
 
 })();

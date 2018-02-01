@@ -78,3 +78,7 @@ I keep forgetting stuff I found usefull..so I'll make notes here if I don't forg
   LESSOPEN='|pygmentize %s'
   ```
 
+
+
+dot -Tpng ticketDag.dot -o /tmp/asd.png
+feh -R1 --scale-down /tmp/asd.png

@@ -18,8 +18,6 @@ dependencies{
   compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.0'
   compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.0'
 
-  testCompile 'junit:junit:4.12'
-
   compile 'com.google.guava:guava:23.0'
 
   compile('net.rcarz:jira-client:0.5') {
@@ -53,6 +51,17 @@ compile 'hu.rxd:lexirex:+'
 // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
 compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.10.0.201712302008-r'
 
+
+compile('org.projectlombok:lombok:1.16.12')
+
+    testCompile("junit:junit:4.12")
+    testRuntime("org.junit.vintage:junit-vintage-engine:4.12.0-M4")
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M4")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
+
+    // Enable use of the JUnitPlatform Runner within the IDE
+    testCompile("org.junit.platform:junit-platform-runner:1.0.0-M4")
 }
 
 
