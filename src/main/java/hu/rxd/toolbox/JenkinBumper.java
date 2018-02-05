@@ -24,6 +24,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import hu.rxd.model.jenkins.HiveJenkinsX;
 import hu.rxd.toolbox.jira.HiveTicket;
 import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.Comment;
@@ -45,9 +46,19 @@ public class JenkinBumper {
     for (HiveTicket t : candidates) {
       LOG.info("processing: " + t);
       if (needsTestRun(t)) {
-        LOG.info("check?: ");
+        submit(t);
+        //        LOG.info("check?: ");
       }
     }
+
+  }
+
+  private void submit(HiveTicket t) throws Exception {
+    String id = t.getIssue().getKey();
+    LOG.info(id);
+    String jiraNum = id.split("-")[1];
+    //    "ISSUE_NUM"
+    HiveJenkinsX.add(jiraNum);
 
   }
 

@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.offbytwo.jenkins.JenkinsServer;
+import com.offbytwo.jenkins.client.JenkinsHttpClient;
+import com.offbytwo.jenkins.model.Job;
 import com.offbytwo.jenkins.model.JobWithDetails;
 
 import hu.rxd.toolbox.jira.ToolboxSettings;
@@ -31,11 +33,12 @@ import hu.rxd.toolbox.jira.ToolboxSettings;
 public class HiveJenkinsX {
 
   public static void main(String[] args) throws IOException {
-    add("17934");
+    //    add("17934");
+    add("Y");
   }
 
 
-  private static void add(String string) throws IOException {
+  public static void add0(String string) throws IOException {
     ToolboxSettings ts = ToolboxSettings.instance();
     JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"), ts.getJenkinsUser(), ts.getJenkinsPass());
     //    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"));
@@ -47,5 +50,27 @@ public class HiveJenkinsX {
     j.build(map, true);
   }
 
+  public static void add(String string) throws IOException {
+    ToolboxSettings ts = ToolboxSettings.instance();
+    //    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"), ts.getJenkinsUser(), ts.getJenkinsPass());
+    URI serverUri = URI.create("http://x:8080/");
+    JenkinsHttpClient jc = new JenkinsHttpClient(serverUri, "kgyrtkirk", "xxx");
+    JenkinsServer js = new JenkinsServer(jc);
+    //    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"));
+
+    long t0 = System.currentTimeMillis();
+    //    JobWithDetails j = js.getJob("hive-check");
+    Job j0 = new Job("hive-check", "http://sust-j3.duckdns.org:8080/job/hive-check/");
+    j0.setClient(jc);
+    //    j0.build();
+    //    JobWithDetails j2 = j0.details();
+    Map map = new HashMap<>();
+    map.put("REVISION", string);
+
+
+    j0.build(map, true);
+    long t1 = System.currentTimeMillis();
+    System.out.println(t1 - t0);
+  }
 
 }
