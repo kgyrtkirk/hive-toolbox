@@ -2,7 +2,11 @@
 set -e
 #set -x
 
+git clone github.com/apache/hive
+cd hive
+
 C=09ce6cdf3fd3682c2501ca0b5664cfc2adf6b765
+
 
 M_OPTS="
 -Dorg.slf4j.simpleLogger.log.org.apache.maven.plugin.surefire.SurefirePlugin=INFO
