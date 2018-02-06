@@ -18,3 +18,4 @@ cache:
 install: true
 
 script: ./gradlew test installDist
+
