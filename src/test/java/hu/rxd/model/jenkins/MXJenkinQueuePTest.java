@@ -24,7 +24,7 @@ public class MXJenkinQueuePTest {
     // JenkinsQueue jq = om.readValue(is, JenkinsQueue.class);
   }
 
-  //  @Test
+  @Test
   public void asf() throws Exception {
     ToolboxSettings.instance();
 

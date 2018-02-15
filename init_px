@@ -1,0 +1,26 @@
+#!/bin/bash
+set -e
+DN="$1"
+
+[ "$DN" == "" ] && echo "need NAME" && exit 1
+[ -d "$DN" ] && echo "$DN exists" && exit 1
+
+#./update_all
+
+git clone \
+	-o asf	\
+	--reference `pwd`/master \
+	https://git-wip-us.apache.org/repos/asf/hive.git $DN
+
+M2="`pwd`/.m2.$DN"
+mkdir -p "$M2/repository"
+
+cd $DN
+
+
+git remote add kgyrtkirk git@github.com:kgyrtkirk/hive
+git fetch --all
+
+git config --local extra.mavenOpts \
+	-Dmaven.repo.local="$M2/repository"
+

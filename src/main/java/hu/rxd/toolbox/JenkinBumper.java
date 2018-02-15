@@ -55,10 +55,11 @@ public class JenkinBumper {
 
   private void submit(HiveTicket t) throws Exception {
     String id = t.getIssue().getKey();
-    LOG.info(id);
+    LOG.info("submit:" + id);
     String jiraNum = id.split("-")[1];
     //    "ISSUE_NUM"
-//    HiveJenkinsX.add(jiraNum);
+
+    //    HiveJenkinsX.add(jiraNum);
 
   }
 
