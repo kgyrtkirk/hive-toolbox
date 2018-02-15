@@ -1,0 +1,33 @@
+#!/bin/bash
+
+rm -f ws
+rm -f ~/.m2/active_repository
+D="`pwd`/$1"
+ln -s "$D" ws
+R_MASTER="`pwd`/tmp/m2.master/repository/"
+RD="`pwd`/tmp/m2.$1/repository/"
+RDUP="`pwd`/tmp/m2.$1/wr/"
+RDWR="`pwd`/tmp/m2.$1/work/"
+
+is_mount() {
+    path=$(readlink -f $1)
+    grep -q "$path" /proc/mounts
+}
+
+mkdir -p "$RD" "$RDUP" "$RDWR"
+echo mkdir -p "$RD" "$RDUP" "$RDWR"
+
+#if is_mount "$RD"
+#	echo mounted
+#else
+echo	mount -t overlay overlay -o lowerdir=$R_MASTER,upperdir=$RDUP,workdir=$RDWR $RD
+#fi
+
+
+ln -s "$RD" ~/.m2/active_repository
+
+cd "$D"
+banner "setting mavenOpts"
+git config --local extra.mavenOpts "-Dmaven.repo.local=$RD"
+#/home/kirk/projects/hive/.m2.HIVE-18448-drop0idx/repository
+
