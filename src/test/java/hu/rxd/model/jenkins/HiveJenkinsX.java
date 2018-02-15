@@ -34,7 +34,7 @@ public class HiveJenkinsX {
 
   public static void main(String[] args) throws IOException {
     //    add("17934");
-    add("Y");
+    add("XY-18448");
   }
 
 
@@ -50,22 +50,41 @@ public class HiveJenkinsX {
     j.build(map, true);
   }
 
+  static class JenkinsHandler {
+    private JenkinsHttpClient jc;
+    private JenkinsServer js;
+    private URI serverUri;
+
+    public JenkinsHandler(URI serverUri, String user, String pass) {
+      this.serverUri = serverUri;
+      jc = new JenkinsHttpClient(serverUri, user, pass);
+      js = new JenkinsServer(jc);
+    }
+
+    public Job getJob(String string) {
+      Job j0 = new Job(string, serverUri.toString() + "/job/" + string + "/");
+      j0.setClient(jc);
+      return j0;
+    }
+  }
+
   public static void add(String string) throws IOException {
-    ToolboxSettings ts = ToolboxSettings.instance();
+    URI serverUri = URI.create("https://localhost1.apache.org:8443/");
+    //    ToolboxSettings ts = ToolboxSettings.instance();
     //    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"), ts.getJenkinsUser(), ts.getJenkinsPass());
-    URI serverUri = URI.create("http://x:8080/");
-    JenkinsHttpClient jc = new JenkinsHttpClient(serverUri, "kgyrtkirk", "xxx");
-    JenkinsServer js = new JenkinsServer(jc);
     //    JenkinsServer js = new JenkinsServer(URI.create("https://builds.apache.org/"));
+    JenkinsHandler jh = new JenkinsHandler(serverUri, "xxxkgyrtkirk", "__fix_the_token__");
+    Job j0 = jh.getJob("PreCommit-HIVE-Build");
 
     long t0 = System.currentTimeMillis();
     //    JobWithDetails j = js.getJob("hive-check");
-    Job j0 = new Job("hive-check", "http://sust-j3.duckdns.org:8080/job/hive-check/");
-    j0.setClient(jc);
+    //    Job j0 = new Job("hive-check", "http://sust-j3.duckdns.org:8080/job/hive-check/");
+
     //    j0.build();
     //    JobWithDetails j2 = j0.details();
     Map map = new HashMap<>();
     map.put("REVISION", string);
+    map.put("ISSUE_NUM", string);
 
 
     j0.build(map, true);
