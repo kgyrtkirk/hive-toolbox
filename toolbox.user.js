@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         hu.rxd.hive.toolbox
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  adds some things...
 // @author       kirk
 // @match        https://issues.apache.org/jira/browse/**
@@ -10,7 +10,7 @@
 // @match        http://sustaining-jenkins.eng.hortonworks.com:8080/**/*hive*/*/testReport/**
 // @grant        none
 // @require http://code.jquery.com/jquery-latest.js
-// @require https://bowercdn.net/c/urijs-1.18.1/src/URI.min.js
+// @require https://bowercdn.net/c/urijs-1.19.1/src/URI.min.js
 // ==/UserScript==
 
 (function() {
@@ -32,10 +32,11 @@
 
     var style = $(`<style>
 .toolbox_button {
+color: blue;
 xbackground-color: lightblue;
 border: 1px solid lightblue;
-    color: white;
     margin:-1px;
+    margin-left:1px;
     margin-right: 5px;
 width:1em;
     text-align: center;
@@ -149,5 +150,66 @@ background-color: lightblue;
         .addClass("collapsed");
     }
     collapseQAComments();
+
+
+    function fixAttachmentSortOrder() {
+
+        var p=$('ol:has(>li.attachment-content)');
+
+        $('li.attachment-content').sort(function (a, b) {
+            var contentA =parseInt($(a).attr('data-attachment-id'));
+            var contentB =parseInt($(b).attr('data-attachment-id'));
+            console.log(contentA);
+            return (contentA-contentB);
+        }).appendTo(p);
+    }
+
+    function getAttachments() {
+        return $('li.attachment-content').map( function() {
+            return {
+                name:$(this).find("a").text(),
+                time:$(this).find('time').attr('datetime'),
+                attachmentId:parseInt($(this).attr('data-attachment-id')),
+                url:$(this).find("a").attr('href'),
+            }; } ).sort(function(a,b) { return + a.attachmentId - b.attachmentId; });
+    }
+
+    fixAttachmentSortOrder();
+
+    function extractTicketId(str){
+        return str.replace(/.*\//,'');
+    }
+
+    var ticketId = extractTicketId(window.location.pathname);
+
+    function buildReExecJobInvocationUri(branch,qaInfo,patchUrl) {
+        var jobName="hive-ptest-rerun";
+        var args={
+            KEYWORD: 'R[{2}@{0}@{1}]'.format(patchUrl.match(/[^\/]+$/),branch,ticketId),
+            PTEST_JOB_URL: qaInfo.buildUrl,
+            PATCH_URL: patchUrl,
+        };
+  //      alert(args.KEYWORD);
+        var u=URI('http://sustaining-jenkins.eng.hortonworks.com:8080/view/hive/job/{0}/parambuild/'.format(jobName)).search(args);
+        return u;
+    }
+
+
+    function decorateLastQA() {
+        var c=$(".activity-comment:has(a[rel=hiveqa]):last");
+        var qaInfo={
+            patchUrl: c.find("a.external-link:contains('/attachment/')").text(),
+            buildUrl: c.find("a.external-link:contains('/job/')").last().text().match(/.*\/[0-9]+/)+"/"
+        };
+        if(c.size() == 0 )
+            return;
+        var c2=c.find(".preformatted");
+//        c2.css( "border", "3px double red" );
+        createLink("A",buildReExecJobInvocationUri("apache/master",qaInfo,qaInfo.patchUrl)).insertAfter(c2);
+        createLink("B",buildReExecJobInvocationUri("apache/master",qaInfo,"")).insertAfter(c2);
+    }
+
+    decorateLastQA();
+
 
 })();
