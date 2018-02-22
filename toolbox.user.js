@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         hu.rxd.hive.toolbox
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  adds some things...
 // @author       kirk
 // @match        https://issues.apache.org/jira/browse/**
