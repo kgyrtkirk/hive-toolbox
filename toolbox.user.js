@@ -9,7 +9,7 @@
 // @match        http://sust-j3.duckdns.org:8080/**/*hive*/*/testReport/**
 // @match        http://sustaining-jenkins.eng.hortonworks.com:8080/**/*hive*/*/testReport/**
 // @grant        none
-// @run-at document-idle
+// @run-at document-start
 // @require http://code.jquery.com/jquery-latest.js
 // @require https://bowercdn.net/c/urijs-1.19.1/src/URI.min.js
 // ==/UserScript==
@@ -213,13 +213,23 @@ background-color: lightblue;
         createLink("B",buildReExecJobInvocationUri("apache/master",qaInfo,"")).insertAfter(c2);
     }
 
-    var ticketId = extractTicketId(window.location.pathname);
 
-    addCustomStyle();
-    decorateJenkinsResults();
-    collapseQAComments();
-    fixAttachmentSortOrder();
-    decorateLastQA();
+    var ticketId;
+
+    function go(){
+        ticketId = extractTicketId(window.location.pathname);
+        addCustomStyle();
+        decorateJenkinsResults();
+        collapseQAComments();
+        fixAttachmentSortOrder();
+        decorateLastQA();
+    }
+
+    window.addEventListener("load", init, false);
+    function init() {
+        setTimeout(go, 50, document.body);
+    }
+
 
 
 })();
