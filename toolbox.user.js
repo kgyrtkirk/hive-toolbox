@@ -9,9 +9,12 @@
 // @match        http://sust-j3.duckdns.org:8080/**/*hive*/*/testReport/**
 // @match        http://sustaining-jenkins.eng.hortonworks.com:8080/**/*hive*/*/testReport/**
 // @grant        none
+// @run-at document-idle
 // @require http://code.jquery.com/jquery-latest.js
 // @require https://bowercdn.net/c/urijs-1.19.1/src/URI.min.js
 // ==/UserScript==
+
+
 
 (function() {
     'use strict';
@@ -30,6 +33,7 @@
     }
 
 
+    function addCustomStyle() {
     var style = $(`<style>
 .toolbox_button {
 color: blue;
@@ -49,6 +53,8 @@ background-color: lightblue;
 </style>
 `);
     $('html > head').append(style);
+    }
+
 
     //$("a[title='Show details']").css( "border", "3px double red" );
 
@@ -139,9 +145,11 @@ background-color: lightblue;
 //        testLink.css( "border", "3px double blue" );
     }
 
-    $("tr:has( > td > a[title='Show details'])").each( function() {
-        processFailureRow(this);
-    });
+    function decorateJenkinsResults() {
+        $("tr:has( > td > a[title='Show details'])").each( function() {
+            processFailureRow(this);
+        });
+    }
 
 
     function collapseQAComments(){
@@ -149,7 +157,6 @@ background-color: lightblue;
         .removeClass("extended")
         .addClass("collapsed");
     }
-    collapseQAComments();
 
 
     function fixAttachmentSortOrder() {
@@ -174,13 +181,10 @@ background-color: lightblue;
             }; } ).sort(function(a,b) { return + a.attachmentId - b.attachmentId; });
     }
 
-    fixAttachmentSortOrder();
-
     function extractTicketId(str){
         return str.replace(/.*\//,'');
     }
 
-    var ticketId = extractTicketId(window.location.pathname);
 
     function buildReExecJobInvocationUri(branch,qaInfo,patchUrl) {
         var jobName="hive-ptest-rerun";
@@ -209,6 +213,12 @@ background-color: lightblue;
         createLink("B",buildReExecJobInvocationUri("apache/master",qaInfo,"")).insertAfter(c2);
     }
 
+    var ticketId = extractTicketId(window.location.pathname);
+
+    addCustomStyle();
+    decorateJenkinsResults();
+    collapseQAComments();
+    fixAttachmentSortOrder();
     decorateLastQA();
 
 
