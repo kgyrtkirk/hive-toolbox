@@ -6,13 +6,13 @@
 // @author       kirk
 // @match        https://issues.apache.org/jira/browse/**
 // @match        https://builds.apache.org/job/PreCommit-HIVE-Build/*/testReport/
-// @match        http://sust-j3.duckdns.org:8080/**/*hive*/*/testReport/**
 // @match        http://sustaining-jenkins.eng.hortonworks.com:8080/**/*hive*/*/testReport/**
-// @grant        none
-// @run-at document-start
+// @grant        GM_getValue
+// @run-at       document-idle
 // @require http://code.jquery.com/jquery-latest.js
 // @require https://bowercdn.net/c/urijs-1.19.1/src/URI.min.js
 // ==/UserScript==
+
 
 
 
@@ -42,7 +42,7 @@ border: 1px solid lightblue;
     margin:-1px;
     margin-left:1px;
     margin-right: 5px;
-width:1em;
+    min-width:1em;
     text-align: center;
     text-decoration: none !IMPORTANT;
     display: inline-block;
@@ -52,7 +52,7 @@ background-color: lightblue;
 }
 </style>
 `);
-    $('html > head').append(style);
+        $('html > head').append(style);
     }
 
 
@@ -209,8 +209,8 @@ background-color: lightblue;
             return;
         var c2=c.find(".preformatted");
 //        c2.css( "border", "3px double red" );
-        createLink("A",buildReExecJobInvocationUri("apache/master",qaInfo,qaInfo.patchUrl)).insertAfter(c2);
-        createLink("B",buildReExecJobInvocationUri("apache/master",qaInfo,"")).insertAfter(c2);
+        createLink("re-run with patch",buildReExecJobInvocationUri("apache/master",qaInfo,qaInfo.patchUrl)).insertAfter(c2);
+        createLink("re-run at master",buildReExecJobInvocationUri("apache/master",qaInfo,"")).insertAfter(c2);
     }
 
 
@@ -225,11 +225,13 @@ background-color: lightblue;
         decorateLastQA();
     }
 
+/*
     window.addEventListener("load", init, false);
     function init() {
-        setTimeout(go, 50, document.body);
+        setTimeout(go, 500, document.body);
     }
-
+*/
+    go();
 
 
 })();
