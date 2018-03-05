@@ -63,7 +63,7 @@ public class Toolbox {
     if (args[0].startsWith("RERUN")) {
       String url = args[2];
       TestEntries res = TestEntries.fromJenkinsBuild(url);
-      TestEntries res2 = res.filterFailed().limit(400);
+      TestEntries res2 = res.filterFailed().limit(600);
       System.out.println(res2);
       String pat = res2.getSimpleMavenTestPattern();
       System.out.println("pat len:" + pat.length());
