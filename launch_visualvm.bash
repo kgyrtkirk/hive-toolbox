@@ -2,7 +2,10 @@
 
 set -e
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano 
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace
+rpm --import http://li.nux.ro/download/nux/RPM-GPG-KEY-nux.ro
+rpm -Uvh http://li.nux.ro/download/nux/dextop/el7/x86_64/nux-dextop-release-0-5.el7.nux.noarch.rpm
+yum install -y ffmpeg ffmpeg-devel mplayer
 
 vncserver -kill :1 || echo ok
 mkdir -p $HOME/.vnc
