@@ -13,7 +13,7 @@ fi
 
 sed -ir '/alias (rm|cp|mv)=.*/d' ~/.bashrc
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner
 
 if yum list installed nux-dextop-release; then
 	echo nux-ok
@@ -31,6 +31,14 @@ grep -n '^###>' "$0" | while read l;do
 	chmod +x $f
 done
 
+mkdir -p /tools
+cd /tools
+if [ ! -d visualvm_14 ];then
+	wget -c https://github.com/visualvm/visualvm.src/releases/download/1.4/visualvm_14.zip
+	unzip visualvm_14.zip
+fi
+
+
 
 vncserver -kill :1 || echo ok
 mkdir -p $HOME/.vnc
@@ -46,24 +54,18 @@ chmod +x $HOME/.vnc/xstartup
 vncpasswd -f > $HOME/.vnc/passwd <<< alskdj
 chmod 600 $HOME/.vnc/passwd
 
+
 vncserver :1 -depth 24 -geometry 1920x1080
 
 export DISPLAY=:1
 xhost +localhost
-
-mkdir -p /tools
-cd /tools
-if [ ! -d visualvm_14 ];then
-	wget -c https://github.com/visualvm/visualvm.src/releases/download/1.4/visualvm_14.zip
-	unzip visualvm_14.zip
-fi
 
 cp -r ~/.ssh ~hive/
 chown -R hive:hive ~hive/.ssh
 chown hive:hive /var/lib/hive/
 #DISPLAY=:1 icewm &
 #DISPLAY=:1 sudo -u hive xterm -bg black -fg white &
-DISPLAY=:1 sudo -u hive visualvm_14/bin/visualvm &
+#DISPLAY=:1 sudo -u hive visualvm_14/bin/visualvm &
 
 exit 0
 ###>capture.bash
@@ -81,9 +83,9 @@ eval $(xwininfo -name cap |
            -e "s/^ \+Height: \+\([0-9]\+\).*/h=\1/p" )
 
 
-ffmpeg -video_size ${w}x${h} -framerate 1 -f x11grab -i :1+${x},${y} "$N.mp4"
+ffmpeg -video_size ${w}x${h} -framerate 1 -f x11grab -i :1+${x},${y} "$N.mkv"
 
-ffmpeg -i "$N.mp4" -filter:v "setpts=0.01*PTS" -r 20 "$N.gif"
+ffmpeg -i "$N.mkv" -filter:v "setpts=0.01*PTS" -r 20 "$N.gif"
 
 
 
