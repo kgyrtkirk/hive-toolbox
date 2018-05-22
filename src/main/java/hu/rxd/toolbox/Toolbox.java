@@ -80,6 +80,15 @@ public class Toolbox {
       return;
     }
 
+    if (args[0].equals("reviewboard")) {
+
+      new ReviewBoarder(new File("."));
+      Applicator applicator = new Applicator(new HiveTicket(args[1]));
+
+      //      FileRepositoryBuilder builder = new FileRepositoryBuilder();
+      return;
+    }
+
     //      tmp/jobL.properties tmp/jobR.properties "$QFILE_TARGET" "$QFILE_ALL"
     if(args[0].equals("QF_SPLIT")) {
       // FIXME: ugly crap!
