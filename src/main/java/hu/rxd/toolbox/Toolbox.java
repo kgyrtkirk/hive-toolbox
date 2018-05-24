@@ -83,7 +83,7 @@ public class Toolbox {
     if (args[0].equals("reviewboard")) {
 
       new ReviewBoarder(new File("."));
-      Applicator applicator = new Applicator(new HiveTicket(args[1]));
+      //      Applicator applicator = new Applicator(new HiveTicket(args[1]));
 
       //      FileRepositoryBuilder builder = new FileRepositoryBuilder();
       return;
