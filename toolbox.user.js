@@ -182,7 +182,10 @@ background-color: lightblue;
     }
 
     function extractTicketId(str){
-        return str.replace(/.*\//,'');
+        var cand=str.replace(/.*\//,'');
+        if(cand.match(/^[A-Z]+-[0-9]+$/) != null)
+            return cand;
+        return null;
     }
 
 
@@ -214,6 +217,39 @@ background-color: lightblue;
     }
 
 
+    function showQueueStatus(ticketId){
+        var id=ticketId.replace(/^[^0-9]+/,"");
+        var url="https://builds.apache.org/queue/api/xml?tree=items[actions[parameters[name,value]],task[name]]";
+
+        $.get( url,
+            function(data) {
+            document.apacheQueueData=data;
+            var hiveQueue=$(document.apacheQueueData)
+            .find("item")
+            .filter(
+                function (idx,e) {
+                    return $(e).find("name").text().match(/HIVE/);
+                });
+            var hiveInfos=hiveQueue.map( function (idx,queueItem) {
+                return $(queueItem).find("parameter")
+                    .map(function (idx,u) {
+                    return [[$(u).find("name").text(),$(u).find("value").text()]];
+                }).toArray().reduce(function(map, obj) {
+                    map[obj[0]] = obj[1];
+                    return map;
+                }, {});
+            });
+            document.hiveInfos=hiveInfos;
+            var issueIdx=document.hiveInfos.toArray().reverse().findIndex( function (a) { return a["ISSUE_NUM"] == id;});
+            $('<span>')
+                .addClass("ptest-status")
+                .append("PTEST_QUEUE: "+issueIdx+" / " +hiveInfos.size())
+                .insertAfter($('#summary-val'));
+
+        }
+        );
+    }
+
     var ticketId;
 
     function go(){
@@ -223,6 +259,10 @@ background-color: lightblue;
         collapseQAComments();
         fixAttachmentSortOrder();
         decorateLastQA();
+        console.log("ticketId:"+ticketId);
+        if(ticketId != null && ticketId.startsWith("HIVE")) {
+            showQueueStatus(ticketId);
+        }
     }
 
 /*
