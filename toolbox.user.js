@@ -1,13 +1,14 @@
 // ==UserScript==
 // @name         hu.rxd.hive.toolbox
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  adds some things...
 // @author       kirk
 // @match        https://issues.apache.org/jira/browse/**
 // @match        https://builds.apache.org/job/PreCommit-HIVE-Build/*/testReport/
 // @match        http://sustaining-jenkins.eng.hortonworks.com:8080/**/*hive*/*/testReport/**
 // @grant        GM_getValue
+// @grant        GM_setValue
 // @run-at       document-idle
 // @require http://code.jquery.com/jquery-latest.js
 // @require https://bowercdn.net/c/urijs-1.19.1/src/URI.min.js
@@ -49,6 +50,12 @@ border: 1px solid lightblue;
 }
 .toolbox_button:hover {
 background-color: lightblue;
+}
+.ptest-status {
+display:block;
+float:right;
+background-color:orange;
+font-size:2em;
 }
 </style>
 `);
@@ -216,12 +223,31 @@ background-color: lightblue;
         createLink("re-run at master",buildReExecJobInvocationUri("apache/master",qaInfo,"")).insertAfter(c2);
     }
 
+    function cachedGet(cacheTime, cacheLabel, url, fnOk, fnFail) {
+        var ttlKey='cache.ttl.'+cacheLabel;
+        var dataKey='cache.data.'+cacheLabel;
+        var ttl=Number(GM_getValue(ttlKey));
+        var data=GM_getValue(dataKey);
+        var now=Date.now();
+
+        if(Number.isNaN(ttl) || now > ttl) {
+            $.get( url, function (data) {
+                GM_setValue(ttlKey, now+cacheTime);
+                GM_setValue(dataKey, data);
+                fnOk(data);
+            }, null, "text").fail(fnFail);
+        } else {
+            console.log("serving "+url+" from cache");
+            console.log(data);
+            fnOk(data);
+        }
+    }
 
     function showQueueStatus(ticketId){
         var id=ticketId.replace(/^[^0-9]+/,"");
         var url="https://builds.apache.org/queue/api/xml?tree=items[actions[parameters[name,value]],task[name]]";
 
-        $.get( url,
+        cachedGet(600*1000, "apache.queue",url,
             function(data) {
             document.apacheQueueData=data;
             var hiveQueue=$(document.apacheQueueData)
@@ -240,14 +266,18 @@ background-color: lightblue;
                 }, {});
             });
             document.hiveInfos=hiveInfos;
-            var issueIdx=document.hiveInfos.toArray().reverse().findIndex( function (a) { return a["ISSUE_NUM"] == id;});
+            var issueIdx=document.hiveInfos.toArray().findIndex( function (a) { return a["ISSUE_NUM"] == id;});
             $('<span>')
                 .addClass("ptest-status")
-                .append("PTEST_QUEUE: "+issueIdx+" / " +hiveInfos.size())
+                .append("Q: "+issueIdx+" / " +hiveInfos.size())
                 .insertAfter($('#summary-val'));
 
-        }
-        );
+        },function() {
+            $('<span>')
+                .addClass("ptest-status")
+                .append("xxx")
+                .insertAfter($('#summary-val'));
+        });
     }
 
     var ticketId;
