@@ -76,6 +76,8 @@ public class Toolbox {
     if (args[0].equals("applicator")) {
       Applicator applicator = new Applicator(new HiveTicket(args[1]));
 
+      applicator.apply(new File("."));
+
       //      FileRepositoryBuilder builder = new FileRepositoryBuilder();
       return;
     }

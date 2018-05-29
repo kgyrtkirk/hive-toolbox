@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jgit.api.Git;
+import org.eclipse.jgit.api.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,6 +56,7 @@ public class Applicator {
     attachment = ticket.getLastAttachment();
     URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
     patchFile = new File(attachment.getFileName());
+    //    patchFile = new File("/tmp/" + attachment.getFileName());
     FileUtils.copyURLToFile(patchURL, patchFile);
 
     message = buildMessage();
@@ -113,4 +116,19 @@ public class Applicator {
 
   }
 
+  public void apply(File repoDir) throws Exception {
+    Git repo = Git.open(repoDir);
+
+    ensureStateClean(repo);
+
+    //    repo.apply().setPatch(new FileInputStream(patchFile)).call();
+
+  }
+
+  private void ensureStateClean(Git repo) throws Exception {
+    Status status = repo.status().call();
+    if (status.hasUncommittedChanges()) {
+      throw new RuntimeException("hasUncommittedChanges!");
+    }
+  }
 }
