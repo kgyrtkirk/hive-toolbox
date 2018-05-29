@@ -66,6 +66,7 @@ public class Applicator {
     //    git.status().call();
     //    authorIdent=
     String authorIdent = getAuthorIdent();
+    System.out.printf("git apply -p0 -3 %s\n", patchFile.getName());
     System.out.printf("git commit --author '%s' -m '%s' --signoff\n", authorIdent, message);
   }
 
