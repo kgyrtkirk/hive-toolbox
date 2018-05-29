@@ -9,6 +9,7 @@ import hu.rxd.toolbox.qtest.diff.classifiers.MaskRemovalClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.OpIdChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.PostHookChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatTaskOnlyChangeClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.StatsCPChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsDisappearClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsNPChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsOnlyChangeClassifier;
@@ -29,6 +30,7 @@ public class DiffClassificator {
   public DiffClassificator() {
     classifiers.add(new OpIdChangeClassifier());
     classifiers.add(new StatsNPChangeClassifier());
+    classifiers.add(new StatsCPChangeClassifier());
     classifiers.add(new StatsPCChangeClassifier());
     classifiers.add(new StatsOnlyChangeClassifier());
     classifiers.add(new StatTaskOnlyChangeClassifier());
