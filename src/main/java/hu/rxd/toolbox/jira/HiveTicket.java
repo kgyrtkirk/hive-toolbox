@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.compress.utils.Lists;
+
 import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.Comment;
 import net.rcarz.jiraclient.Issue;
@@ -91,6 +92,7 @@ public class HiveTicket {
 
   public Comment getLastQAComment() {
     List<Comment> comments = getCommentsByName(HIVEQA);
+    comments.removeIf((Comment c) -> {return c.getBody().contains("-1 due to build exiting with an error");} );
     if (comments.size() == 0) {
       throw new RuntimeException("theres no last qa comment");
     }
@@ -100,8 +102,12 @@ public class HiveTicket {
   public Attachment getLastAttachment() throws JiraException {
     Attachment ret = null;
     //    i.refresh("*all");
+    long retId = 0;
     for (Attachment a : i.getAttachments()) {
-      if (ret == null || ret.getCreatedDate().before(a.getCreatedDate())) {
+      long iId = Long.parseLong(a.getId());
+      if (ret == null || iId > retId) {
+        //        if (ret == null || ret.getCreatedDate().before(a.getCreatedDate())) {
+        retId = iId;
         ret = a;
       }
     }
