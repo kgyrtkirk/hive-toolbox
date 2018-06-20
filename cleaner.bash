@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cat $1 	|
+cat $1 	| tr -cd '[:print:]\n' |
 	fgrep -Fvf <(echo -e 'pool.HikariPool:\nTotal time spent in each metastore function (ms)') |
 	sed -E 's/[0-9]{4}-[0-9]{,2}-[0-9]{,2}T[0-9]{2}:[0-9]{2}:[0-9]{2},[0-9]{3}/TIMESTAMP/g'	|
 	sed -E 's/[0-9]{4}-[0-9]{,2}-[0-9]{,2}_[0-9]{2}-[0-9]{2}-[0-9]{2}_[0-9]+_[0-9]+/ALLTIMER/g'	|
@@ -18,4 +18,7 @@ cat $1 	|
 	sed -E 's/DFSClient_NONMAPREDUCE_[0-9\\-]+_/DFSClient_NONMAPREDUCE_XXXX_/g' |
 	sed -E 's/[0-9]{13,15}/EPOCH/g' |
 	sed -E 's/[0-9]{10}/EpOCH/g' |
+	sed -E 's/\((X|SESSION)ID = [0-9]+\)/(\1ID = XXX)/g' |
 	sed -E 's/0x[0-9a-f]{15,16}/REF_64/g'
+
+#TezTR-274858_1_13_1_0_0

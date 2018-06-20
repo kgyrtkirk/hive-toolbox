@@ -34,8 +34,13 @@ done
 mkdir -p /tools
 cd /tools
 if [ ! -d visualvm_14 ];then
-	wget -c https://github.com/visualvm/visualvm.src/releases/download/1.4/visualvm_14.zip
+	wget -c -nv https://github.com/visualvm/visualvm.src/releases/download/1.4/visualvm_14.zip
 	unzip visualvm_14.zip
+fi
+
+if [ ! -d mat_17 ];then
+	wget -c -nv -O mat_17.zip  'http://www.eclipse.org/downloads/download.php?file=/mat/1.7/rcp/MemoryAnalyzer-1.7.0.20170613-linux.gtk.x86_64.zip&r=1' 
+	unzip mat_17.zip
 fi
 
 
