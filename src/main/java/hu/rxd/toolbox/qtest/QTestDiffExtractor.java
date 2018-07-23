@@ -13,9 +13,9 @@ public class QTestDiffExtractor {
 
   public QTestDiffExtractor(String input) {
 
-    if (input.contains("Output was too long and had to be truncated...")) {
-      throw new RuntimeException("too-long");
-    }
+//    if (input.contains("Output was too long and had to be truncated...")) {
+//      throw new RuntimeException("too-long");
+//    }
 
     // System.out.println(input);
     String[] lines = input.split("\\r?\\n");

@@ -71,10 +71,19 @@ public class Applicator {
   }
 
   private String getAuthorIdent() {
+
     //    "${assignee.displayName} <${assignee.emailAddress.replaceAll(' at ','@').replaceAll(' dot ','.')}>"
     User author = ticket.getIssue().getAssignee();
     String name = author.getDisplayName();
-    String email = author.getEmail().replaceAll(" at ", "@").replaceAll(" dot ", ".");
+
+    String email0 = author.getEmail();
+    String email;
+
+    if (email0 == null) {
+      email = ToolboxSettings.instance().getEmailAddressesForJiraUser(author.getName());
+    } else {
+      email = email0.replaceAll(" at ", "@").replaceAll(" dot ", ".");
+    }
     return String.format("%s <%s>", name, email);
 
   }

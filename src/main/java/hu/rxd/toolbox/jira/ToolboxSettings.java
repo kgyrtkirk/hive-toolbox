@@ -20,6 +20,8 @@ package hu.rxd.toolbox.jira;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -35,6 +37,7 @@ public class ToolboxSettings {
 
   public static class JiraSettings {
     public String userid;
+    public Map<String, String> userEmailAddresses;
   }
 
   public static class DataClass {
@@ -44,8 +47,10 @@ public class ToolboxSettings {
 
   private static ToolboxSettings i;
   private DataClass dataClass;
+  private File configFile;
 
   private ToolboxSettings(File configFile) {
+    this.configFile = configFile;
     ObjectMapper om = new ObjectMapper(new YAMLFactory());
     try {
       dataClass = om.readValue(configFile, DataClass.class);
@@ -84,6 +89,24 @@ public class ToolboxSettings {
       throw new RuntimeException("dataClass.jira.userid is unset");
     }
     return dataClass.jira.userid;
+  }
+
+  private Map<String, String> getUserEmailAddresses() {
+    Map<String, String> ret = dataClass.jira.userEmailAddresses;
+    if (ret == null) {
+      System.err.println("dataClass.jira.userEmailAddresses is unset");
+      ret = new HashMap<>();
+    }
+    return ret;
+  }
+
+  public String getEmailAddressesForJiraUser(String userName) {
+    Map<String, String> m = getUserEmailAddresses();
+    String email = m.get(userName);
+    if (email == null) {
+      throw new RuntimeException("can't get email for " + userName + "; try adding it to " + configFile);
+    }
+    return email;
   }
 
 }

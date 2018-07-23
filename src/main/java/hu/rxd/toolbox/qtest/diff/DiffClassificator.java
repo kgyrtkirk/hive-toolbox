@@ -40,7 +40,6 @@ public class DiffClassificator {
     classifiers.add(new StatsDisappearClassifier());
     classifiers.add(new StatsTaskRenameClassifier());
     classifiers.add(new ColumnStatsAccurateOnly());
-    classifiers.add(new MaskRemovalClassifier("#### A masked pattern was here ####"));
   }
 
   public static class DiffObject {
