@@ -86,6 +86,9 @@ public class HiveTicket {
       if (comment.getAuthor().getName().equals(HIVEQA)) {
         iterator.remove();
       }
+      if (comment.getAuthor().getName().equals(i.getAssignee().getName())) {
+        iterator.remove();
+      }
     }
     return comments;
   }
