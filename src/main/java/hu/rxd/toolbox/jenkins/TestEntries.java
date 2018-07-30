@@ -31,7 +31,9 @@ public class TestEntries {
    * @throws Exception
    */
   public static TestEntries fromJenkinsBuild(String buildURL) throws Exception {
-    URL u0 = new URL(buildURL + "/testReport/api/json?pretty=true&tree=suites[cases[className,name,duration,status]]");
+    String treePart = "suites[cases[className,name,duration,status]]";
+    treePart = treePart.replaceAll("\\[", "%5B").replaceAll("\\]", "%5D");
+    URL u0 = new URL(buildURL + "/testReport/api/json?pretty=true&tree=" + treePart);
     URL u = new CachedURL(u0).getURL();
     try (InputStream jsonStream = u.openStream()) {
       return new TestEntries(testEntries(parseTestResults(jsonStream)));
