@@ -12,15 +12,14 @@ git clone \
 	--reference `pwd`/master \
 	https://git-wip-us.apache.org/repos/asf/hive.git $DN
 
-M2="`pwd`/.m2.$DN"
-mkdir -p "$M2/repository"
-
 cd $DN
-
 
 git remote add kgyrtkirk git@github.com:kgyrtkirk/hive
 git fetch --all
+git config --local extra.ideProjects ql,common
+git checkout -b $DN
+git push kgyrtkirk -u HEAD
 
-git config --local extra.mavenOpts \
-	-Dmaven.repo.local="$M2/repository"
+cd ..
 
+./activate $DN

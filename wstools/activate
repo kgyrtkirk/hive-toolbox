@@ -1,0 +1,54 @@
+#!/bin/bash
+
+rm -f ws
+rm -rf ~/.m2/active_repository
+name="`basename "$1"`"
+D="`pwd`/$1"
+ln -s "$D" ws
+R_MASTER="`pwd`/tmp/m2.master/repository/"
+RD="`pwd`/tmp/m2.$1/repository/"
+RDUP="`pwd`/tmp/m2.$1/wr/"
+RDWR="`pwd`/tmp/m2.$1/work/"
+
+is_mount() {
+    path=$(readlink -f $1)
+    grep -q "$path" /proc/mounts
+}
+
+mkdir -p "$RD" "$RDUP" "$RDWR"
+
+#if is_mount "$RD"
+#	echo mounted
+#else
+
+m0="`findmnt -t overlay -n -o SOURCE --target $RD`"
+m1="`findmnt -t overlay -n -o SOURCE --target tmp`"
+if [ "$m0" == "$m1" -a "$name" != "master"  -a "$name" != "branch-3" -a "$name" != "branch-2" ]; then
+	echo " * mounting overlay..."
+	sudo	mount -t overlay overlay -o lowerdir=$R_MASTER,upperdir=$RDUP,workdir=$RDWR $RD
+else
+	if [ "$name" == "branch-3" -o "$name" == "branch-2" ];then
+		echo " * specoverlay $name"
+		L="${RD::-1}"
+		if [ ! -h "$L" ];then
+			rmdir "$L"
+			ln -s "$R_MASTER" "$L"
+		fi
+	fi
+	echo " * overlay ok"
+fi
+
+#echo	mount -t overlay overlay -o lowerdir=$R_MASTER,upperdir=$RDUP,workdir=$RDWR $RD
+
+
+ln -s "$RD" ~/.m2/active_repository
+
+cd "$D"
+echo " * setting mavenOpts"
+git config --local extra.mavenOpts "-Dmaven.repo.local=$RD -Pitests -Ditest.jdbc.jars=/home/kirk/projects/hive/jdbc/ojdbc6.jar"
+git fetch --all
+
+#git config --local extra.
+
+#/home/kirk/projects/hive/.m2.HIVE-18448-drop0idx/repository
+

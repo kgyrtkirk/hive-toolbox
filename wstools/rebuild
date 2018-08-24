@@ -1,0 +1,14 @@
+#!/bin/bash
+
+set -e
+[ "$1" == "" ] && echo "usage: $0 dir" && exit 1
+cd "$1"
+set +e
+MODULES="`git config --local extra.ideProjects`"
+set -e
+if [ "$MODULES" == "" ];then
+	echo -e "no modules; use:\n git config --local extra.ideProjects ql,common"
+	exit 1
+fi
+
+$HOME/projects/toolbox/xl_hive_reinit $MODULES
