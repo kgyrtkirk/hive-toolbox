@@ -1,0 +1,11 @@
+#!/bin/bash
+
+
+echo "@@@ auto-isolation" >&2
+C="`git config --local --get extra.mavenopts`"
+echo "@@@ $C" >&2
+
+MVN="/home/kirk/tools/apache-maven-3.5.0/bin/mvn"
+
+$MVN $C "$@"
+exit $?
