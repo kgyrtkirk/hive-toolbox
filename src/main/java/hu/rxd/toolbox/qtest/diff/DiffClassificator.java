@@ -5,8 +5,8 @@ import java.util.List;
 
 import hu.rxd.toolbox.qtest.diff.classifiers.ColumnStatsAccurateOnly;
 import hu.rxd.toolbox.qtest.diff.classifiers.EmptyLineRemovalClassifier;
-import hu.rxd.toolbox.qtest.diff.classifiers.MaskRemovalClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.OpIdChangeClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.PatternMatchClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.PostHookChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatTaskOnlyChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsCPChangeClassifier;
@@ -15,6 +15,7 @@ import hu.rxd.toolbox.qtest.diff.classifiers.StatsNPChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsOnlyChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsPCChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsTaskRenameClassifier;
+import hu.rxd.toolbox.qtest.diff.classifiers.WarningsOnlyClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.ZeroStatsDisappearClassifier;
 
 public class DiffClassificator {
@@ -39,6 +40,10 @@ public class DiffClassificator {
     classifiers.add(new ZeroStatsDisappearClassifier());
     classifiers.add(new StatsDisappearClassifier());
     classifiers.add(new StatsTaskRenameClassifier());
+    classifiers.add(new PatternMatchClassifier("predicates", "\\s*predicate:.*"));
+    classifiers
+        .add(new PatternMatchClassifier("predStats", "\\s*(predicate|Statistics|expressions|outputColumnNames):.*"));
+    classifiers.add(new WarningsOnlyClassifier());
     classifiers.add(new ColumnStatsAccurateOnly());
   }
 
