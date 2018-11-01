@@ -30,6 +30,14 @@ toolbox/bin/toolbox RERUN patternfile https://builds.apache.org/job/PreCommit-HI
   it has some other extension like `llq` which shows the `q` file for the actual entry...
 
 
+```
+toolbox applicator HIVE-19097
+```
+* downloads the latest patch from the jira
+* prints out 2 commands:
+	* the git apply command to apply the patch
+	* and a git commit to submit it with the original author with the jira title.
+
 ### also there but not yet working...
 
 * some jenkins related stuff...to peek into its queues and other things; however currently I'm not able to access attachments using the jira api because of [some problem](https://issues.apache.org/jira/browse/INFRA-15541)
