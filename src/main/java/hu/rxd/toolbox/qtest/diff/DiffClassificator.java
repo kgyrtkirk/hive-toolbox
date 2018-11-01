@@ -43,6 +43,7 @@ public class DiffClassificator {
     classifiers.add(new PatternMatchClassifier("predicates", "\\s*predicate:.*"));
     classifiers
         .add(new PatternMatchClassifier("predStats", "\\s*(predicate|Statistics|expressions|outputColumnNames):.*"));
+    classifiers.add(new PatternMatchClassifier("filterExpr", "\\s*(filterExpr):.*"));
     classifiers.add(new WarningsOnlyClassifier());
     classifiers.add(new ColumnStatsAccurateOnly());
   }
