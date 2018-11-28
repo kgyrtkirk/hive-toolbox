@@ -43,7 +43,16 @@ if [ ! -d mat_17 ];then
 	unzip mat_17.zip
 fi
 
+if [ ! -d maven ];then
+	wget -c -nv -O maven.tgz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
+	tar xzf maven.tgz
+	ln -s apache-maven-3.6.0/bin maven
+fi
 
+if [ ! -d eclipse ];then
+	wget -c -nv -O eclipse.tgz http://ftp.halifax.rwth-aachen.de/eclipse//technology/epp/downloads/release/2018-09/R/eclipse-java-2018-09-linux-gtk-x86_64.tar.gz
+	tar xzf eclipse.tgz
+fi
 
 vncserver -kill :1 || echo ok
 mkdir -p $HOME/.vnc
