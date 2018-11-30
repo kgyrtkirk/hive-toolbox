@@ -45,6 +45,9 @@ public class DiffClassificator {
         .add(new PatternMatchClassifier("predStats", "\\s*(predicate|Statistics|expressions|outputColumnNames):.*"));
     classifiers.add(new WarningsOnlyClassifier());
     classifiers.add(new ColumnStatsAccurateOnly());
+    classifiers
+        .add(new PatternMatchClassifier("vecAllocChange",
+            "\\s*(predicateExpression|projectedOutputColumnNums|selectExpressions|valueColumns|keyColumnNums|valueColumnNums|scratchColumnTypeNames|keyColumns|aggregators|keyExpressions):.*"));
   }
 
   public static class DiffObject {

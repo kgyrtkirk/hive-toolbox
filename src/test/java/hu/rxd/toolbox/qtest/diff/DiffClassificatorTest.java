@@ -44,6 +44,7 @@ public class DiffClassificatorTest {
     //    ret.add(new Object[] { "statsPC_1", "statsPC" });
     ret.add(new Object[] { "dataser10x_1", "dataser10x" });
     ret.add(new Object[] { "maskRemoval", "maskRemoval" });
+    ret.add(new Object[] {"vecAllocChange_1", "vecAllocChange" });
 
     return ret;
   }
