@@ -13,7 +13,7 @@ fi
 
 sed -ir '/alias (rm|cp|mv)=.*/d' ~/.bashrc
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree
 
 if yum list installed nux-dextop-release; then
 	echo nux-ok
@@ -38,9 +38,11 @@ if [ ! -d visualvm_14 ];then
 	unzip visualvm_14.zip
 fi
 
-if [ ! -d mat_17 ];then
-	wget -c -nv -O mat_17.zip  'http://www.eclipse.org/downloads/download.php?file=/mat/1.7/rcp/MemoryAnalyzer-1.7.0.20170613-linux.gtk.x86_64.zip&r=1' 
-	unzip mat_17.zip
+if [ ! -d mat ];then
+	#wget -c -nv -O mat_17.zip  'http://www.eclipse.org/downloads/download.php?file=/mat/1.7/rcp/MemoryAnalyzer-1.7.0.20170613-linux.gtk.x86_64.zip&r=1' 
+	#unzip mat_17.zip
+	wget -c -nv -O mat_181.zip  'https://www.eclipse.org/downloads/download.php?file=/mat/1.8.1/rcp/MemoryAnalyzer-1.8.1.20180910-linux.gtk.x86_64.zip&mirror_id=1045'
+	unzip mat_181.zip
 fi
 
 if [ ! -d maven ];then
