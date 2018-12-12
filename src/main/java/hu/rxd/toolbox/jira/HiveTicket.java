@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.compress.utils.Lists;
 
 import net.rcarz.jiraclient.Attachment;
+import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Comment;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.Issue.SearchResult;
@@ -39,6 +40,11 @@ public class HiveTicket {
   private static final String HIVEQA = "hiveqa";
   public static JiraClient jira = new JiraClient("https://issues.apache.org/jira");
   private Issue i;
+
+  public static void jiraLogin(String user, String pass) {
+    BasicCredentials creds = new BasicCredentials(user, pass);
+    jira = new JiraClient("https://issues.apache.org/jira", creds);
+  }
 
   public HiveTicket(Issue i0) throws Exception {
     //    i = i0;

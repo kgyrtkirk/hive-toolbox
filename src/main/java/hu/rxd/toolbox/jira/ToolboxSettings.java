@@ -37,6 +37,7 @@ public class ToolboxSettings {
 
   public static class JiraSettings {
     public String userid;
+    public String password;
     public Map<String, String> userEmailAddresses;
   }
 
@@ -89,6 +90,13 @@ public class ToolboxSettings {
       throw new RuntimeException("dataClass.jira.userid is unset");
     }
     return dataClass.jira.userid;
+  }
+
+  public String getJiraPassword() {
+    if (dataClass.jira.password == null) {
+      throw new RuntimeException("dataClass.jira.password is unset");
+    }
+    return dataClass.jira.password;
   }
 
   private Map<String, String> getUserEmailAddresses() {

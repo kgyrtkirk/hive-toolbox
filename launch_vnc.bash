@@ -5,6 +5,7 @@ set -e
 echo "Executing@`hostname`: $0 $*"
 if [ "$1" != "client" ] ; then
 	[ "$1" == "" ] && echo "usage: $0 <host>" && exit 1
+
 	scp "$0" "$1:"
 	ssh "$1" "$0 client"
 	echo "** vnc into $1:1 with alskdj"
@@ -13,7 +14,7 @@ fi
 
 sed -ir '/alias (rm|cp|mv)=.*/d' ~/.bashrc
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox
 
 if yum list installed nux-dextop-release; then
 	echo nux-ok
@@ -41,8 +42,9 @@ fi
 if [ ! -d mat ];then
 	#wget -c -nv -O mat_17.zip  'http://www.eclipse.org/downloads/download.php?file=/mat/1.7/rcp/MemoryAnalyzer-1.7.0.20170613-linux.gtk.x86_64.zip&r=1' 
 	#unzip mat_17.zip
-	wget -c -nv -O mat_181.zip  'https://www.eclipse.org/downloads/download.php?file=/mat/1.8.1/rcp/MemoryAnalyzer-1.8.1.20180910-linux.gtk.x86_64.zip&mirror_id=1045'
-	unzip mat_181.zip
+	wget -c -nv -O mat_181x.zip  'http://ftp.halifax.rwth-aachen.de/eclipse//mat/1.8.1/rcp/MemoryAnalyzer-1.8.1.20180910-linux.gtk.x86_64.zip'
+	#wget -c -nv -O mat_181.zip  'https://www.eclipse.org/downloads/download.php?file=/mat/1.8.1/rcp/MemoryAnalyzer-1.8.1.20180910-linux.gtk.x86_64.zip&mirror_id=1045'
+	unzip mat_181x.zip
 fi
 
 if [ ! -d maven ];then

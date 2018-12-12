@@ -18,12 +18,19 @@
 
 package hu.rxd.model.jenkins;
 
+import java.io.File;
 import java.net.URI;
+import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import hu.rxd.toolbox.jira.HiveTicket;
+import hu.rxd.toolbox.jira.ToolboxSettings;
+import hu.rxd.toolbox.qtest.diff.CachedURL;
+import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.Issue;
 
 public class TestHiveTicket {
@@ -42,16 +49,37 @@ public class TestHiveTicket {
   }
 
   @Test
+  @Ignore
   public void as2() throws Exception {
-    //    HiveTicket t = new HiveTicket("HIVE-16827");
-    //    Attachment u = t.getLastAttachment();
-    //    Issue ii = HiveTicket.jira.getIssue("SLING-2720");
     Issue ii = HiveTicket.jira.getIssue("HIVE-13567");
     System.out.println(ii.getAttachments().size());
 
     //    Comment lastQAComment = t.getLastQAComment();
     //    String b = lastQAComment.getBody();
     //    System.out.println(b);
+
+  }
+
+  @Test
+  @Ignore
+  public void reattach() throws Exception {
+    HiveTicket.jiraLogin(
+        ToolboxSettings.instance().getJiraUserId(),
+        ToolboxSettings.instance().getJiraPassword());
+    HiveTicket t = new HiveTicket("HIVE-15078");
+    Attachment attachment = t.getLastAttachment();
+    URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
+
+    File patchFile = new File(attachment.getFileName());
+    FileUtils.copyURLToFile(patchURL, patchFile);
+
+    //    System.out.println(t);
+
+    t.getIssue().addAttachment(patchFile);
+
+    //    Object a = t.getIssue().getField(Field.ASSIGNEE);
+    //    System.out.println(a);
+    //    t.getIssue().update().field(Field.ASSIGNEE, "kgyrtkirk").execute();
 
   }
 
