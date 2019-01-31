@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         hu.rxd.hive.toolbox
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  adds some things...
 // @author       kirk
 // @match        https://issues.apache.org/jira/browse/**
@@ -54,7 +54,8 @@ background-color: lightblue;
 .ptest-status {
 display:block;
 float:right;
-background-color:orange;
+background-color1:orange;
+border: 1px solid orange;
 font-size:2em;
 }
 </style>
@@ -266,11 +267,29 @@ font-size:2em;
                 }, {});
             });
             document.hiveInfos=hiveInfos;
+            var qStatus=$('<div id=qStatus>').addClass("ptest-status");
+            qStatus.insertAfter($('#summary-val'));
+
+            hiveInfos.each( function (idx,info) {
+                var match=info["ISSUE_NUM"]==id;
+                $("<a>")
+                    .append(match?"■":"□")
+                    .attr("title","HIVE-"+info["ISSUE_NUM"])
+                    .attr("href","https://issues.apache.org/jira/browse/HIVE-"+info["ISSUE_NUM"])
+                    .appendTo(qStatus);
+            });
+            qStatus.append($("<br>"));
             var issueIdx=document.hiveInfos.toArray().findIndex( function (a) { return a["ISSUE_NUM"] == id;});
+            var statusStr;
+            if(issueIdx>=0) {
+                statusStr="Q: "+(issueIdx+1)+" / " +hiveInfos.size();
+            }else{
+                statusStr="[N/A] / "+ +hiveInfos.size();
+            }
             $('<span>')
-                .addClass("ptest-status")
-                .append("Q: "+issueIdx+" / " +hiveInfos.size())
-                .insertAfter($('#summary-val'));
+                .append(statusStr)
+                .appendTo(qStatus);
+
 
         },function() {
             $('<span>')
