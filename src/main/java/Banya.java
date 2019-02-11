@@ -1,14 +1,16 @@
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.LineIterator;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.LineIterator;
 
 public class Banya {
 
@@ -21,11 +23,16 @@ public class Banya {
     private String threadId;
     private QTypes type;
     private Engines engine;
+    private List<String> metaTimes;
+    private long sumMt;
+    private float compileTime = -1;
+    private float runTime = -1;
 
     public Q(String queryID) {
       this.queryID = queryID;
       type = QTypes.UNK;
       engine = Engines.UNK;
+      metaTimes = new ArrayList<>();
     }
 
     public void setStart(LogLine decomposeLine) {
@@ -41,7 +48,10 @@ public class Banya {
 
     @Override
     public String toString() {
-      return type + "@" + engine + " TI:" + threadId + " " + queryID + " "
+      return compileTime + "//" + runTime + " ; meta:: " + sumMt + "; " + metaTimes.size() + "|" + type + "@" + engine
+          + " TI:"
+          + threadId + " "
+          + queryID + " "
           + (tfformat(st) + " ~[" + last + "]> " + tfformat(ed));
     }
 
@@ -74,20 +84,54 @@ public class Banya {
       if (ll.line.contains("client.TezClient")) {
         engine = Engines.TEZ;
       }
+      if (ll.line.contains("Time taken")) {
+        String[] tp = ll.line.split("taken:");
+        String t = tp[1].trim().split(" ")[0];
+        float takenSecs = Float.parseFloat(t);
+        int k = 1;
+        if (ll.line.contains("ompilin")) {
+          compileTime = takenSecs * 1000;
+          k = 1;
+        } else {
+          runTime = takenSecs * 1000;
+          k = 2;
+        }
+        
+      }
 
     }
 
     public void recordMetaTime(String string) {
       long mt = extractMetaTime(string);
+      sumMt += mt;
+      metaTimes.add(string);
     }
 
     private static long extractMetaTime(String string) {
       Long total = 0l;
       String[] parts = string.split("[=,}]");
       for (String string2 : parts) {
-        Long val = Long.valueOf(string2);
-        total = val;
+        try {
+          Long val = Long.valueOf(string2);
+          total += val;
+        } catch (NumberFormatException e) {
+
+        }
       }
+      return total;
+    }
+
+    private long sxTime() {
+      long total = deltaT();
+      long sumMeta = sumMt;
+
+      return sumMeta * 100 / total;
+    }
+
+    public long deltaT() {
+      if (ed == null || st == null)
+        return -1;
+      long total = (ed.getTime() - st.getTime());
       return total;
     }
 
@@ -149,7 +193,7 @@ public class Banya {
 
       pat_postHook = Pattern.compile(".*Received post-hook notification for :hive_([^ ]+).*");
 
-      pat_MTime = Pattern.compile(".*metadata.Hive: Total time spent in each metastore function (ms):(.*)");
+      pat_MTime = Pattern.compile(".*metadata.Hive: Total time spent in each metastore function \\(ms\\):(.*)");
     }
 
     public void process(String line) throws Exception {
@@ -185,6 +229,9 @@ public class Banya {
         String t = ll.getThread();
 
         Q q = qByThread.get(t);
+        if (line.contains("Total time spent in ea")) {
+          int asd = 1;
+        }
         if (q != null) {
           Matcher pm = pat_MTime.matcher(line);
           if (pm.matches()) {
@@ -199,12 +246,6 @@ public class Banya {
       //      accepted = "Hive query accepted";
       //      post = "Received post-hook notification for";
 
-    }
-
-    private long extractMetaTime(String group) {
-      throw new RuntimeException();
-      // TODO Auto-generated method stub
-      // return null;
     }
 
     // FIXME: LL.of
@@ -228,13 +269,14 @@ public class Banya {
   public static void main(String[] args) throws Exception {
     String input = "/mnt/work/hwx/ear/ear-9636/aa/hiveserver2_11829.log";
     String ec = "/mnt/work/hwx/ear/ear-8827/exacrap/";
+    ec = "/media/sf_tx/ex/8827/ee/";
     input = ec + "hiveserver2Interactive.log.2019-02-05_47";
-    input = ec + "hiveserver2Interactive.log.2019-02-05_185";
-
-    LineIterator it = FileUtils.lineIterator(new File(input), "UTF-8");
-    try {
+    QP qp = new QP();
       int cnt = 0;
-      QP qp = new QP();
+    for (int k = 50; k < 186; k++) {
+        input = ec + "hiveserver2Interactive.log.2019-02-05_" + k;
+        LineIterator it = FileUtils.lineIterator(new File(input), "UTF-8");
+      try {
       while (it.hasNext()) {
         String line = it.nextLine();
         // do something with line
@@ -246,15 +288,17 @@ public class Banya {
         cnt++;
       }
 
-      for (Entry<String, Q> string : qp.queryMap.entrySet()) {
-        Q v = string.getValue();
-        //        if (v.ed == null) {
-          System.out.println(v);
-        //        }
+      } finally {
+        it.close();
       }
-
-    } finally {
-      it.close();
+      }
+    for (Entry<String, Q> string : qp.queryMap.entrySet()) {
+      Q v = string.getValue();
+      //        if (v.ed == null) {
+      if (v.deltaT() > 1000)
+      System.out.println(v);
+      //        }
     }
+
   }
 }
