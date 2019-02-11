@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 public class Banya {
 
   static class Q {
@@ -200,7 +201,7 @@ public class Banya {
       Matcher m_acc = pat_accepted.matcher(line);
       String queryID;
       if (m_acc.matches()) {
-        LogLine decomposeLine = decomposeLine(line);
+        LogLine decomposeLine = LogLine.of(line);
         queryID = m_acc.group(1);
         Q q = getQ(queryID);
         q.setThreadId(decomposeLine.getThread());
@@ -210,7 +211,7 @@ public class Banya {
       }
       Matcher m_exec = pat_exec.matcher(line);
       if (m_exec.matches()) {
-        LogLine decomposeLine = decomposeLine(line);
+        LogLine decomposeLine = LogLine.of(line);
         queryID = m_exec.group(1);
         Q q = getQ(queryID);
         qByThread.remove(q.threadId);
@@ -219,7 +220,7 @@ public class Banya {
       }
       Matcher m_pos = pat_postHook.matcher(line);
       if (m_pos.matches()) {
-        LogLine decomposeLine = decomposeLine(line);
+        LogLine decomposeLine = LogLine.of(line);
         queryID = m_pos.group(1);
         getQ(queryID).setEnd(decomposeLine);
       }
@@ -246,12 +247,6 @@ public class Banya {
       //      accepted = "Hive query accepted";
       //      post = "Received post-hook notification for";
 
-    }
-
-    // FIXME: LL.of
-    @Deprecated
-    private LogLine decomposeLine(String line) throws Exception {
-      return LogLine.of(line);
     }
 
     private Q getQ(String queryID) {
