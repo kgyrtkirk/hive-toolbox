@@ -49,6 +49,9 @@ public class DiffClassificator {
     classifiers
         .add(new PatternMatchClassifier("vecAllocChange",
             "\\s*(predicateExpression|projectedOutputColumnNums|functionInputExpressions|selectExpressions|valueColumns|keyColumnNums|valueColumnNums|scratchColumnTypeNames|keyColumns|aggregators|keyExpressions):.*"));
+    classifiers.add(new PatternMatchClassifier("minRed", "\\s*minReductionHashAggr:.*"));
+    classifiers.add(new PatternMatchClassifier("bucks", "\\s*(bucketingVersion|numBuckets):.*"));
+
   }
 
   public static class DiffObject {
