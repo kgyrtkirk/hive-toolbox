@@ -97,7 +97,7 @@ public class Banya {
           runTime = takenSecs * 1000;
           k = 2;
         }
-        
+
       }
 
     }
@@ -130,8 +130,9 @@ public class Banya {
     }
 
     public long deltaT() {
-      if (ed == null || st == null)
+      if (ed == null || st == null) {
         return -1;
+      }
       long total = (ed.getTime() - st.getTime());
       return total;
     }
@@ -185,6 +186,7 @@ public class Banya {
     private Map<String, Q> qByThread = new LinkedHashMap<>();
     private Pattern pat_exec;
     private Pattern pat_MTime;
+    private int lineCnt;
 
     public QP() {
       //      pat_accepted = Pattern.compile(".*Hive query accepted: hive_([^ ]+).*");
@@ -259,6 +261,26 @@ public class Banya {
 
     }
 
+    public void processFile(File file) throws Exception {
+      LineIterator it = FileUtils.lineIterator(file, "UTF-8");
+      try {
+        while (it.hasNext()) {
+          String line = it.nextLine();
+          // do something with line
+
+          process(line);
+          //                if (cnt > 3000) {
+          //                  break;
+          //                }
+          lineCnt++;
+        }
+
+      } finally {
+        it.close();
+      }
+
+    }
+
   }
 
   public static void main(String[] args) throws Exception {
@@ -267,33 +289,24 @@ public class Banya {
     ec = "/media/sf_tx/ex/8827/ee/";
     input = ec + "hiveserver2Interactive.log.2019-02-05_47";
     QP qp = new QP();
-      int cnt = 0;
+    int cnt = 0;
     for (int k = 50; k < 186; k++) {
-        input = ec + "hiveserver2Interactive.log.2019-02-05_" + k;
-        LineIterator it = FileUtils.lineIterator(new File(input), "UTF-8");
-      try {
-      while (it.hasNext()) {
-        String line = it.nextLine();
-        // do something with line
+      input = ec + "hiveserver2Interactive.log.2019-02-05_" + k;
+      qp.processFile(new File(input));
+    }
+    showLongQueries(qp);
 
-        qp.process(line);
-        //                if (cnt > 3000) {
-        //                  break;
-        //                }
-        cnt++;
-      }
+  }
 
-      } finally {
-        it.close();
-      }
-      }
+  private static void showLongQueries(QP qp) {
     for (Entry<String, Q> string : qp.queryMap.entrySet()) {
       Q v = string.getValue();
       //        if (v.ed == null) {
       if (v.deltaT() > 1000)
-      System.out.println(v);
-      //        }
+       {
+        System.out.println(v);
+        //        }
+      }
     }
-
   }
 }
