@@ -1,0 +1,10 @@
+<settings>
+<localRepository/>  
+ <mirrors>
+   <mirror>
+     <id>public</id>
+     <mirrorOf>*</mirrorOf>
+     <url>http://nexus-private.hortonworks.com/nexus/content/groups/public</url>
+   </mirror>
+  </mirrors>
+</settings>
