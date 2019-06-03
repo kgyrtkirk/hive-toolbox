@@ -33,6 +33,7 @@ import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.jira.HiveTicket;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
+import hu.rxd.toolbox.qtest.LocalFileDispatcher;
 import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
 
@@ -42,14 +43,21 @@ public class Toolbox {
 
     if (args[0].startsWith("http")) {
       IInputStreamDispatcher isd = new LocalizedArchiveDispatcher(new URL(args[0]));
-      QTDiffRunner.processTestXmls(isd);
+      new QTDiffRunner().withArgs(args).processTestXmls(isd);
+
+      return;
+    }
+
+    if (args[0].startsWith("file://")) {
+      IInputStreamDispatcher isd = new LocalFileDispatcher(new URL(args[0]));
+      new QTDiffRunner().withArgs(args).processTestXmls(isd);
 
       return;
     }
 
     if (args[0].startsWith("HIVE")) {
       IInputStreamDispatcher isd = new LastQAReportInputStreamDispatcher(args[0]);
-      QTDiffRunner.processTestXmls(isd);
+      new QTDiffRunner().withArgs(args).processTestXmls(isd);
 
       return;
     }

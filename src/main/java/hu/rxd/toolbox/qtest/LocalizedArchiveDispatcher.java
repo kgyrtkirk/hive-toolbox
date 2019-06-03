@@ -24,25 +24,18 @@ import java.util.function.Function;
 
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 
-public class LocalizedArchiveDispatcher implements IInputStreamDispatcher {
-
-  private URL url;
+public class LocalizedArchiveDispatcher extends LocalFileDispatcher
+    implements IInputStreamDispatcher {
 
   public LocalizedArchiveDispatcher(URL url) {
-    this.url = url;
+    super(url);
   }
 
   @Override
   public void visit(Function<InputStream, Void> function) throws Exception {
     URL localUrl = new CachedURL(url).getURL();
-    if (url.getFile().endsWith("zip")) {
-      new ZipXL(localUrl).visit(function);
-      return;
-    }
-    if (url.getFile().endsWith("tar.gz")) {
-      new TarGzXL(localUrl).visit(function);
-      return;
-    }
+    handleArchives(localUrl, function);
+
     throw new RuntimeException("unable to handle contents of: " + url);
   }
 
