@@ -101,9 +101,11 @@ public class HiveTicket {
 
   public Comment getLastQAComment() {
     List<Comment> comments = getCommentsByName(HIVEQA);
-    comments.removeIf((Comment c) -> {return c.getBody().contains("-1 due to build exiting with an error");} );
+    comments.removeIf((Comment c) -> {
+      String body = c.getBody();
+      return body.contains("-1 due to build exiting with an error") || body.contains("Apache Yetus");
+    });
     comments.removeIf((Comment c) -> {return c.getBody().contains("@author");} );
-    
     if (comments.size() == 0) {
       throw new RuntimeException("theres no last qa comment");
     }
