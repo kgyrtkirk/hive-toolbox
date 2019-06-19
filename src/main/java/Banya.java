@@ -145,13 +145,16 @@ public class Banya {
     private String line;
     private String threadName;
 //    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,S");
-    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss,S");
+    //    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss,S");
+    private static final SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,S");
 
     public LogLine(String line) throws Exception {
       this.line = line;
 
-//      Pattern pat_line = Pattern.compile("(.{23}) ([^ ]+) \\[([^]]+)\\]: (.*)");
-      Pattern pat_line = Pattern.compile("(.{23}) +([^ ]+) +\\[(.+)\\] (.*)");
+      String lp0 = "(.{23}) ([^ ]+) \\[([^]]+)\\]: (.*)";
+      String lp1 = "(.{23}) +([^ ]+) +\\[(.+)\\] (.*)";
+      String lp2 = "(.{23}) +([^ ]+) +\\[(.+)\\]: (.*)";
+      Pattern pat_line = Pattern.compile(lp2);
       Matcher m = pat_line.matcher(line);
       if (!m.matches()) {
         throw new RuntimeException(line);
@@ -269,9 +272,9 @@ public class Banya {
           // do something with line
 
           process(line);
-          //                if (cnt > 3000) {
-          //                  break;
-          //                }
+          if (lineCnt > 300000) {
+            break;
+          }
           lineCnt++;
         }
 
@@ -284,16 +287,11 @@ public class Banya {
   }
 
   public static void main(String[] args) throws Exception {
-    String input = "/mnt/work/hwx/ear/ear-9636/aa/hiveserver2_11829.log";
-    String ec = "/mnt/work/hwx/ear/ear-8827/exacrap/";
-    ec = "/media/sf_tx/ex/8827/ee/";
-    input = ec + "hiveserver2Interactive.log.2019-02-05_47";
+
+    String input;
     QP qp = new QP();
-    int cnt = 0;
-    for (int k = 50; k < 186; k++) {
-      input = ec + "hiveserver2Interactive.log.2019-02-05_" + k;
-      qp.processFile(new File(input));
-    }
+    input = "/mnt/work/hwx/ear/ear-10203/hs2.log";
+    qp.processFile(new File(input));
     showLongQueries(qp);
 
   }
