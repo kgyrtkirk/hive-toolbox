@@ -14,6 +14,19 @@ fi
 
 sed -ir '/alias (rm|cp|mv)=.*/d' ~/.bashrc
 
+javaExecutables=( `pgrep java|xargs -n1 -IPID readlink /proc/PID/exe|sort|uniq` )
+
+if [ "${#javaExecutables[@]}" == 1 ];then
+	JHOME="${javaExecutables[0]//bin\/java}"
+cat >> ~/.bashrc << EOF
+	export JAVA_HOME="$JHOME"
+	export PATH="\$PATH:$JHOME/bin"
+EOF
+fi
+
+
+
+
 yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox
 
 if yum list installed nux-dextop-release; then
