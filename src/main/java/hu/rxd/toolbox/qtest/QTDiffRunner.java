@@ -9,12 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-
 import com.google.common.base.Function;
 import com.google.common.io.ByteStreams;
 
@@ -28,25 +22,14 @@ public class QTDiffRunner {
   private static PrintStream output;
   static int idx = 0;
   static Map<String, Integer> catCnt = new HashMap<String, Integer>();
-  private String classifiedString;
 
   public static void main(String[] args) throws FileNotFoundException, Exception {
     IInputStreamDispatcher isd = new LastQAReportInputStreamDispatcher(args[0]);
 
-    new QTDiffRunner().processTestXmls(isd);
+    processTestXmls(isd);
   }
 
-  public QTDiffRunner withArgs(String[] args) throws Exception {
-    CommandLineParser parser = new DefaultParser();
-    Options options = new Options();
-    options.addOption("classify", true, "custom string occurence for diff classification");
-    CommandLine cmd = parser.parse(options, args);
-
-    this.classifiedString = cmd.getOptionValue("classify");
-    return this;
-  }
-
-  public void processTestXmls(IInputStreamDispatcher testResultsDispatcher) throws IOException, Exception, FileNotFoundException {
+  public static void processTestXmls(IInputStreamDispatcher testResultsDispatcher) throws IOException, Exception, FileNotFoundException {
     try (PrintStream output0 = new PrintStream("/tmp/_qd")) {
       output = output0;
       ByteStreams.copy(QTestDiffExtractor.class.getResourceAsStream("/qdr.bash"), output);
@@ -76,17 +59,14 @@ public class QTDiffRunner {
     }
   }
 
-  private void processTestCases(List<TestCase> testcase) throws Exception {
-    DiffClassificator diffClassificator = new DiffClassificator().addClassifedString(classifiedString);
+  private static void processTestCases(List<TestCase> testcase) throws Exception {
+    DiffClassificator diffClassificator = new DiffClassificator();
 
     for (TestCase tc : testcase) {
       if (tc.failure == null) {
         continue;
       }
       if (tc.systemOut == null) {
-        continue;
-      }
-      if (tc.failure.message == null){
         continue;
       }
       if (tc.failure.message.startsWith("Client Execution succeeded but contained differences") || tc.failure.message.contains("QTestUtil.failedDiff(")
@@ -111,4 +91,5 @@ public class QTDiffRunner {
       }
     }
   }
+
 }

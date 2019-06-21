@@ -15,7 +15,6 @@ import hu.rxd.toolbox.qtest.diff.classifiers.StatsNPChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsOnlyChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsPCChangeClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.StatsTaskRenameClassifier;
-import hu.rxd.toolbox.qtest.diff.classifiers.StringOccurrenceClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.WarningsOnlyClassifier;
 import hu.rxd.toolbox.qtest.diff.classifiers.ZeroStatsDisappearClassifier;
 
@@ -99,10 +98,4 @@ public class DiffClassificator {
     return "UNCLASSIFIED";
   }
 
-  public DiffClassificator addClassifedString(String classifiedString) {
-    if (classifiedString != null){
-      classifiers.add(new StringOccurrenceClassifier(classifiedString));
-    }
-    return this;
-  }
 }
