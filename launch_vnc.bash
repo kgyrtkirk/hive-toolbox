@@ -27,7 +27,7 @@ fi
 
 
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox screen
 
 if yum list installed nux-dextop-release; then
 	echo nux-ok
@@ -63,7 +63,8 @@ fi
 if [ ! -d maven ];then
 	wget -c -nv -O maven.tgz https://www-us.apache.org/dist/maven/maven-3/3.6.0/binaries/apache-maven-3.6.0-bin.tar.gz
 	tar xzf maven.tgz
-	ln -s apache-maven-3.6.0/bin maven
+	ln -s apache-maven-3.6.0 maven
+	echo 'export PATH="\$PATH:/tools/maven/bin/"' >> ~/.bashrc
 fi
 
 if [ ! -d eclipse ];then

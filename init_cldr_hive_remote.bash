@@ -11,22 +11,38 @@ if [ "$1" != "client" ] ; then
 	exit 0
 fi
 
+mkdir -p ~/.m2
+
 cat >~/.m2/settings.xml <<EOL
 <settings>
-<!-- insert CLDR specific maven settings here ###TODO###" -->
+<localRepository/>
+ <mirrors>
+   <mirror>
+     <id>public</id>
+     <mirrorOf>*</mirrorOf>
+     <url>http://nexus-private.hortonworks.com/nexus/content/groups/public</url>
+   </mirror>
+  </mirrors>
 </settings>
 EOL
 
 cd /tools
-# clone cldr repo here ###TODO###
 
-# cd hive
+[ ! -d hive ] && git clone https://github.infra.cloudera.com/CDH/hive
+cd hive
+git checkout cdpd-master
+yum install -y jq
 
-# checkout your favorite branch here ###TODO###
+VERSION="`find /opt/cloudera/parcels/ -name hive-exec-*core.jar -printf "%f\n"|sort|uniq|cut -d- -f 3-4|cut -d. -f 4-`"
 
-# reset to your favorite revision here ###TODO###
+echo "VERSION: $VERSION"
+patch_url="`curl -s "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7" | jq -r .centos7.patch_url`"
+wget $patch_url/hive-source.patch
 
-# patch or whatever you need here ###TODO###
+git apply -3 -p1 hive-source.patch
+git commit -m 'POM-PATCH' -a
 
-# build hive, one example is below (legacy hwx) ###TODO###
-#../apache-maven-3.6.0/bin/mvn clean install source:jar eclipse:eclipse -DskipTests -Pitests,hadoop-2 -Denforcer.skip=true
+MO="-Denforcer.skip -Pitests,hadoop-2"
+mvn $MO install source:jar install -pl ql -DskipTests -am
+mvn $MO eclipse:eclipse -pl ql -DskipTests
+

@@ -6,7 +6,7 @@ git clean -dfx
 C="${1:-ql}"
 banner install
 MOPTS="-DskipTests -T2C -DXskipSparkTests -Pitests -Denforcer.skip"
-time mvn install source:jar $MOPTS -am
+time mvn install source:jar $MOPTS -am -U
 banner eclipse
 time mvn eclipse:eclipse $MOPTS -B -pl $C
 banner ok
