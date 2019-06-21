@@ -30,6 +30,7 @@ public class DiffClassificator {
   List<Classifier> classifiers = new ArrayList<Classifier>();
 
   public DiffClassificator() {
+    classifiers.add(new PatternMatchClassifier("trailingWs", "[   ]*$"));
     classifiers.add(new OpIdChangeClassifier());
     classifiers.add(new StatsNPChangeClassifier());
     classifiers.add(new StatsCPChangeClassifier());

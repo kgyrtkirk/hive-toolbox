@@ -20,9 +20,12 @@ public class CachedURL {
 
   public CachedURL(URL url) throws IOException {
     remoteUrl = url;
+    
     String sha1 = DigestUtils.sha1Hex(remoteUrl.toString());
-    cachedFile = new File(new File(System.getProperty(("java.io.tmpdir"))), "hu.rxd.tmp-" + sha1);
-    tmpFile = new File(new File(System.getProperty(("java.io.tmpdir"))), "hu.rxd.tmp-" + sha1 + ".tmp");
+    String baseName = new File(url.getPath()).getName();
+    String localFileName = "hu.rxd.tmp-" + sha1 + "." + baseName;
+    cachedFile = new File(new File(System.getProperty(("java.io.tmpdir"))), localFileName);
+    tmpFile = new File(new File(System.getProperty(("java.io.tmpdir"))), localFileName + ".tmp");
   }
 
   public URL getURL() throws Exception {
