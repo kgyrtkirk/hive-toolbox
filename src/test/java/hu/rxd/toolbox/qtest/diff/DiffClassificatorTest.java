@@ -42,7 +42,7 @@ public class DiffClassificatorTest {
     //    ret.add(new Object[] { "zStatsEst_2", "zStatsEst" });
     ret.add(new Object[] { "taskName_1", "taskName" });
     //    ret.add(new Object[] { "statsPC_1", "statsPC" });
-    ret.add(new Object[] { "dataser10x_1", "dataser10x" });
+    ret.add(new Object[] { "dataser10x_1", "statsOnly" });
     ret.add(new Object[] { "maskRemoval", "maskRemoval" });
     ret.add(new Object[] {"vecAllocChange_1", "vecAllocChange" });
 
