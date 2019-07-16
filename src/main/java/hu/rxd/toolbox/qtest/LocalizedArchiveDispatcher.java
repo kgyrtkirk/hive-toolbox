@@ -35,8 +35,6 @@ public class LocalizedArchiveDispatcher extends LocalFileDispatcher
   public void visit(Function<InputStream, Void> function) throws Exception {
     URL localUrl = new CachedURL(url).getURL();
     handleArchives(localUrl, function);
-
-    throw new RuntimeException("unable to handle contents of: " + url);
   }
 
 }

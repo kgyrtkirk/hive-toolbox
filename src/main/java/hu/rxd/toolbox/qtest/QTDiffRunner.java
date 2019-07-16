@@ -36,10 +36,12 @@ public class QTDiffRunner {
     new QTDiffRunner().processTestXmls(isd);
   }
 
+
   public QTDiffRunner withArgs(String[] args) throws Exception {
     CommandLineParser parser = new DefaultParser();
     Options options = new Options();
-    options.addOption("classify", true, "custom string occurence for diff classification");
+    // FIXME: instead of using commons.cli ; consider some annotation based one like picocli
+    options.addOption("c", "classify", true, "custom string occurence for diff classification");
     CommandLine cmd = parser.parse(options, args);
 
     this.classifiedString = cmd.getOptionValue("classify");
