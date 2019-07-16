@@ -21,7 +21,9 @@ package hu.rxd.toolbox;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.eclipse.jgit.api.Git;
@@ -92,7 +94,7 @@ public class Applicator {
     Issue issue = ticket.getIssue();
 
     String people = issue.getAssignee().getDisplayName() + " ";
-    List<String> reviewPeople = new ArrayList<>();
+    Set<String> reviewPeople = new LinkedHashSet<>();
     for (Comment c : ticket.getReviewComments()) {
       reviewPeople.add(c.getAuthor().getDisplayName());
     }
