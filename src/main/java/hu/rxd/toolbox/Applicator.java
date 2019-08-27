@@ -53,6 +53,16 @@ public class Applicator {
 
   private String message;
 
+  public static void main(String[] args) throws Exception {
+    if (args.length == 0) {
+      System.out.println("usage: applicator <apache-ticket-id>");
+      System.exit(1);
+    }
+    Applicator applicator = new Applicator(new HiveTicket(args[0]));
+    applicator.apply(new File("."));
+    return;
+  }
+
   public Applicator(HiveTicket hiveTicket) throws Exception {
     ticket = hiveTicket;
     attachment = ticket.getLastAttachment();
