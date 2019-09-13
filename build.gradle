@@ -1,9 +1,11 @@
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'application'
+plugins {
+  id 'nebula.ospackage-base' version '7.1.0'
+  id 'groovy'
+  id 'eclipse'
+  id 'application'
+}
 
 mainClassName = 'hu.rxd.toolbox.Toolbox'
-
 
 task createAllStartScripts() {
 }
