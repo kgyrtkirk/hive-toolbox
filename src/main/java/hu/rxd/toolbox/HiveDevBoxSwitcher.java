@@ -3,7 +3,10 @@ package hu.rxd.toolbox;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -79,7 +82,11 @@ public class HiveDevBoxSwitcher {
         link.delete();
       }
       Files.createSymbolicLink(link.toPath(), targetPath.toPath());
+      postActivation();
       LOG.info("activated {} for {}", targetPath, getComponentName());
+    }
+
+    public void postActivation() throws Exception {
     }
 
     private void ensurePresence(Version ver, String componentTargetDir, File targetPath) throws IOException, Exception {
@@ -177,6 +184,15 @@ public class HiveDevBoxSwitcher {
     @Override
     public String getComponentName() {
       return "tez";
+    }
+
+    public void postActivation() throws IOException {
+      try {
+        Files.copy(new File(baseDir + "/tez/share/tez.tar.gz").toPath(), new File("/apps/tez/").toPath(),
+            StandardCopyOption.REPLACE_EXISTING);
+      } catch (Exception e) {
+        throw new IOException("cant copy tez.tar.gz", e);
+      }
     }
 
   }
