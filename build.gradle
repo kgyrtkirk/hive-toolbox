@@ -89,6 +89,10 @@ task fooDeb(type: Deb) {
 	from(installDist.outputs) {
     into targetDir
   }
+  from('src/main/scripts') {
+    into "${targetDir}/scripts"
+  }
+
   scripts.each { name,clazz ->
     link("/bin/${name}","${targetDir}/bin/${name}")
   }
