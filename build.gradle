@@ -1,26 +1,31 @@
 plugins {
+  id 'com.palantir.git-version' version '0.12.2'
   id 'nebula.ospackage-base' version '7.1.0'
   id 'groovy'
   id 'eclipse'
   id 'application'
 }
 
+version = gitVersion()
 mainClassName = 'hu.rxd.toolbox.Toolbox'
 
 task createAllStartScripts() {
+	ext.outputDir=new File(project.buildDir, 'scripts')
 }
 
-def scripts = [ 'applicator': 'hu.rxd.toolbox.Applicator',
+def scripts = [
+  'applicator': 'hu.rxd.toolbox.Applicator',
+  'toolbox':    'hu.rxd.toolbox.Toolbox',
 ]
 scripts.each() { scriptName, className ->
         def t = tasks.create(name: scriptName+'StartScript', type: CreateStartScripts) {
         mainClassName = className
         applicationName = scriptName
-        outputDir = new File(project.buildDir, 'scripts')
+        outputDir = createAllStartScripts.outputDir
         classpath = jar.outputs.files + project.configurations.runtime
     }
-      applicationDistribution.into("bin") {
-            from(t)
+    applicationDistribution.into("bin") {
+	    from(t)
             fileMode = 0755
     }
     createAllStartScripts.dependsOn(t)
@@ -79,4 +84,12 @@ compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.11.0.20
 
 }
 
-
+task fooDeb(type: Deb) {
+  def targetDir='/usr/local/hive-toolbox/'
+	from(installDist.outputs) {
+    into targetDir
+  }
+  scripts.each { name,clazz ->
+    link("/bin/${name}","${targetDir}/bin/${name}")
+  }
+}
