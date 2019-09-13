@@ -81,6 +81,7 @@ compile 'hu.rxd:lexirex:+'
 // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
 compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.11.0.201803080745-r'
 
+  compile 'org.rauschig:jarchivelib:0.7.1'
 
 }
 

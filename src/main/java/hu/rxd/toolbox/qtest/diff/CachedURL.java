@@ -28,12 +28,16 @@ public class CachedURL {
     tmpFile = new File(new File(System.getProperty(("java.io.tmpdir"))), localFileName + ".tmp");
   }
 
-  public URL getURL() throws Exception {
+  public File getFile() throws IOException {
     if (!cachedFile.exists()) {
       download();
     }
     LOG.info("serving: {} for {}", cachedFile, remoteUrl);
-    return cachedFile.toURI().toURL();
+    return cachedFile;
+  }
+
+  public URL getURL() throws IOException {
+    return getFile().toURI().toURL();
   }
 
   private void download() throws IOException {
