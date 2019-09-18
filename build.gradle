@@ -16,6 +16,7 @@ task createAllStartScripts() {
 def scripts = [
   'applicator': 'hu.rxd.toolbox.Applicator',
   'toolbox':    'hu.rxd.toolbox.Toolbox',
+  'sw2':	'hu.rxd.toolbox.HiveDevBoxSwitcher',
 ]
 scripts.each() { scriptName, className ->
         def t = tasks.create(name: scriptName+'StartScript', type: CreateStartScripts) {
@@ -82,6 +83,8 @@ compile 'hu.rxd:lexirex:+'
 compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.11.0.201803080745-r'
 
   compile 'org.rauschig:jarchivelib:0.7.1'
+// https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils
+compile group: 'org.codehaus.plexus', name: 'plexus-utils', version: '3.2.1'
 
 }
 

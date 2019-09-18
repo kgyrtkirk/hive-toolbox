@@ -4,14 +4,19 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.CopyOption;
+import java.nio.file.DirectoryStream;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.PathMatcher;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.codehaus.plexus.util.DirectoryScanner;
 import org.rauschig.jarchivelib.Archiver;
 import org.rauschig.jarchivelib.ArchiverFactory;
 import org.slf4j.Logger;
@@ -44,12 +49,12 @@ public class HiveDevBoxSwitcher {
       this.type = Type.APACHE;
     }
 
-    // supposed to be the actual version like 3.1.0.7.0.0.0 or something...
+    /** supposed to be the actual version like 3.1.0.7.0.0.0 or something...*/
     public String getVersion() {
       return versionStr;
     }
 
-    // supposed to be HDP-3.1 
+    /** supposed to be HDP-3.1*/
     public String getVerStr() {
       return versionStr;
     }
@@ -74,11 +79,10 @@ public class HiveDevBoxSwitcher {
     @Override
     public void switchTo(Version ver) throws Exception {
       String componentTargetDir = String.format("%s-%s", getComponentName(), ver.getVerStr());
-      File targetPath = new File(baseDir, componentTargetDir);
-      ensurePresence(ver, componentTargetDir, targetPath);
+      File targetPath = ensurePresence(ver, componentTargetDir);
 
       File link = new File(baseDir, getComponentName());
-      if (link.exists()) {
+      if (Files.isSymbolicLink(link.toPath())) {
         link.delete();
       }
       Files.createSymbolicLink(link.toPath(), targetPath.toPath());
@@ -89,7 +93,18 @@ public class HiveDevBoxSwitcher {
     public void postActivation() throws Exception {
     }
 
-    private void ensurePresence(Version ver, String componentTargetDir, File targetPath) throws IOException, Exception {
+    private File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
+      File targetPath = new File(baseDir, componentTargetDir);
+      if ("dev".equals(ver.getVersion())) {
+        if (!targetPath.exists()) {
+          throw new IOException(targetPath + " doesn't exists");
+        }
+        File packageDir = getMatchingPathForGlob(targetPath,
+            "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
+//      "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
+        return packageDir;
+      }
+
       if (!targetPath.exists()) {
         LOG.info("downloading: {}", ver);
         File f = tryDownload(getCandidateUrls(ver));
@@ -110,6 +125,23 @@ public class HiveDevBoxSwitcher {
       } else {
         LOG.info("{} is already present", componentTargetDir);
       }
+      return targetPath;
+    }
+
+    File getMatchingPathForGlob(File path, String glob) throws IOException {
+      DirectoryScanner scanner = new DirectoryScanner();
+      scanner.setIncludes(new String[] { glob });
+      scanner.setBasedir(path.getAbsolutePath());
+      scanner.setCaseSensitive(false);
+      scanner.scan();
+
+      String[] dirs = scanner.getIncludedDirectories();
+
+      if (dirs.length != 1) {
+        throw new IOException(
+            "Expected exactly one match to glob:" + glob + " under " + path + ". bot got: " + Arrays.toString(dirs));
+      }
+      return new File(path, dirs[0]);
     }
 
     private File tryDownload(List<URL> candidateUrls) throws IOException {
@@ -188,7 +220,7 @@ public class HiveDevBoxSwitcher {
 
     public void postActivation() throws IOException {
       try {
-        Files.copy(new File(baseDir + "/tez/share/tez.tar.gz").toPath(), new File("/apps/tez/").toPath(),
+        Files.copy(new File(baseDir + "/tez/share/tez.tar.gz").toPath(), new File("/apps/tez/tez.tar.gz").toPath(),
             StandardCopyOption.REPLACE_EXISTING);
       } catch (Exception e) {
         throw new IOException("cant copy tez.tar.gz", e);
