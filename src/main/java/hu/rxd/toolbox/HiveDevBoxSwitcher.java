@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import hu.rxd.toolbox.HiveDevBoxSwitcher.Version.Type;
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class HiveDevBoxSwitcher {
@@ -38,7 +39,7 @@ public class HiveDevBoxSwitcher {
 
   static class Version {
     enum Type {
-      APACHE,
+      APACHE, HDP, DEV
     }
 
     Type type;
@@ -46,15 +47,22 @@ public class HiveDevBoxSwitcher {
 
     public Version(String versionStr) {
       this.versionStr = versionStr;
-      this.type = Type.APACHE;
+      if (versionStr.startsWith("HDP")) {
+        this.type = Type.HDP;
+      } else {
+        this.type = Type.APACHE;
+      }
     }
 
     /** supposed to be the actual version like 3.1.0.7.0.0.0 or something...*/
-    public String getVersion() {
+    public String getComponentVersion(Component c) {
       return versionStr;
     }
 
-    /** supposed to be HDP-3.1*/
+    /** Supposed to be the qualified version string
+     * 
+     * probably something like HDP-3.1
+     */
     public String getVerStr() {
       return versionStr;
     }
@@ -65,7 +73,7 @@ public class HiveDevBoxSwitcher {
     }
   }
 
-  static interface IC {
+  static interface IComponent {
     void switchTo(Version version) throws Exception;
 
     String getComponentName();
@@ -73,7 +81,7 @@ public class HiveDevBoxSwitcher {
 
   static Logger LOG = LoggerFactory.getLogger(HiveDevBoxSwitcher.class);
 
-  static abstract class GenericComponent implements IC {
+  static abstract class GenericComponent implements IComponent {
     File baseDir = new File("/var/tmp/");
 
     @Override
@@ -95,10 +103,11 @@ public class HiveDevBoxSwitcher {
 
     private File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
       File targetPath = new File(baseDir, componentTargetDir);
-      if ("dev".equals(ver.getVersion())) {
+      if (ver.type == Type.DEV) {
         if (!targetPath.exists()) {
           throw new IOException(targetPath + " doesn't exists");
         }
+        // FIXME: glob should came from actual component
         File packageDir = getMatchingPathForGlob(targetPath,
             "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
 //      "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
@@ -179,10 +188,12 @@ public class HiveDevBoxSwitcher {
 
     @Override
     String getApacheMirrorPath(Version ver) {
-      return String.format("hive/hive-%s/apache-hive-%s-bin.tar.gz", ver.getVersion(),
-          ver.getVersion());
+      String v = ver.getComponentVersion(Component.hive);
+      return String.format("hive/hive-%s/apache-hive-%s-bin.tar.gz", v, v);
     }
 
+    // FIXME: probably change to Component?
+    // FIXME: rename Component to ComponentKind ?
     @Override
     public String getComponentName() {
       return "hive";
@@ -194,8 +205,8 @@ public class HiveDevBoxSwitcher {
 
     @Override
     String getApacheMirrorPath(Version ver) {
-      return String.format("hadoop/common/hadoop-%s/hadoop-%s.tar.gz", ver.getVersion(),
-          ver.getVersion());
+      String v = ver.getComponentVersion(Component.hadoop);
+      return String.format("hadoop/common/hadoop-%s/hadoop-%s.tar.gz", v, v);
     }
 
     @Override
@@ -209,8 +220,8 @@ public class HiveDevBoxSwitcher {
 
     @Override
     String getApacheMirrorPath(Version ver) {
-      return String.format("tez/%s/apache-tez-%s-bin.tar.gz", ver.getVersion(),
-          ver.getVersion());
+      String v = ver.getComponentVersion(Component.tez);
+      return String.format("tez/%s/apache-tez-%s-bin.tar.gz", v, v);
     }
 
     @Override
@@ -232,9 +243,9 @@ public class HiveDevBoxSwitcher {
   enum Component {
     hive(new HiveComponent()), hadoop(new HadoopComponent()), tez(new TezComponent()),;
 
-    private IC component;
+    private IComponent component;
 
-    private Component(IC component) {
+    private Component(IComponent component) {
       this.component = component;
     }
 
@@ -246,7 +257,7 @@ public class HiveDevBoxSwitcher {
       }
     }
 
-    IC get() {
+    IComponent get() {
       return component;
     }
   }
