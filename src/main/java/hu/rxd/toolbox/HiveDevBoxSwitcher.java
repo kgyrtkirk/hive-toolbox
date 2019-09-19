@@ -1,7 +1,11 @@
 package hu.rxd.toolbox;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.CopyOption;
 import java.nio.file.DirectoryStream;
@@ -13,7 +17,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -22,6 +32,7 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import hu.rxd.toolbox.HiveDevBoxSwitcher.Version.Type;
@@ -39,23 +50,54 @@ public class HiveDevBoxSwitcher {
 
   static class Version {
     enum Type {
-      APACHE, HDP, DEV
+      APACHE, HDP, DEV;
     }
 
     Type type;
     private String versionStr;
+    private String stackVersion;
 
     public Version(String versionStr) {
       this.versionStr = versionStr;
       if (versionStr.startsWith("HDP")) {
         this.type = Type.HDP;
+        this.stackVersion = versionStr.substring(4);
       } else {
         this.type = Type.APACHE;
       }
     }
 
-    /** supposed to be the actual version like 3.1.0.7.0.0.0 or something...*/
-    public String getComponentVersion(Component c) {
+    /** supposed to be the actual version like 3.1.0.7.0.0.0 or something...
+     * @throws Exception */
+    public String getComponentVersion(Component c) throws Exception {
+      return getComponentVersion(versionStr, c);
+      //      return versionStr;
+    }
+
+    public String getComponentVersion(String versionStr, Component c) throws Exception {
+      if (type == Type.HDP) {
+        String artifacts = String.format("http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/%s/artifacts.txt",stackVersion);
+        Path path = new CachedURL(new URL(artifacts)).getFile().toPath();
+        String versionMatchingPattern = String.format("tars/%s/%s-(.*)-source.tar.gz", c, c);
+        Set<String> matches = Files.lines(path).filter(
+            //tars/hive/hive-3.1.0.3.0.0.0-1634-source.tar.gz
+            s -> s.matches(versionMatchingPattern)
+        ).collect(Collectors.toSet());
+
+        if (matches.size() != 1) {
+          throw new RuntimeException("Expected to match 1 file; found: " + matches.toString());
+        }
+        String m = matches.iterator().next();
+        Matcher match = Pattern.compile(versionMatchingPattern).matcher(m);
+        if(!match.find()) { 
+          throw new RuntimeException("no match?!");
+        }
+        String version = match.group(1);
+        LOG.info("Version of " + c + " for " + versionStr + " is " + version);
+        return version;
+
+      }
+      // TODO Auto-generated method stub
       return versionStr;
     }
 
@@ -167,6 +209,46 @@ public class HiveDevBoxSwitcher {
     String apache_mirror = "http://xenia.sote.hu/ftp/mirrors/www.apache.org/";
     String archive_mirror = "https://archive.apache.org/dist/";
 
+    interface Mirror {
+
+      URL getFor(Component tez, String componentVersion) throws Exception;
+
+    }
+
+    // FIXME s?
+    static class HdpMirrors implements Mirror {
+
+      
+      private static final List<String> MIRROR_ROOTS =
+          Lists.newArrayList(("http://public-repo-1.hortonworks.com/HDP"));
+      private final String baseUrl;
+
+      public HdpMirrors(String string) {
+        baseUrl = string;
+        assert !baseUrl.endsWith("/");
+      }
+
+      //"      centos7/3.x/updates/%s/artifacts.txt",stackVersion)"
+      public static Collection<Mirror> of(Version ver) {
+        List<Mirror> ret = new ArrayList<>();
+        for (String root : MIRROR_ROOTS) {
+          String versionRoot =
+              String.format("%s/centos7/%s.x/updates/%s/", root, ver.stackVersion.substring(0, 1), ver.stackVersion);
+          ret.add(new HdpMirrors(versionRoot));
+        }
+        return ret;
+      }
+
+      @Override
+      public URL getFor(Component tez, String componentVersion) throws Exception {
+        //        tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
+        String tarPart = String.format("tars/%s/%s-%s-minimal.tar.gz", tez, tez, componentVersion);
+        //        String tarPart = String.format("tars/%s/apache-%s-%s-bin.tar.gz", tez, tez, componentVersion);
+        return new URL(baseUrl + tarPart);
+      }
+
+    }
+
     private List<URL> getCandidateUrls(Version ver) throws Exception {
       List<URL> ret = new ArrayList<>();
 
@@ -175,19 +257,36 @@ public class HiveDevBoxSwitcher {
         ret.add(new URL(apache_mirror + getApacheMirrorPath(ver)));
         ret.add(new URL(archive_mirror + getApacheMirrorPath(ver)));
         break;
+      case HDP:
+        // FIXME: can be moved?!
+        String componentVersion = ver.getComponentVersion(getComponentType());
+        for (Mirror m : HdpMirrors.of(ver)) {
+          ret.add(m.getFor(getComponentType(), componentVersion));
+        }
+        break;
       default:
+        //        http: //public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/artifacts.txt
+        //        http: //s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/3.x/BUILDS/3.0.0.0-1634/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
+
         throw new RuntimeException("?");
       }
       return ret;
     }
 
-    abstract String getApacheMirrorPath(Version version);
+    //FIXME
+    protected abstract Component getComponentType();
+
+    //         public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
+    //    http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz]
+    //      at hu.rxd.toolbox.HiveDevBoxSwitcher$GenericComponent.tryDownload(Hive
+
+    abstract String getApacheMirrorPath(Version version) throws Exception;
   }
 
   static class HiveComponent extends GenericComponent {
 
     @Override
-    String getApacheMirrorPath(Version ver) {
+    String getApacheMirrorPath(Version ver) throws Exception {
       String v = ver.getComponentVersion(Component.hive);
       return String.format("hive/hive-%s/apache-hive-%s-bin.tar.gz", v, v);
     }
@@ -199,12 +298,17 @@ public class HiveDevBoxSwitcher {
       return "hive";
     }
 
+    @Override
+    protected Component getComponentType() {
+      return Component.hive;
+    }
+
   }
 
   static class HadoopComponent extends GenericComponent {
 
     @Override
-    String getApacheMirrorPath(Version ver) {
+    String getApacheMirrorPath(Version ver) throws Exception {
       String v = ver.getComponentVersion(Component.hadoop);
       return String.format("hadoop/common/hadoop-%s/hadoop-%s.tar.gz", v, v);
     }
@@ -214,12 +318,17 @@ public class HiveDevBoxSwitcher {
       return "hadoop";
     }
 
+    @Override
+    protected Component getComponentType() {
+      return Component.hadoop;
+    }
+
   }
 
   static class TezComponent extends GenericComponent {
 
     @Override
-    String getApacheMirrorPath(Version ver) {
+    String getApacheMirrorPath(Version ver) throws Exception {
       String v = ver.getComponentVersion(Component.tez);
       return String.format("tez/%s/apache-tez-%s-bin.tar.gz", v, v);
     }
@@ -227,6 +336,11 @@ public class HiveDevBoxSwitcher {
     @Override
     public String getComponentName() {
       return "tez";
+    }
+
+    @Override
+    protected Component getComponentType() {
+      return Component.tez;
     }
 
     public void postActivation() throws IOException {
