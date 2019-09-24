@@ -19,13 +19,17 @@ public class CachedURL {
   private File tmpFile;
 
   public CachedURL(URL url) throws IOException {
+    this(url, new File(System.getProperty(("java.io.tmpdir"))));
+  }
+
+  public CachedURL(URL url, File downloadDir) throws IOException {
     remoteUrl = url;
     
     String sha1 = DigestUtils.sha1Hex(remoteUrl.toString());
     String baseName = new File(url.getPath()).getName();
     String localFileName = "hu.rxd.tmp-" + sha1 + "." + baseName;
-    cachedFile = new File(new File(System.getProperty(("java.io.tmpdir"))), localFileName);
-    tmpFile = new File(new File(System.getProperty(("java.io.tmpdir"))), localFileName + ".tmp");
+    cachedFile = new File(downloadDir, localFileName);
+    tmpFile = new File(downloadDir, localFileName + ".tmp");
   }
 
   public File getFile() throws IOException {

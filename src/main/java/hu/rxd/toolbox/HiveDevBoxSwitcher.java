@@ -50,7 +50,7 @@ public class HiveDevBoxSwitcher {
 
   static class Version {
     enum Type {
-      APACHE, HDP, DEV;
+      APACHE, HDP, DEV, XXX;
     }
 
     Type type;
@@ -61,6 +61,10 @@ public class HiveDevBoxSwitcher {
       this.versionStr = versionStr;
       if (versionStr.startsWith("HDP")) {
         this.type = Type.HDP;
+        this.stackVersion = versionStr.substring(4);
+      }
+      if (versionStr.startsWith("XXX")) {
+        this.type = Type.XXX;
         this.stackVersion = versionStr.substring(4);
       } else {
         this.type = Type.APACHE;
@@ -75,8 +79,18 @@ public class HiveDevBoxSwitcher {
     }
 
     public String getComponentVersion(String versionStr, Component c) throws Exception {
-      if (type == Type.HDP) {
-        String artifacts = String.format("http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/%s/artifacts.txt",stackVersion);
+      if (type == Type.HDP || type == Type.XXX) {
+
+        String artifacts;
+        if (type == Type.HDP) {
+          artifacts = String.format("http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/%s/artifacts.txt",
+              stackVersion);
+        } else {
+          artifacts =
+              String.format(
+                  "http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/%s/cdh/7.x/redhat7/yum/artifacts.txt",
+                  stackVersion);
+        }
         Path path = new CachedURL(new URL(artifacts)).getFile().toPath();
         String versionMatchingPattern = String.format("tars/%s/%s-(.*)-source.tar.gz", c, c);
         Set<String> matches = Files.lines(path).filter(
@@ -124,14 +138,17 @@ public class HiveDevBoxSwitcher {
   static Logger LOG = LoggerFactory.getLogger(HiveDevBoxSwitcher.class);
 
   static abstract class GenericComponent implements IComponent {
-    File baseDir = new File("/var/tmp/");
+    File baseDir = new File("/work/");
+    File downloadDir = new File(baseDir, ".downloads");
+    File linkDir = new File("/active/");
+    //    File baseDir = new File("/var/tmp/");
 
     @Override
     public void switchTo(Version ver) throws Exception {
       String componentTargetDir = String.format("%s-%s", getComponentName(), ver.getVerStr());
       File targetPath = ensurePresence(ver, componentTargetDir);
 
-      File link = new File(baseDir, getComponentName());
+      File link = new File(linkDir, getComponentName());
       if (Files.isSymbolicLink(link.toPath())) {
         link.delete();
       }
@@ -143,7 +160,7 @@ public class HiveDevBoxSwitcher {
     public void postActivation() throws Exception {
     }
 
-    private File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
+    protected File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
       File targetPath = new File(baseDir, componentTargetDir);
       if (ver.type == Type.DEV) {
         if (!targetPath.exists()) {
@@ -195,10 +212,10 @@ public class HiveDevBoxSwitcher {
       return new File(path, dirs[0]);
     }
 
-    private File tryDownload(List<URL> candidateUrls) throws IOException {
+    protected File tryDownload(List<URL> candidateUrls) throws IOException {
       for (URL url : candidateUrls) {
         try {
-          return new CachedURL(url).getFile();
+          return new CachedURL(url, downloadDir).getFile();
         } catch (Exception e) {
           LOG.info("failed to download: " + url);
         }
@@ -242,14 +259,53 @@ public class HiveDevBoxSwitcher {
       @Override
       public URL getFor(Component tez, String componentVersion) throws Exception {
         //        tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
-        String tarPart = String.format("tars/%s/%s-%s-minimal.tar.gz", tez, tez, componentVersion);
+        String tarPart = String.format("tars/%s/%s-%s.tar.gz", tez, tez, componentVersion);
         //        String tarPart = String.format("tars/%s/apache-%s-%s-bin.tar.gz", tez, tez, componentVersion);
         return new URL(baseUrl + tarPart);
       }
 
     }
 
-    private List<URL> getCandidateUrls(Version ver) throws Exception {
+    // FIXME s?
+    static class XXXMirrors implements Mirror {
+
+      private static final List<String> MIRROR_ROOTS =
+          Lists.newArrayList(("http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build"));
+      private final String baseUrl;
+
+      public XXXMirrors(String string) {
+        baseUrl = string;
+        assert !baseUrl.endsWith("/");
+      }
+
+      //"      centos7/3.x/updates/%s/artifacts.txt",stackVersion)"
+      public static Collection<Mirror> of(Version ver) {
+        List<Mirror> ret = new ArrayList<>();
+        for (String root : MIRROR_ROOTS) {
+          String versionRoot =
+              String.format("%s/%s/cdh/7.x/redhat7/yum/", root, ver.stackVersion);
+          ret.add(new XXXMirrors(versionRoot));
+        }
+        return ret;
+      }
+
+      @Override
+      public URL getFor(Component tez, String componentVersion) throws Exception {
+        String tarPart;
+        if (tez == Component.hive) {
+          tarPart = String.format("tars/%s/apache-%s-%s-bin.tar.gz", tez, tez, componentVersion);
+        } else {
+          //        tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
+          tarPart = String.format("tars/%s/%s-%s.tar.gz", tez, tez, componentVersion);
+
+        }
+        //        String tarPart = String.format("tars/%s/apache-%s-%s-bin.tar.gz", tez, tez, componentVersion);
+        return new URL(baseUrl + tarPart);
+      }
+
+    }
+
+    protected List<URL> getCandidateUrls(Version ver) throws Exception {
       List<URL> ret = new ArrayList<>();
 
       switch (ver.type) {
@@ -258,11 +314,20 @@ public class HiveDevBoxSwitcher {
         ret.add(new URL(archive_mirror + getApacheMirrorPath(ver)));
         break;
       case HDP:
-        // FIXME: can be moved?!
+      { // FIXME: can be moved?!
         String componentVersion = ver.getComponentVersion(getComponentType());
         for (Mirror m : HdpMirrors.of(ver)) {
           ret.add(m.getFor(getComponentType(), componentVersion));
         }
+        break;
+      }
+      case XXX: {
+        // FIXME: can be moved?!
+        String componentVersion = ver.getComponentVersion(getComponentType());
+        for (Mirror m : XXXMirrors.of(ver)) {
+          ret.add(m.getFor(getComponentType(), componentVersion));
+        }
+      }
         break;
       default:
         //        http: //public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/artifacts.txt
@@ -343,9 +408,32 @@ public class HiveDevBoxSwitcher {
       return Component.tez;
     }
 
+    @Override
+    protected File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
+      if (ver.type == Type.APACHE) {
+        // FIXME hackyu
+        return super.ensurePresence(ver, componentTargetDir);
+      }
+
+      // HDP/CDP releases only supply the "shared" tez.tgz under tars
+      File targetPath = new File(baseDir, componentTargetDir);
+      if (!targetPath.exists()) {
+        LOG.info("downloading: {}", ver);
+        File f = tryDownload(getCandidateUrls(ver));
+        File expandPath = new File(baseDir, componentTargetDir + ".tmp");
+        FileUtils.deleteDirectory(expandPath);
+        File targetTgz = new File(expandPath, "/share/tez.tar.gz");
+        FileUtils.forceMkdir(targetTgz.getParentFile());
+        FileUtils.copyFile(f, targetTgz);
+        expandPath.renameTo(targetPath);
+      }
+      return targetPath;
+
+    }
+
     public void postActivation() throws IOException {
       try {
-        Files.copy(new File(baseDir + "/tez/share/tez.tar.gz").toPath(), new File("/apps/tez/tez.tar.gz").toPath(),
+        Files.copy(new File(linkDir + "/tez/share/tez.tar.gz").toPath(), new File("/apps/tez/tez.tar.gz").toPath(),
             StandardCopyOption.REPLACE_EXISTING);
       } catch (Exception e) {
         throw new IOException("cant copy tez.tar.gz", e);
