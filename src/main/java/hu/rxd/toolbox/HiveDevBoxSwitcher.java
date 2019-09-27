@@ -1,19 +1,10 @@
 package hu.rxd.toolbox;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.CopyOption;
-import java.nio.file.DirectoryStream;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.PathMatcher;
-import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,7 +14,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.DirectoryScanner;
@@ -32,7 +22,6 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import hu.rxd.toolbox.HiveDevBoxSwitcher.Version.Type;
@@ -59,11 +48,12 @@ public class HiveDevBoxSwitcher {
 
     public Version(String versionStr) {
       this.versionStr = versionStr;
-      if (versionStr.startsWith("HDP")) {
+      if (versionStr.startsWith("DEV")) {
+        this.type = Type.DEV;
+      } else if (versionStr.startsWith("HDP")) {
         this.type = Type.HDP;
         this.stackVersion = versionStr.substring(4);
-      }
-      if (versionStr.startsWith("XXX")) {
+      } else if (versionStr.startsWith("XXX")) {
         this.type = Type.XXX;
         this.stackVersion = versionStr.substring(4);
       } else {
