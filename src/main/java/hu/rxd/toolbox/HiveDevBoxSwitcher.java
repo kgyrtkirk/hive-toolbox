@@ -145,8 +145,7 @@ public class HiveDevBoxSwitcher {
 
     @Override
     public void switchTo(Version ver) throws Exception {
-      String componentTargetDir = String.format("%s-%s", getComponentName(), ver.getVerStr());
-      File targetPath = ensurePresence(ver, componentTargetDir);
+      File targetPath = ensurePresence(ver);
 
       File link = new File(linkDir, getComponentName());
       if (Files.isSymbolicLink(link.toPath())) {
@@ -157,29 +156,28 @@ public class HiveDevBoxSwitcher {
       LOG.info("activated {} for {}", targetPath, getComponentName());
     }
 
+    /**
+     * Some components may need to do something after activation.
+     * 
+     * For example Tez needs to be placed at some predefined hdfs location to work.
+     */
     public void postActivation() throws Exception {
     }
 
-    protected File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
-      File targetPath = new File(baseDir, componentTargetDir);
+    protected File ensurePresence(Version ver) throws IOException, Exception {
       if (ver.type == Type.DEV) {
-        if (!targetPath.exists()) {
-          throw new IOException(targetPath + " doesn't exists");
-        }
-        // FIXME: glob should came from actual component
-        File packageDir = getMatchingPathForGlob(targetPath,
-            "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
-//      "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
-        return packageDir;
+        return provideDevPath(ver);
       }
-
-      if (!targetPath.exists()) {
-        expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
-      } else {
-        LOG.info("{} is already present", componentTargetDir);
-      }
+      String componentTargetDir = String.format("%s-%s", getComponentName(), ver.getVerStr());
+      File targetPath = new File(baseDir, componentTargetDir);
+      if (!targetPath.exists())
+        provideComponent(targetPath, ver);
       return targetPath;
     }
+
+    protected abstract void provideComponent(File targetPath, Version ver) throws Exception;
+
+    protected abstract File provideDevPath(Version ver) throws Exception;
 
     /**
      * Expands a "standard" release artifact.
@@ -187,7 +185,7 @@ public class HiveDevBoxSwitcher {
      * they contain exactly 1 directory at the top level of the archive
      * exmaple: apache-hive releases or apache-maven releases
      */
-    private void expand1DirReleaseArtifact(File targetPath, File artifactFile) throws IOException {
+    protected void expand1DirReleaseArtifact(File targetPath, File artifactFile) throws IOException {
       File expandPath = new File(baseDir, targetPath.getName() + ".tmp");
       FileUtils.deleteDirectory(expandPath);
       Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
@@ -377,6 +375,42 @@ public class HiveDevBoxSwitcher {
       return Component.hive;
     }
 
+    protected File ensurePresence(Version ver, String componentTargetDir) throws Exception {
+      File targetPath = new File(baseDir, componentTargetDir);
+      switch (ver.type) {
+      case DEV:
+        if (!targetPath.exists()) {
+          throw new IOException(targetPath + " doesn't exists");
+        }
+        File packageDir = getMatchingPathForGlob(targetPath,
+            "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
+        return packageDir;
+      case APACHE:
+      case HDP:
+        if (!targetPath.exists()) {
+          expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
+        } else {
+          LOG.info("{} is already present", componentTargetDir);
+        }
+        return targetPath;
+      default:
+        throw new RuntimeException("not handled case: " + ver.type);
+      }
+    }
+
+    @Override
+    protected void provideComponent(File targetPath, Version ver) throws Exception {
+      expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
+    }
+
+    @Override
+    protected File provideDevPath(Version ver) throws Exception {
+      File targetPath = new File("/home/dev/hive");
+      File packageDir = getMatchingPathForGlob(targetPath,
+          "packaging/target/apache-hive-*-SNAPSHOT-bin/apache-hive-*-SNAPSHOT-bin");
+      return packageDir;
+    }
+
   }
 
   static class HadoopComponent extends GenericComponent {
@@ -395,6 +429,20 @@ public class HiveDevBoxSwitcher {
     @Override
     protected Component getComponentType() {
       return Component.hadoop;
+    }
+
+
+    @Override
+    protected void provideComponent(File targetPath, Version ver) throws Exception {
+      expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
+    }
+
+    @Override
+    protected File provideDevPath(Version ver) throws Exception {
+      File targetPath = new File("/home/dev/hadoop");
+      File packageDir = getMatchingPathForGlob(targetPath,
+          "packaging/target/apache-invalid-not-yet-checked-*-SNAPSHOT-bin/apache-invalid-*-SNAPSHOT-bin");
+      return packageDir;
     }
 
   }
@@ -418,26 +466,30 @@ public class HiveDevBoxSwitcher {
     }
 
     @Override
-    protected File ensurePresence(Version ver, String componentTargetDir) throws IOException, Exception {
-      if (ver.type == Type.APACHE) {
-        // FIXME hackyu
-        return super.ensurePresence(ver, componentTargetDir);
-      }
-
-      // HDP/CDP releases only supply the "shared" tez.tgz under tars
-      File targetPath = new File(baseDir, componentTargetDir);
-      if (!targetPath.exists()) {
+    protected void provideComponent(File targetPath, Version ver) throws Exception {
+      switch (ver.type) {
+      case HDP:
+      case XXX:
         LOG.info("downloading: {}", ver);
         File f = downloadArtifact(getCandidateUrls(ver));
-        File expandPath = new File(baseDir, componentTargetDir + ".tmp");
+        File expandPath = new File(baseDir, targetPath.getName() + ".tmp");
         FileUtils.deleteDirectory(expandPath);
         File targetTgz = new File(expandPath, "/share/tez.tar.gz");
         FileUtils.forceMkdir(targetTgz.getParentFile());
         FileUtils.copyFile(f, targetTgz);
         expandPath.renameTo(targetPath);
+        return;
+      default:
+        expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
       }
-      return targetPath;
+    }
 
+    @Override
+    protected File provideDevPath(Version ver) throws Exception {
+      File targetPath = new File("/home/dev/hadoop");
+      File packageDir = getMatchingPathForGlob(targetPath,
+          "packaging/target/apache-invalid-not-yet-checked-*-SNAPSHOT-bin/apache-invalid-*-SNAPSHOT-bin");
+      return packageDir;
     }
 
     public void postActivation() throws IOException {
