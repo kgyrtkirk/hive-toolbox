@@ -9,7 +9,6 @@ import com.google.common.collect.Lists;
 
 // FIXME s?
 class HdpMirrors implements Mirror {
-
   
   private static final List<String> MIRROR_ROOTS =
       Lists.newArrayList(("http://public-repo-1.hortonworks.com/HDP"));

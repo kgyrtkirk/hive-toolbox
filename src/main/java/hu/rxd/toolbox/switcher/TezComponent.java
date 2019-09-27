@@ -7,8 +7,6 @@ import java.nio.file.StandardCopyOption;
 
 import org.apache.commons.io.FileUtils;
 
-import hu.rxd.toolbox.HiveDevBoxSwitcher;
-
 class TezComponent extends GenericComponent {
 
   @Override

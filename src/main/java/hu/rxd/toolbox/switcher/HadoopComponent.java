@@ -15,7 +15,6 @@ class HadoopComponent extends GenericComponent {
     return Component.hadoop;
   }
 
-
   @Override
   protected void provideComponent(File targetPath, Version ver) throws Exception {
     expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));

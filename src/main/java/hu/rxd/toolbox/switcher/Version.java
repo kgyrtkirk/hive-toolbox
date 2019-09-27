@@ -15,8 +15,19 @@ import hu.rxd.toolbox.HiveDevBoxSwitcher;
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class Version {
+
   public enum Type {
-    APACHE, HDP, DEV, XXX;
+    APACHE(new ApacheMirrors()), HDP(new HdpMirrors2()), DEV(new DevMirrors()), XXX(new XXXMirrors2());
+
+    public Mirrors mirrors;
+
+    private Type(Mirrors m) {
+      mirrors = m;
+    }
+
+    public Mirrors getMirrors() {
+      return mirrors;
+    }
   }
 
   Version.Type type;
@@ -41,7 +52,7 @@ public class Version {
   /** supposed to be the actual version like 3.1.0.7.0.0.0 or something...
    * @throws Exception */
   public String getComponentVersion(Component c) throws Exception {
-    return getComponentVersion(versionStr, c);
+    return type.getMirrors().getComponentVersion(this, c);
     //      return versionStr;
   }
 
