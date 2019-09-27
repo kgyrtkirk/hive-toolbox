@@ -17,7 +17,7 @@ import hu.rxd.toolbox.qtest.diff.CachedURL;
 public class Version {
 
   public enum Type {
-    APACHE(new ApacheMirrors()), HDP(new HdpMirrors2()), DEV(new DevMirrors()), XXX(new XXXMirrors2());
+    APACHE(new ApacheMirrors()), HDP(new HdpMirrors()), DEV(new DevMirrors()), XXX(new CDPMirrors());
 
     public Mirrors mirrors;
 

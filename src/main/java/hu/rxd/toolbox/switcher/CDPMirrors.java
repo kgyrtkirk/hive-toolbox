@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,11 +15,13 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Lists;
+
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 
-public class XXXMirrors2 implements Mirrors {
+public class CDPMirrors implements Mirrors {
 
-  static Logger LOG = LoggerFactory.getLogger(XXXMirrors2.class);
+  static Logger LOG = LoggerFactory.getLogger(CDPMirrors.class);
 
   @Override
   public String getComponentVersion(Version version, Component c) throws Exception {
@@ -26,6 +31,20 @@ public class XXXMirrors2 implements Mirrors {
         version.stackVersion);
     return determineComponentVerFromArtifactsTxt(artifacts, version, c);
 
+  }
+
+  private static final List<String> MIRROR_ROOTS =
+      Lists.newArrayList(("http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build"));
+
+  //"      centos7/3.x/updates/%s/artifacts.txt",stackVersion)"
+  public static Collection<Mirror> of(Version ver) {
+    List<Mirror> ret = new ArrayList<>();
+    for (String root : MIRROR_ROOTS) {
+      String versionRoot =
+          String.format("%s/%s/cdh/7.x/redhat7/yum/", root, ver.stackVersion);
+      ret.add(new CDPMirror(versionRoot));
+    }
+    return ret;
   }
 
   static String determineComponentVerFromArtifactsTxt(String artifacts, Version v, Component c)

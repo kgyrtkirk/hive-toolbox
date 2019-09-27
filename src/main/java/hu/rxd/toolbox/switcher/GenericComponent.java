@@ -137,7 +137,7 @@ abstract class GenericComponent implements IComponent {
     case XXX: {
       // FIXME: can be moved?!
       String componentVersion = ver.getComponentVersion(getComponentType());
-      for (Mirror m : XXXMirrors.of(ver)) {
+      for (Mirror m : CDPMirrors.of(ver)) {
         ret.add(m.getFor(getComponentType(), componentVersion));
       }
     }
