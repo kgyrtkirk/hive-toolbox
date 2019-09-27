@@ -18,12 +18,7 @@ class TezComponent extends GenericComponent {
   }
 
   @Override
-  public String getComponentName() {
-    return "tez";
-  }
-
-  @Override
-  protected Component getComponentType() {
+  public Component getComponentType() {
     return Component.tez;
   }
 

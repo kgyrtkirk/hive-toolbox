@@ -22,4 +22,8 @@ public enum Component {
   public IComponent get() {
     return component;
   }
+
+  public String getLabel() {
+    return toString();
+  }
 }

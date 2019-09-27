@@ -11,12 +11,7 @@ class HadoopComponent extends GenericComponent {
   }
 
   @Override
-  public String getComponentName() {
-    return "hadoop";
-  }
-
-  @Override
-  protected Component getComponentType() {
+  public Component getComponentType() {
     return Component.hadoop;
   }
 

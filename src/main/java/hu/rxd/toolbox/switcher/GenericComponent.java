@@ -31,13 +31,13 @@ abstract class GenericComponent implements IComponent {
   public void switchTo(Version ver) throws Exception {
     File targetPath = ensurePresence(ver);
 
-    File link = new File(linkDir, getComponentName());
+    File link = new File(linkDir, getComponentType().getLabel());
     if (Files.isSymbolicLink(link.toPath())) {
       link.delete();
     }
     Files.createSymbolicLink(link.toPath(), targetPath.toPath());
     postActivation();
-    LOG.info("activated {} for {}", targetPath, getComponentName());
+    LOG.info("activated {} for {}", targetPath, getComponentType());
   }
 
   /**
@@ -52,7 +52,7 @@ abstract class GenericComponent implements IComponent {
     if (ver.type == Type.DEV) {
       return provideDevPath(ver);
     }
-    String componentTargetDir = String.format("%s-%s", getComponentName(), ver.getVerStr());
+    String componentTargetDir = String.format("%s-%s", getComponentType().getLabel(), ver.getVerStr());
     File targetPath = new File(baseDir, componentTargetDir);
     if (!targetPath.exists())
       provideComponent(targetPath, ver);
@@ -150,9 +150,6 @@ abstract class GenericComponent implements IComponent {
     }
     return ret;
   }
-
-  //FIXME
-  protected abstract Component getComponentType();
 
   //         public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
   //    http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz]

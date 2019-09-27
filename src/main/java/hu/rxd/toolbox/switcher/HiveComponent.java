@@ -13,15 +13,8 @@ class HiveComponent extends GenericComponent {
     return String.format("hive/hive-%s/apache-hive-%s-bin.tar.gz", v, v);
   }
 
-  // FIXME: probably change to Component?
-  // FIXME: rename Component to ComponentKind ?
   @Override
-  public String getComponentName() {
-    return "hive";
-  }
-
-  @Override
-  protected Component getComponentType() {
+  public Component getComponentType() {
     return Component.hive;
   }
 
