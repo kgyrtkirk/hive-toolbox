@@ -174,26 +174,34 @@ public class HiveDevBoxSwitcher {
       }
 
       if (!targetPath.exists()) {
-        LOG.info("downloading: {}", ver);
-        File f = tryDownload(getCandidateUrls(ver));
-        File expandPath = new File(baseDir, componentTargetDir + ".tmp");
-        FileUtils.deleteDirectory(expandPath);
-        Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
-        LOG.info("extracting: {}", componentTargetDir);
-        archiver.extract(f, expandPath);
-
-        File[] files = expandPath.listFiles();
-        if (files.length != 1) {
-          throw new RuntimeException("expected to have only one directory in the archive... " + Arrays.toString(files));
-        }
-        LOG.info("renaming {} to {}", files[0], targetPath);
-        files[0].renameTo(targetPath);
-        FileUtils.deleteDirectory(expandPath);
-        LOG.info("finished: {}", componentTargetDir);
+        expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
       } else {
         LOG.info("{} is already present", componentTargetDir);
       }
       return targetPath;
+    }
+
+    /**
+     * Expands a "standard" release artifact.
+     *
+     * they contain exactly 1 directory at the top level of the archive
+     * exmaple: apache-hive releases or apache-maven releases
+     */
+    private void expand1DirReleaseArtifact(File targetPath, File artifactFile) throws IOException {
+      File expandPath = new File(baseDir, targetPath.getName() + ".tmp");
+      FileUtils.deleteDirectory(expandPath);
+      Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
+      LOG.info("extracting: {}", artifactFile.getName());
+      archiver.extract(artifactFile, expandPath);
+
+      File[] files = expandPath.listFiles();
+      if (files.length != 1) {
+        throw new RuntimeException("expected to have only one directory in the archive... " + Arrays.toString(files));
+      }
+      LOG.info("renaming {} to {}", files[0], targetPath);
+      files[0].renameTo(targetPath);
+      FileUtils.deleteDirectory(expandPath);
+      LOG.info("finished: {}", targetPath);
     }
 
     File getMatchingPathForGlob(File path, String glob) throws IOException {
@@ -212,9 +220,10 @@ public class HiveDevBoxSwitcher {
       return new File(path, dirs[0]);
     }
 
-    protected File tryDownload(List<URL> candidateUrls) throws IOException {
+    protected File downloadArtifact(List<URL> candidateUrls) throws IOException {
       for (URL url : candidateUrls) {
         try {
+          LOG.info("downloading: {}", url);
           return new CachedURL(url, downloadDir).getFile();
         } catch (Exception e) {
           LOG.info("failed to download: " + url);
@@ -419,7 +428,7 @@ public class HiveDevBoxSwitcher {
       File targetPath = new File(baseDir, componentTargetDir);
       if (!targetPath.exists()) {
         LOG.info("downloading: {}", ver);
-        File f = tryDownload(getCandidateUrls(ver));
+        File f = downloadArtifact(getCandidateUrls(ver));
         File expandPath = new File(baseDir, componentTargetDir + ".tmp");
         FileUtils.deleteDirectory(expandPath);
         File targetTgz = new File(expandPath, "/share/tez.tar.gz");
