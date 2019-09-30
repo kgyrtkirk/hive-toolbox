@@ -88,7 +88,7 @@ compile group: 'org.codehaus.plexus', name: 'plexus-utils', version: '3.2.1'
 
 }
 
-task fooDeb(type: Deb) {
+task toolboxDeb(type: Deb) {
   def targetDir='/usr/local/hive-toolbox/'
 	from(installDist.outputs) {
     into targetDir
