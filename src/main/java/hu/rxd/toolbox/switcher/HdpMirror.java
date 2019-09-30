@@ -18,11 +18,13 @@ class HdpMirror implements Mirror {
   }
 
   @Override
-  public URL getFor(Component tez, String componentVersion) throws Exception {
-    //        tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
-    String tarPart = String.format("tars/%s/%s-%s.tar.gz", tez, tez, componentVersion);
-    //        String tarPart = String.format("tars/%s/apache-%s-%s-bin.tar.gz", tez, tez, componentVersion);
+  public URL getFor(Component component, String componentVersion) throws Exception {
+    String tarPart;
+    if (component == Component.hive) {
+      tarPart = String.format("tars/%s/apache-%s-%s-bin.tar.gz", component, component, componentVersion);
+    } else {
+      tarPart = String.format("tars/%s/%s-%s.tar.gz", component, component, componentVersion);
+    }
     return new URL(baseUrl + tarPart);
   }
-
 }

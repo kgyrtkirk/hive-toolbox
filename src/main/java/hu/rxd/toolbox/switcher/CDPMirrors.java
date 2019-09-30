@@ -51,6 +51,7 @@ public class CDPMirrors implements Mirrors {
       throws Exception, IOException {
     Path path = new CachedURL(new URL(artifacts)).getFile().toPath();
     String versionMatchingPattern = String.format("tars/%s/%s-(.*)-source.tar.gz", c, c);
+    LOG.info("matchpattern: {}", versionMatchingPattern);
     Set<String> matches = Files.lines(path).filter(
         s -> s.matches(versionMatchingPattern)
     ).collect(Collectors.toSet());
