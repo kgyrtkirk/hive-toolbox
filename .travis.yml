@@ -17,5 +17,4 @@ cache:
 
 install: true
 
-script: ./gradlew test installDist
-
+script: ./gradlew test installDist toolboxDeb
