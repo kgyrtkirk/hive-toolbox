@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.junit.Test;
+import org.junit.Ignore;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
@@ -14,6 +15,7 @@ import com.offbytwo.jenkins.model.QueueItem;
 
 import hu.rxd.toolbox.jira.ToolboxSettings;
 
+@Ignore
 public class MXJenkinQueuePTest {
   @Test
   public void tx19() throws Exception {
