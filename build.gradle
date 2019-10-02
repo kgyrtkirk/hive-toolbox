@@ -4,6 +4,7 @@ plugins {
   id 'groovy'
   id 'eclipse'
   id 'application'
+  id "com.github.breadmoirai.github-release" version "2.2.9"
 }
 
 version = gitVersion()
@@ -99,5 +100,26 @@ task toolboxDeb(type: Deb) {
 
   scripts.each { name,clazz ->
     link("/bin/${name}","${targetDir}/bin/${name}")
+  }
+}
+
+githubRelease {
+    token System.getenv('GITHUB_REPO_TOKEN')
+    owner "kgyrtkirk"
+    // repo "github-release"
+    tagName project.version // "v1.0.0" // by default this is set to "v${project.version}"
+    // targetCommitish "master" // by default this is set to "master"
+    // releaseName "v1.0.0" // Release title, by default this is the same as the tagName
+    // body "" // by default this is empty
+    // draft false // by default this is false
+    // prerelease false // by default this is false
+    releaseAssets toolboxDeb.outputs // jar.destinationDir.listFiles // this points to which files you want to upload as assets with your release
+    overwrite true // by default false; if set to true, will delete an existing release with the same tag and name
+    // apiEndpoint "https://api.github.com" // should only change for github enterprise users
+}
+
+tasks.githubRelease.doFirst {
+  if(project.version.contains("dirty") || project.version.contains('-')) {
+    throw new RuntimeException("Please don't do dirty/intermediate releases " + project.version);
   }
 }
