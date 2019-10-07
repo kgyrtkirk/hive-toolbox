@@ -95,7 +95,7 @@ task toolboxDeb(type: Deb) {
     into targetDir
   }
   from('src/main/scripts') {
-    into "${targetDir}/scripts"
+    into "${targetDir}/usr/bin"
   }
 
   scripts.each { name,clazz ->
