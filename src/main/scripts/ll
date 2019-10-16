@@ -1,0 +1,19 @@
+#!/bin/bash
+
+f="$1"
+find . -name "$f" > /tmp/.ll
+n="`wc -l < /tmp/.ll`"
+if [ "$n" == "0" ];then
+	echo "Zarro files found: $f"
+	exit 1
+fi
+
+
+
+(
+if [ "$n" -ne "1" ];then
+	echo "More than one match found ($n)"
+	head cat /tmp/.ll
+fi
+cat "`cat /tmp/.ll|head -n1`"
+)|less
