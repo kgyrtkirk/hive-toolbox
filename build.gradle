@@ -103,11 +103,15 @@ task toolboxDeb(type: Deb) {
   }
 }
 
+if(System.getenv('GITHUB_REPO_TOKEN')==null) {
+	logger.warn('You dont have GITHUB_REPO_TOKEN set => release disabled')
+}else{
 githubRelease {
     token System.getenv('GITHUB_REPO_TOKEN')
     owner "kgyrtkirk"
     tagName project.version
     releaseAssets toolboxDeb.outputs
+}
 }
 
 tasks.githubRelease.doFirst {
