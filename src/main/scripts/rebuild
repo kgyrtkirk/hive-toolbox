@@ -1,0 +1,27 @@
+#!/bin/bash -e
+
+MODULES="`git config --local extra.ideProjects`"
+
+set -e
+if [ "$MODULES" == "" ];then
+        echo -e "no ide modules; use:\n git config --local extra.ideProjects ql,common"
+        exit 1
+fi
+
+if git status --porcelain=2|grep .;then
+    echo "> worktree is not clean; continue?"
+    read
+    if [ "$REPLY" != "y" ]; then
+        echo "interrupted.."
+        exit 1
+    fi
+fi
+
+banner clean
+git clean -dfx
+banner install
+MOPTS="-DskipTests -q"
+time mvn install source:jar install $MOPTS -am -U -Pdist
+banner eclipse
+time mvn eclipse:eclipse $MOPTS -pl $MODULES
+banner ok
