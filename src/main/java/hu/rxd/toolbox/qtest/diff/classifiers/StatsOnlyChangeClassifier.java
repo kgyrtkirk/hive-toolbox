@@ -76,6 +76,9 @@ public class StatsOnlyChangeClassifier implements Classifier {
       if (string.matches("^ *(Map|Reducer) [0-9]+ <- (Map|Reducer) [0-9]+ \\(.*\\)$")) {
         return "__STAGE_DEPS_TEZ";
       }
+    if (string.matches("^.*Operator.*\\(rows=[0-9]+ width=[0-9]+\\)$")) {
+      return "__USER_OPERATOR_STAT";
+    }
 //      Reducer 2 <- Map 1 (GROUP, 4)
 
 

@@ -1,0 +1,40 @@
+2237c2237
+<         Merge Join Operator [MERGEJOIN_37] (rows=131 width=178)
+---
+>         Merge Join Operator [MERGEJOIN_37] (rows=83 width=178)
+2293c2293
+<         Merge Join Operator [MERGEJOIN_37] (rows=131 width=178)
+---
+>         Merge Join Operator [MERGEJOIN_37] (rows=83 width=178)
+2388c2388
+<         Select Operator [SEL_20] (rows=3 width=8)
+---
+>         Select Operator [SEL_20] (rows=1 width=8)
+2390c2390
+<           Merge Join Operator [MERGEJOIN_51] (rows=3 width=8)
+---
+>           Merge Join Operator [MERGEJOIN_51] (rows=1 width=8)
+2707c2707
+<         Select Operator [SEL_23] (rows=33 width=223)
+---
+>         Select Operator [SEL_23] (rows=38 width=223)
+2709c2709
+<           Filter Operator [FIL_22] (rows=33 width=227)
+---
+>           Filter Operator [FIL_22] (rows=38 width=228)
+2711c2711
+<             Merge Join Operator [MERGEJOIN_45] (rows=33 width=227)
+---
+>             Merge Join Operator [MERGEJOIN_45] (rows=38 width=228)
+2716c2716
+<                 Merge Join Operator [MERGEJOIN_44] (rows=31 width=226)
+---
+>                 Merge Join Operator [MERGEJOIN_44] (rows=36 width=227)
+2728c2728
+<                     Group By Operator [GBY_7] (rows=1 width=114)
+---
+>                     Group By Operator [GBY_7] (rows=2 width=114)
+2733c2733
+<                         Group By Operator [GBY_5] (rows=1 width=114)
+---
+>                         Group By Operator [GBY_5] (rows=2 width=114)
