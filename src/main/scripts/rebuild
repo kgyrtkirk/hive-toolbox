@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash
 
 MODULES="`git config --local extra.ideProjects`"
 
