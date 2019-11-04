@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 public class Version {
 
   public enum Type {
-    APACHE(new ApacheMirrors()), HDP(new HdpMirrors()), DEV(new DevMirrors()), XXX(new CDPMirrors());
+    APACHE(new ApacheMirrors()), HDP(new HdpMirrors()), DEV(new DevMirrors()), CDP(new CDPMirrors());
 
     public Mirrors mirrors;
 
@@ -31,8 +31,8 @@ public class Version {
     } else if (versionStr.startsWith("HDP")) {
       this.type = Type.HDP;
       this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(4));
-    } else if (versionStr.startsWith("XXX")) {
-      this.type = Type.XXX;
+    } else if (versionStr.startsWith("CDP")) {
+      this.type = Type.CDP;
       this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(4));
     } else {
       this.type = Type.APACHE;

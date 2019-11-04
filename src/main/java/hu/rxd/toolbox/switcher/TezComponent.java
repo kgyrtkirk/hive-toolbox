@@ -24,7 +24,7 @@ class TezComponent extends GenericComponent {
   protected void provideComponent(File targetPath, Version ver) throws Exception {
     switch (ver.type) {
     case HDP:
-    case XXX:
+    case CDP:
       LOG.info("downloading: {}", ver);
       File f = downloadArtifact(getCandidateUrls(ver));
       File expandPath = new File(baseDir, targetPath.getName() + ".tmp");
