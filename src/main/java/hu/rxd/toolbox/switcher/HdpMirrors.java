@@ -1,30 +1,54 @@
 package hu.rxd.toolbox.switcher;
 
+import java.net.URL;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+
+import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class HdpMirrors implements Mirrors {
   Logger LOG = LoggerFactory.getLogger(HdpMirrors.class);
 
   @Override
   public String decodeStackVersion(String version) {
-    //    x=
-    String u =
-        String.format("http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=%s&os=centos7",
-        version);
 
-    throw new RuntimeException("unimpl");
+    String u =
+        String.format(
+            "http://release.eng.hortonworks.com/hwre-api/latestcompiledbuild?stack=HDP&release=%s&os=centos7",
+            version);
+    try {
+
+      Path path = new CachedURL(new URL(u), 600).getFile().toPath();
+      ObjectMapper objectMapper = new ObjectMapper();
+      HashMap myMap = objectMapper.readValue(path.toFile(), HashMap.class);
+      String build = (String) myMap.get("build");
+      if (build == null) {
+        throw new NullPointerException("no build info in response");
+      }
+      if (!version.equals(build)) {
+        throw new IllegalArgumentException(
+            "You are shooting at a moving target! For consistency reasons; please call with the explicit version: "
+                + build);
+      }
+      return build;
+    } catch (Exception e) {
+      throw new RuntimeException("Error while processing response of " + u, e);
+    }
   }
 
-  public static void main(String[] args) {
-    HdpMirrors mm = new HdpMirrors();
-    mm.decodeStackVersion("3.1.4.8");
+  public static void main(String[] args) throws Exception {
+    CDPMirrors mm = new CDPMirrors();
+    String ver = mm.decodeStackVersion("3.1.4.8");
+    System.out.println(ver);
   }
 
   @Override

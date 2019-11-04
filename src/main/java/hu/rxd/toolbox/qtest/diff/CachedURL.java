@@ -48,6 +48,9 @@ public class CachedURL {
   }
 
   private boolean olderThan(File file, int secondsTtl) throws IOException {
+    if (!file.exists()) {
+      return false;
+    }
     FileTime modTime = Files.getLastModifiedTime(file.toPath());
     long tMod = modTime.toMillis();
     long now = System.currentTimeMillis();

@@ -76,7 +76,7 @@ public class CDPMirrors implements Mirrors {
 
     String u =
         String.format(
-            "http://release.eng.hortonworks.com/hwre-api/latestcompiledbuild?stack=HDP&release=%s&os=centos7",
+            "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=%s&os=centos7",
             version);
     try {
 
@@ -87,15 +87,24 @@ public class CDPMirrors implements Mirrors {
       if (build == null) {
         throw new NullPointerException("no build info in response");
       }
-      return build;
+      String gbn = (String) myMap.get("gbn");
+      if (gbn == null) {
+        throw new NullPointerException("no gbn info in response");
+      }
+      if (!version.equals(build)) {
+        throw new IllegalArgumentException(
+            "You are shooting at a moving target! For consistency reasons; please call with the explicit version: "
+                + build);
+      }
+      return gbn;
     } catch (Exception e) {
-      throw new RuntimeException("Error while processing response of " + u);
+      throw new RuntimeException("Error while processing response of " + u, e);
     }
   }
 
   public static void main(String[] args) throws Exception {
     CDPMirrors mm = new CDPMirrors();
-    String ver = mm.decodeStackVersion("3.1.4.8");
+    String ver = mm.decodeStackVersion("7.1.0.0");
     System.out.println(ver);
   }
 
