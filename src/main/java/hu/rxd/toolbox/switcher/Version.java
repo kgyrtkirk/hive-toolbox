@@ -1,18 +1,7 @@
 package hu.rxd.toolbox.switcher;
 
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import hu.rxd.toolbox.HiveDevBoxSwitcher;
-import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class Version {
 
@@ -28,6 +17,7 @@ public class Version {
     public Mirrors getMirrors() {
       return mirrors;
     }
+
   }
 
   Version.Type type;
@@ -40,10 +30,10 @@ public class Version {
       this.type = Type.DEV;
     } else if (versionStr.startsWith("HDP")) {
       this.type = Type.HDP;
-      this.stackVersion = versionStr.substring(4);
+      this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(4));
     } else if (versionStr.startsWith("XXX")) {
       this.type = Type.XXX;
-      this.stackVersion = versionStr.substring(4);
+      this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(4));
     } else {
       this.type = Type.APACHE;
     }

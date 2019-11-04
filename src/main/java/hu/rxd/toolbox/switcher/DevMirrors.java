@@ -7,4 +7,8 @@ public class DevMirrors implements Mirrors {
     return version.getVerStr();
   }
 
+  @Override
+  public String decodeStackVersion(String version) {
+    throw new RuntimeException("unimpl");
+  }
 }

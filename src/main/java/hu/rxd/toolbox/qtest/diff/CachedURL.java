@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.attribute.FileTime;
+
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.compress.utils.IOUtils;
 import org.slf4j.Logger;
@@ -18,11 +21,19 @@ public class CachedURL {
   private File cachedFile;
   private File tmpFile;
 
+  public CachedURL(URL url, int secondsTtl) throws IOException {
+    this(url, new File(System.getProperty(("java.io.tmpdir"))), secondsTtl);
+  }
+
   public CachedURL(URL url) throws IOException {
-    this(url, new File(System.getProperty(("java.io.tmpdir"))));
+    this(url, new File(System.getProperty(("java.io.tmpdir"))), -1);
   }
 
   public CachedURL(URL url, File downloadDir) throws IOException {
+    this(url, downloadDir, -1);
+  }
+
+  public CachedURL(URL url, File downloadDir, int secondsTtl) throws IOException {
     remoteUrl = url;
     
     String sha1 = DigestUtils.sha1Hex(remoteUrl.toString());
@@ -30,6 +41,17 @@ public class CachedURL {
     String localFileName = "hu.rxd.tmp-" + sha1 + "." + baseName;
     cachedFile = new File(downloadDir, localFileName);
     tmpFile = new File(downloadDir, localFileName + ".tmp");
+    if (secondsTtl > 0 && olderThan(cachedFile, secondsTtl)) {
+      LOG.info("removing cached file({}); older than {} seconds", cachedFile, secondsTtl);
+      cachedFile.delete();
+    }
+  }
+
+  private boolean olderThan(File file, int secondsTtl) throws IOException {
+    FileTime modTime = Files.getLastModifiedTime(file.toPath());
+    long tMod = modTime.toMillis();
+    long now = System.currentTimeMillis();
+    return (now - tMod > secondsTtl * 1000);
   }
 
   public File getFile() throws IOException {

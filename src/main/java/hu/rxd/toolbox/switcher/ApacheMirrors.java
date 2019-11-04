@@ -7,4 +7,9 @@ public class ApacheMirrors implements Mirrors {
     return version.getVerStr();
   }
 
+  @Override
+  public String decodeStackVersion(String version) {
+    return version;
+  }
+
 }
