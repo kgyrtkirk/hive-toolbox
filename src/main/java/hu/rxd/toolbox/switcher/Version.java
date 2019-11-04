@@ -58,44 +58,6 @@ public class Version {
 
   static Logger LOG = LoggerFactory.getLogger(Version.class);
 
-  // FIXME this logic seems to be mirror specific; move there!
-  public String getComponentVersion(String versionStr, Component c) throws Exception {
-    if (type == Type.HDP || type == Type.XXX) {
-
-      String artifacts;
-      if (type == Type.HDP) {
-        artifacts = String.format("http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/%s/artifacts.txt",
-            stackVersion);
-      } else {
-        artifacts =
-            String.format(
-                "http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/%s/cdh/7.x/redhat7/yum/artifacts.txt",
-                stackVersion);
-      }
-      Path path = new CachedURL(new URL(artifacts)).getFile().toPath();
-      String versionMatchingPattern = String.format("tars/%s/%s-(.*)-source.tar.gz", c, c);
-      Set<String> matches = Files.lines(path).filter(
-          //tars/hive/hive-3.1.0.3.0.0.0-1634-source.tar.gz
-          s -> s.matches(versionMatchingPattern)
-      ).collect(Collectors.toSet());
-
-      if (matches.size() != 1) {
-        throw new RuntimeException("Expected to match 1 file; found: " + matches.toString());
-      }
-      String m = matches.iterator().next();
-      Matcher match = Pattern.compile(versionMatchingPattern).matcher(m);
-      if(!match.find()) { 
-        throw new RuntimeException("no match?!");
-      }
-      String version = match.group(1);
-      LOG.info("Version of " + c + " for " + versionStr + " is " + version);
-      return version;
-
-    }
-    // TODO Auto-generated method stub
-    return versionStr;
-  }
-
   /** Supposed to be the qualified version string
    * 
    * probably something like HDP-3.1
