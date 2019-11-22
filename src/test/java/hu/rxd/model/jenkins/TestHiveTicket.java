@@ -51,7 +51,7 @@ public class TestHiveTicket {
   @Test
   @Ignore
   public void as2() throws Exception {
-    Issue ii = HiveTicket.jira.getIssue("HIVE-13567");
+    Issue ii = HiveTicket.jira.getIssue("HIVE-22521");
     System.out.println(ii.getAttachments().size());
 
     //    Comment lastQAComment = t.getLastQAComment();
@@ -66,7 +66,7 @@ public class TestHiveTicket {
     HiveTicket.jiraLogin(
         ToolboxSettings.instance().getJiraUserId(),
         ToolboxSettings.instance().getJiraPassword());
-    HiveTicket t = new HiveTicket("HIVE-15078");
+    HiveTicket t = new HiveTicket("HIVE-22521");
     Attachment attachment = t.getLastAttachment();
     URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
 
