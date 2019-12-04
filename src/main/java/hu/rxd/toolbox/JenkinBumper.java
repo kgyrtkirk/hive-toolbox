@@ -20,6 +20,7 @@ package hu.rxd.toolbox;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +65,10 @@ public class JenkinBumper {
   }
 
   private boolean needsTestRun(HiveTicket t) throws JiraException {
-    Attachment lastA = null;
+    Optional<Attachment> lastA = null;
     Comment lastQAComment = null;
-    try {
-      lastA = t.getLastAttachment();
-    } catch (RuntimeException e) {
+    lastA = t.getLastAttachment();
+    if (!lastA.isPresent()) {
       return false;
     }
     try {
@@ -77,7 +77,7 @@ public class JenkinBumper {
       return true;
     }
     Date qaDate = lastQAComment.getCreatedDate();
-    Date atDate = lastA.getCreatedDate();
+    Date atDate = lastA.get().getCreatedDate();
     return (qaDate.before(atDate));
   }
 

@@ -103,7 +103,7 @@ public class HiveTicket {
     return comments.get(comments.size() - 1);
   }
 
-  public Optional<Attachment> getLastAttachment0() throws JiraException {
+  public Optional<Attachment> getLastAttachment() throws JiraException {
     Attachment ret = null;
     //    i.refresh("*all");
     long retId = 0;
@@ -116,15 +116,6 @@ public class HiveTicket {
       }
     }
     return Optional.of(ret);
-  }
-
-  @Deprecated
-  public Attachment getLastAttachment() throws JiraException {
-    Optional<Attachment> r = getLastAttachment0();
-    if (!r.isPresent()) {
-      throw new RuntimeException("theres no last attachment!");
-    }
-    return r.get();
   }
 
   public URI getLastQATestLogsURI() throws Exception {

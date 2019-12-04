@@ -23,6 +23,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -47,7 +48,6 @@ public class Applicator {
 
   // these are fields?
   private HiveTicket ticket;
-  private Attachment attachment;
 
   private File patchFile;
 
@@ -65,9 +65,12 @@ public class Applicator {
 
   public Applicator(HiveTicket hiveTicket) throws Exception {
     ticket = hiveTicket;
-    attachment = ticket.getLastAttachment();
-    URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
-    patchFile = new File(attachment.getFileName());
+    Optional<Attachment> attachment = ticket.getLastAttachment();
+    if (!attachment.isPresent()) {
+      throw new RuntimeException("no attachment for: " + ticket);
+    }
+    URL patchURL = new CachedURL(new URL(attachment.get().getContentUrl())).getURL();
+    patchFile = new File(attachment.get().getFileName());
     //    patchFile = new File("/tmp/" + attachment.getFileName());
     FileUtils.copyURLToFile(patchURL, patchFile);
 

@@ -32,10 +32,13 @@ public class TicketUtils {
   public static void reattach(String ticketKey) throws Exception {
     jiraLogin();
     HiveTicket t = new HiveTicket(ticketKey);
-    Attachment attachment = t.getLastAttachment();
-    URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
+    Optional<Attachment> attachment = t.getLastAttachment();
+    if (!attachment.isPresent()) {
+      throw new RuntimeException("no attachment for " + ticketKey);
+    }
+    URL patchURL = new CachedURL(new URL(attachment.get().getContentUrl())).getURL();
 
-    File patchFile = new File(attachment.getFileName());
+    File patchFile = new File(attachment.get().getFileName());
     FileUtils.copyURLToFile(patchURL, patchFile);
 
     t.getIssue().addAttachment(patchFile);
@@ -55,7 +58,7 @@ public class TicketUtils {
 
       jiraLogin();
       HiveTicket t = new HiveTicket(ticketKey);
-      Optional<Attachment> att = t.getLastAttachment0();
+      Optional<Attachment> att = t.getLastAttachment();
       int idx = 0;
       if (att.isPresent()) {
         idx = extractFileIndex(att.get().getFileName());
