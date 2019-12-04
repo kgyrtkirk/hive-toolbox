@@ -57,15 +57,6 @@ public class HiveTicket {
     i = jira.getIssue(ticketId, "*all", "schema,editmeta");
   }
 
-  //  @Test
-  //  public void u1() throws Exception {
-  //    System.out.println(i);
-  //    List<Comment> comments = i.getComments();
-  //    Comment c0 = comments.get(comments.size() - 1);
-  //    System.out.println(c0.getBody());
-  //
-  //  }
-
   public List<Comment> getCommentsByName(String name) {
     List<Comment> ret = Lists.newArrayList();
     for (Comment comment : i.getComments()) {
