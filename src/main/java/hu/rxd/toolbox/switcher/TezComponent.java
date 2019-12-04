@@ -22,21 +22,22 @@ class TezComponent extends GenericComponent {
 
   @Override
   protected void provideComponent(File targetPath, Version ver) throws Exception {
+    File expandPath = new File(baseDir, targetPath.getName() + ".tmp");
+    FileUtils.deleteDirectory(expandPath);
     switch (ver.type) {
     case HDP:
     case CDP:
       LOG.info("downloading: {}", ver);
       File f = downloadArtifact(getCandidateUrls(ver));
-      File expandPath = new File(baseDir, targetPath.getName() + ".tmp");
-      FileUtils.deleteDirectory(expandPath);
       File targetTgz = new File(expandPath, "/share/tez.tar.gz");
       FileUtils.forceMkdir(targetTgz.getParentFile());
       FileUtils.copyFile(f, targetTgz);
-      expandPath.renameTo(targetPath);
       return;
     default:
-      expand1DirReleaseArtifact(targetPath, downloadArtifact(getCandidateUrls(ver)));
+      expand1DirReleaseArtifact(expandPath, downloadArtifact(getCandidateUrls(ver)));
+
     }
+    expandPath.renameTo(targetPath);
   }
 
   @Override

@@ -20,7 +20,7 @@ fi
 banner clean
 git clean -dfx
 banner install
-MOPTS="-DskipTests -q"
+MOPTS="-DskipTests $@"
 time mvn install source:jar install $MOPTS -am -U -Pdist
 banner eclipse
 time mvn eclipse:eclipse $MOPTS -pl $MODULES

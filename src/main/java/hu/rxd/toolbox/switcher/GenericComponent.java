@@ -21,7 +21,7 @@ import hu.rxd.toolbox.switcher.Version.Type;
 
 abstract class GenericComponent implements IComponent {
   File baseDir = new File("/work/");
-  File downloadDir = new File(baseDir, ".downloads");
+  File downloadDir = new File(baseDir, "downloads");
   File linkDir = new File("/active/");
   //    File baseDir = new File("/var/tmp/");
 
