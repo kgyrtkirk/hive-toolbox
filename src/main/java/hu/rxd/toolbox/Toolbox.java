@@ -27,19 +27,39 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.io.FileUtils;
+
 import com.google.common.base.Joiner;
 
 import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.jira.HiveTicket;
+import hu.rxd.toolbox.jira.ToolboxSettings;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LocalFileDispatcher;
 import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
+import hu.rxd.toolbox.qtest.diff.CachedURL;
+import net.rcarz.jiraclient.Attachment;
 
 public class Toolbox {
 
   public static void main(String[] args) throws FileNotFoundException, Exception {
+
+    if (args[0].equals("reattach")) {
+      HiveTicket.jiraLogin(
+          ToolboxSettings.instance().getJiraUserId(),
+          ToolboxSettings.instance().getJiraPassword());
+      HiveTicket t = new HiveTicket(args[1]);
+      Attachment attachment = t.getLastAttachment();
+      URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
+
+      File patchFile = new File(attachment.getFileName());
+      FileUtils.copyURLToFile(patchURL, patchFile);
+
+      t.getIssue().addAttachment(patchFile);
+      return;
+    }
 
     if (args[0].startsWith("http")) {
       IInputStreamDispatcher isd = new LocalizedArchiveDispatcher(new URL(args[0]));

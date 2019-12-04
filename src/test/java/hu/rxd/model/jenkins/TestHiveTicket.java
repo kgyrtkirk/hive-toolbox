@@ -66,7 +66,7 @@ public class TestHiveTicket {
     HiveTicket.jiraLogin(
         ToolboxSettings.instance().getJiraUserId(),
         ToolboxSettings.instance().getJiraPassword());
-    HiveTicket t = new HiveTicket("HIVE-22521");
+    HiveTicket t = new HiveTicket("HIVE-22517");
     Attachment attachment = t.getLastAttachment();
     URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
 
