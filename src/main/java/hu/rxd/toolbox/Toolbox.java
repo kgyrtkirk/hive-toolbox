@@ -47,17 +47,11 @@ public class Toolbox {
   public static void main(String[] args) throws FileNotFoundException, Exception {
 
     if (args[0].equals("reattach")) {
-      HiveTicket.jiraLogin(
-          ToolboxSettings.instance().getJiraUserId(),
-          ToolboxSettings.instance().getJiraPassword());
-      HiveTicket t = new HiveTicket(args[1]);
-      Attachment attachment = t.getLastAttachment();
-      URL patchURL = new CachedURL(new URL(attachment.getContentUrl())).getURL();
-
-      File patchFile = new File(attachment.getFileName());
-      FileUtils.copyURLToFile(patchURL, patchFile);
-
-      t.getIssue().addAttachment(patchFile);
+      TicketUtils.reattach(args[1]);
+      return;
+    }
+    if (args[0].equals("upload")) {
+      TicketUtils.upload();
       return;
     }
 

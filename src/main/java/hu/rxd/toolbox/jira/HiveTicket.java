@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,7 +112,7 @@ public class HiveTicket {
     return comments.get(comments.size() - 1);
   }
 
-  public Attachment getLastAttachment() throws JiraException {
+  public Optional<Attachment> getLastAttachment0() throws JiraException {
     Attachment ret = null;
     //    i.refresh("*all");
     long retId = 0;
@@ -123,10 +124,16 @@ public class HiveTicket {
         ret = a;
       }
     }
-    if (ret == null) {
+    return Optional.of(ret);
+  }
+
+  @Deprecated
+  public Attachment getLastAttachment() throws JiraException {
+    Optional<Attachment> r = getLastAttachment0();
+    if (!r.isPresent()) {
       throw new RuntimeException("theres no last attachment!");
     }
-    return ret;
+    return r.get();
   }
 
   public URI getLastQATestLogsURI() throws Exception {
