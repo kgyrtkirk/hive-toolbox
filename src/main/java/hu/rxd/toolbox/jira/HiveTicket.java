@@ -115,7 +115,7 @@ public class HiveTicket {
         ret = a;
       }
     }
-    return Optional.of(ret);
+    return Optional.ofNullable(ret);
   }
 
   public URI getLastQATestLogsURI() throws Exception {
