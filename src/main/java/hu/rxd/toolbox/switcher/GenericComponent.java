@@ -15,7 +15,6 @@ import org.rauschig.jarchivelib.ArchiverFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import hu.rxd.toolbox.HiveDevBoxSwitcher;
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 import hu.rxd.toolbox.switcher.Version.Type;
 

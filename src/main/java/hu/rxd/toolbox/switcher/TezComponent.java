@@ -2,10 +2,16 @@ package hu.rxd.toolbox.switcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
 
 class TezComponent extends GenericComponent {
 
@@ -28,16 +34,32 @@ class TezComponent extends GenericComponent {
     case HDP:
     case CDP:
       LOG.info("downloading: {}", ver);
+      // simulate the tez "release" process
+      // expand "minimal" as root 
+      File minimal = downloadArtifact(addMinimalClassifier(getCandidateUrls(ver)));
+      Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
+      LOG.info("extracting: {}", minimal.getName());
+      archiver.extract(minimal, expandPath);
+
+      // place the "full" version under share
       File f = downloadArtifact(getCandidateUrls(ver));
       File targetTgz = new File(expandPath, "/share/tez.tar.gz");
       FileUtils.forceMkdir(targetTgz.getParentFile());
       FileUtils.copyFile(f, targetTgz);
-      return;
+      break;
     default:
       expand1DirReleaseArtifact(expandPath, downloadArtifact(getCandidateUrls(ver)));
 
     }
     expandPath.renameTo(targetPath);
+  }
+
+  private List<URL> addMinimalClassifier(List<URL> candidateUrls) throws Exception {
+    List<URL> ret=new ArrayList<URL>();
+    for (URL url : candidateUrls) {
+      ret.add(new URL(url.toString().replaceAll(".tar.gz", "-minimal.tar.gz")));
+    }
+    return ret;
   }
 
   @Override
