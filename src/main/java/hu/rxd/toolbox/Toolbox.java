@@ -41,6 +41,7 @@ import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 import net.rcarz.jiraclient.Attachment;
+import net.rcarz.jiraclient.Comment;
 
 public class Toolbox {
 
@@ -94,7 +95,33 @@ public class Toolbox {
       }
       return;
     }
+    //    if (args[0].equals("")) 
+    if (args[0].startsWith("ticketScan")) {
+      List<String> failedPats = TicketUtils.getFailed(new HiveTicket(args[2]));
 
+      try (PrintStream ps = new PrintStream(args[1])) {
+        String s = Joiner.on(",").join(failedPats);
+        ps.println(s);
+      }
+
+    //      String ticket = args[2];
+      //      HiveTicket
+      //      .getMatchingTickets("assignee = kgyrtkirk and ")
+      //          HiveTicket t = new HiveTicket(ticket);
+    //      Comment c = t.getLastQAComment();
+    //      System.out.println(c);
+    //      String[] lines = c.getBody().split("\n");
+    //
+    //      //      TestEntries res2 = res.filterFailed().limit(600);
+    //      //      System.out.println(res2);
+    //      //      String pat = res2.getSimpleMavenTestPattern();
+    //      //      System.out.println("pat len:" + pat.length());
+    //      //      try (PrintStream ps = new PrintStream(args[1])) {
+    //      //        ps.println(pat);
+    //      //      }
+      return;
+    }
+    //
     if (args[0].equals("applicator")) {
       Applicator applicator = new Applicator(new HiveTicket(args[1]));
 
