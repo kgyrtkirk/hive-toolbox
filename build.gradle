@@ -81,7 +81,7 @@ compile 'org.slf4j:slf4j-simple:1.7.25'
 
 compile 'hu.rxd:lexirex:+'
 // https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit
-compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '4.11.0.201803080745-r'
+compile group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.6.1.202002131546-r'
 
   compile 'org.rauschig:jarchivelib:0.7.1'
 // https://mvnrepository.com/artifact/org.codehaus.plexus/plexus-utils

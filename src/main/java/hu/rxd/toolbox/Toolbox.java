@@ -19,33 +19,63 @@
 package hu.rxd.toolbox;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.net.URL;
+import java.security.Key;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.io.FileUtils;
+import javax.crypto.SecretKey;
+
+import org.apache.commons.collections.EnumerationUtils;
+import org.apache.xerces.impl.dv.util.Base64;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.jira.HiveTicket;
-import hu.rxd.toolbox.jira.ToolboxSettings;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LocalFileDispatcher;
 import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
-import hu.rxd.toolbox.qtest.diff.CachedURL;
-import net.rcarz.jiraclient.Attachment;
-import net.rcarz.jiraclient.Comment;
 
 public class Toolbox {
 
   public static void main(String[] args) throws FileNotFoundException, Exception {
+
+    if (args[0].equals("jceks-decode")) {
+      String fileName = args[1];
+      char[] password = "none".toCharArray();
+      //      String alias = args[2];
+
+      KeyStore ks = KeyStore.getInstance("JCEKS");
+      try (FileInputStream fis = new FileInputStream(fileName)) {
+        ks.load(fis, password);
+        Enumeration<String> aa = ks.aliases();
+        for (String alias : (List<String>) EnumerationUtils.toList(aa)) {
+          SecretKey secretKey = (SecretKey) ks.getKey(alias, password);
+          String secret = new String(secretKey.getEncoded());
+          
+          System.out.println("alias: " + alias);
+          System.out.println("secret: " + secret);
+          //          System.out.println(Base64.decode(secret));
+//          System.out.println(new BigInteger(1, secretKey.getEncoded()).toString(16));
+//          System.out.println(secretKey.getEncoded());
+//          Key key = secretKey;
+          
+        }
+      }
+      return;
+    }
 
     if (args[0].equals("reattach")) {
       TicketUtils.reattach(args[1]);
