@@ -22,6 +22,8 @@ wget -nv -O $tmp "${patch_url}/${COMPONENT}-source.patch" ||
 wget -nv -O $tmp "${patch_url}/dag_build/${COMPONENT}-source.patch"
 
 git apply -p1 $tmp
-sed -i "s/pig.version>0.16.0.*</pig.version>0.16.0.${build}</" pom.xml
+sed "s/pig.version>0.16.0.*</pig.version>0.16.0.${build}</"  << EOF > pom.xml
+$(cat pom.xml)
+EOF
 
 echo "@@@ patched"
