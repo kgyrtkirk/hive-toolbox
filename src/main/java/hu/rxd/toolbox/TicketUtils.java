@@ -1,5 +1,6 @@
 package hu.rxd.toolbox;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -48,7 +49,9 @@ public class TicketUtils {
     File patchFile = new File(attachment.get().getFileName());
     FileUtils.copyURLToFile(patchURL, patchFile);
 
-    t.getIssue().addAttachment(patchFile);
+    try (Closeable c = t.withAssignedToCurrentUser()) {
+      t.getIssue().addAttachment(patchFile);
+    }
   }
 
   private static void jiraLogin() {
