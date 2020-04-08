@@ -121,10 +121,15 @@ abstract class GenericComponent implements IComponent {
     List<URL> ret = new ArrayList<>();
 
     switch (ver.type) {
-    case APACHE:
+    case APACHE: {
+      String componentVersion = ver.getComponentVersion(getComponentType());
+      for (Mirror m : ver.type.getMirrors().of0(ver)) {
+        ret.add(m.getFor(getComponentType(), componentVersion));
+      }
       ret.add(new URL(apache_mirror + getApacheMirrorPath(ver)));
       ret.add(new URL(archive_mirror + getApacheMirrorPath(ver)));
       break;
+    }
     case HDP:
     { // FIXME: can be moved?!
       String componentVersion = ver.getComponentVersion(getComponentType());

@@ -1,5 +1,8 @@
 package hu.rxd.toolbox.switcher;
 
+import java.util.Collection;
+import java.util.Collections;
+
 public class ApacheMirrors implements Mirrors {
 
   @Override
@@ -12,4 +15,8 @@ public class ApacheMirrors implements Mirrors {
     return version;
   }
 
+  @Override
+  public Collection<Mirror> of0(Version ver) {
+    return Collections.EMPTY_LIST;
+  }
 }
