@@ -20,10 +20,9 @@ public class ApacheMirrors implements Mirrors {
   @Override
   public Collection<Mirror> of0(Version ver) {
     List<Mirror> ret = new ArrayList<Mirror>();
-    String apache_mirror = "http://xenia.sote.hu/ftp/mirrors/www.apache.org/";
-    String archive_mirror = "https://archive.apache.org/dist/";
-    ret.add(new ApacheMirror(apache_mirror));
-    ret.add(new ApacheMirror(archive_mirror));
+    ret.add(new ApacheMirror("http://xenia.sote.hu/ftp/mirrors/www.apache.org/"));
+    ret.add(new ApacheMirror("https://archive.apache.org/dist/"));
+    ret.add(new ApacheMirror("https://rxd.hu/misc/preview/"));
     return ret;
   }
 
