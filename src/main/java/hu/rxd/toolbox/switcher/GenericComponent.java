@@ -114,8 +114,6 @@ abstract class GenericComponent implements IComponent {
     throw new IOException("Cant find a valid url; tried: " + candidateUrls);
   }
 
-  String apache_mirror = "http://xenia.sote.hu/ftp/mirrors/www.apache.org/";
-  String archive_mirror = "https://archive.apache.org/dist/";
 
   protected List<URL> getCandidateUrls(Version ver) throws Exception {
     List<URL> ret = new ArrayList<>();
@@ -126,8 +124,6 @@ abstract class GenericComponent implements IComponent {
       for (Mirror m : ver.type.getMirrors().of0(ver)) {
         ret.add(m.getFor(getComponentType(), componentVersion));
       }
-      ret.add(new URL(apache_mirror + getApacheMirrorPath(ver)));
-      ret.add(new URL(archive_mirror + getApacheMirrorPath(ver)));
       break;
     }
     case HDP:
@@ -159,5 +155,6 @@ abstract class GenericComponent implements IComponent {
   //    http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz]
   //      at hu.rxd.toolbox.HiveDevBoxSwitcher$GenericComponent.tryDownload(Hive
 
+  @Deprecated
   abstract String getApacheMirrorPath(Version version) throws Exception;
 }
