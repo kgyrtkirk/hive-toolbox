@@ -4,6 +4,6 @@ import java.net.URL;
 
 interface Mirror {
 
-  URL getFor(Component tez, String componentVersion) throws Exception;
+  URL getFor(Component component, String componentVersion) throws Exception;
 
 }

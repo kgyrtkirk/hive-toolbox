@@ -73,6 +73,13 @@ public class HdpMirrors implements Mirrors {
       Lists.newArrayList("http://public-repo-1.hortonworks.com/HDP",
           "http://private-repo-1.hortonworks.com/HDP");
 
+  @Override
+  @Deprecated // pending renames
+  public Collection<Mirror> of0(Version ver) {
+    return of(ver);
+  }
+
+  @Deprecated
   public static Collection<Mirror> of(Version ver) {
     List<Mirror> ret = new ArrayList<>();
     for (String root : MIRROR_ROOTS) {

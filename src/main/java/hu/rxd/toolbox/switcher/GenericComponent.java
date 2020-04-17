@@ -114,45 +114,16 @@ abstract class GenericComponent implements IComponent {
     throw new IOException("Cant find a valid url; tried: " + candidateUrls);
   }
 
-  String apache_mirror = "http://xenia.sote.hu/ftp/mirrors/www.apache.org/";
-  String archive_mirror = "https://archive.apache.org/dist/";
 
   protected List<URL> getCandidateUrls(Version ver) throws Exception {
     List<URL> ret = new ArrayList<>();
-
-    switch (ver.type) {
-    case APACHE:
-      ret.add(new URL(apache_mirror + getApacheMirrorPath(ver)));
-      ret.add(new URL(archive_mirror + getApacheMirrorPath(ver)));
-      break;
-    case HDP:
-    { // FIXME: can be moved?!
-      String componentVersion = ver.getComponentVersion(getComponentType());
-      for (Mirror m : HdpMirrors.of(ver)) {
-        ret.add(m.getFor(getComponentType(), componentVersion));
-      }
-      break;
-    }
-    case CDP: {
-      // FIXME: can be moved?!
-      String componentVersion = ver.getComponentVersion(getComponentType());
-      for (Mirror m : CDPMirrors.of(ver)) {
-        ret.add(m.getFor(getComponentType(), componentVersion));
-      }
-    }
-      break;
-    default:
-      //        http: //public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/artifacts.txt
-      //        http: //s3.amazonaws.com/dev.hortonworks.com/HDP/centos7/3.x/BUILDS/3.0.0.0-1634/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
-
-      throw new RuntimeException("?");
+    String componentVersion = ver.getComponentVersion(getComponentType());
+    for (Mirror m : ver.type.getMirrors().of0(ver)) {
+      ret.add(m.getFor(getComponentType(), componentVersion));
     }
     return ret;
   }
 
-  //         public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz
-  //    http://public-repo-1.hortonworks.com/HDP/centos7/3.x/updates/3.0.0.0/tars/tez/tez-0.9.1.3.0.0.0-1634.tar.gz]
-  //      at hu.rxd.toolbox.HiveDevBoxSwitcher$GenericComponent.tryDownload(Hive
-
+  @Deprecated
   abstract String getApacheMirrorPath(Version version) throws Exception;
 }

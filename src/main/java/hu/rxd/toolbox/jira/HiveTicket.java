@@ -18,6 +18,8 @@
 
 package hu.rxd.toolbox.jira;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -31,6 +33,7 @@ import org.apache.commons.compress.utils.Lists;
 import net.rcarz.jiraclient.Attachment;
 import net.rcarz.jiraclient.BasicCredentials;
 import net.rcarz.jiraclient.Comment;
+import net.rcarz.jiraclient.Field;
 import net.rcarz.jiraclient.Issue;
 import net.rcarz.jiraclient.Issue.SearchResult;
 import net.rcarz.jiraclient.JiraClient;
@@ -151,6 +154,38 @@ public class HiveTicket {
   public boolean canBeSubmitted() {
     // FIXME: needs check for latest QA run
     return (getReviewComments().size() > 0);
+  }
+
+  public Closeable withAssignedToCurrentUser() throws Exception {
+    final String origUser = getIssue().getAssignee().getName();
+    String currentUser = ToolboxSettings.instance().getJiraUserId();
+
+    if (currentUser.equals(origUser)) {
+      // no need
+      return () -> {
+      };
+    }
+
+    System.out.println("Taking over ticket from :" + origUser);
+    getIssue().update()
+        .field(Field.ASSIGNEE, currentUser)
+        .execute();
+
+    return new Closeable() {
+
+      @Override
+      public void close() throws IOException {
+        try {
+          System.out.println("Assigning back to origUser:" + origUser);
+          getIssue().update()
+              .field(Field.ASSIGNEE, origUser)
+              .execute();
+        } catch (JiraException e) {
+          throw new RuntimeException("can't assign back to " + origUser, e);
+        }
+      }
+    };
+
   }
 
 }

@@ -1,5 +1,7 @@
 package hu.rxd.toolbox.switcher;
 
+import java.util.Collection;
+
 public interface Mirrors {
 
   String getComponentVersion(Version version, Component c) throws Exception;
@@ -11,4 +13,6 @@ public interface Mirrors {
    * for CDP this is by acquiring the build id
    */
   public String decodeStackVersion(String version);
+
+  Collection<Mirror> of0(Version ver);
 }

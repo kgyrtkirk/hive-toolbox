@@ -38,7 +38,14 @@ public class CDPMirrors implements Mirrors {
   private static final List<String> MIRROR_ROOTS =
       Lists.newArrayList(("http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build"));
 
+  @Override
+  @Deprecated // pending renames
+  public Collection<Mirror> of0(Version ver) {
+    return of(ver);
+  }
+
   //"      centos7/3.x/updates/%s/artifacts.txt",stackVersion)"
+  @Deprecated
   public static Collection<Mirror> of(Version ver) {
     List<Mirror> ret = new ArrayList<>();
     for (String root : MIRROR_ROOTS) {

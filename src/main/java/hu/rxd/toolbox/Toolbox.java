@@ -19,32 +19,63 @@
 package hu.rxd.toolbox;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
+import java.math.BigInteger;
 import java.net.URL;
+import java.security.Key;
+import java.security.KeyStore;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.io.FileUtils;
+import javax.crypto.SecretKey;
+
+import org.apache.commons.collections.EnumerationUtils;
+import org.apache.xerces.impl.dv.util.Base64;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Iterables;
 
 import hu.rxd.toolbox.jenkins.TestEntries;
 import hu.rxd.toolbox.jira.HiveTicket;
-import hu.rxd.toolbox.jira.ToolboxSettings;
 import hu.rxd.toolbox.qtest.IInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LastQAReportInputStreamDispatcher;
 import hu.rxd.toolbox.qtest.LocalFileDispatcher;
 import hu.rxd.toolbox.qtest.LocalizedArchiveDispatcher;
 import hu.rxd.toolbox.qtest.QTDiffRunner;
-import hu.rxd.toolbox.qtest.diff.CachedURL;
-import net.rcarz.jiraclient.Attachment;
 
 public class Toolbox {
 
   public static void main(String[] args) throws FileNotFoundException, Exception {
+
+    if (args[0].equals("jceks-decode")) {
+      String fileName = args[1];
+      char[] password = "none".toCharArray();
+      //      String alias = args[2];
+
+      KeyStore ks = KeyStore.getInstance("JCEKS");
+      try (FileInputStream fis = new FileInputStream(fileName)) {
+        ks.load(fis, password);
+        Enumeration<String> aa = ks.aliases();
+        for (String alias : (List<String>) EnumerationUtils.toList(aa)) {
+          SecretKey secretKey = (SecretKey) ks.getKey(alias, password);
+          String secret = new String(secretKey.getEncoded());
+          
+          System.out.println("alias: " + alias);
+          System.out.println("secret: " + secret);
+          //          System.out.println(Base64.decode(secret));
+//          System.out.println(new BigInteger(1, secretKey.getEncoded()).toString(16));
+//          System.out.println(secretKey.getEncoded());
+//          Key key = secretKey;
+          
+        }
+      }
+      return;
+    }
 
     if (args[0].equals("reattach")) {
       TicketUtils.reattach(args[1]);
@@ -94,7 +125,33 @@ public class Toolbox {
       }
       return;
     }
+    //    if (args[0].equals("")) 
+    if (args[0].startsWith("ticketScan")) {
+      List<String> failedPats = TicketUtils.getFailed(new HiveTicket(args[2]));
 
+      try (PrintStream ps = new PrintStream(args[1])) {
+        String s = Joiner.on(",").join(failedPats);
+        ps.println(s);
+      }
+
+    //      String ticket = args[2];
+      //      HiveTicket
+      //      .getMatchingTickets("assignee = kgyrtkirk and ")
+      //          HiveTicket t = new HiveTicket(ticket);
+    //      Comment c = t.getLastQAComment();
+    //      System.out.println(c);
+    //      String[] lines = c.getBody().split("\n");
+    //
+    //      //      TestEntries res2 = res.filterFailed().limit(600);
+    //      //      System.out.println(res2);
+    //      //      String pat = res2.getSimpleMavenTestPattern();
+    //      //      System.out.println("pat len:" + pat.length());
+    //      //      try (PrintStream ps = new PrintStream(args[1])) {
+    //      //        ps.println(pat);
+    //      //      }
+      return;
+    }
+    //
     if (args[0].equals("applicator")) {
       Applicator applicator = new Applicator(new HiveTicket(args[1]));
 

@@ -1,9 +1,13 @@
 package hu.rxd.toolbox;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,6 +18,7 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
+import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
@@ -21,10 +26,13 @@ import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Joiner;
+
 import hu.rxd.toolbox.jira.HiveTicket;
 import hu.rxd.toolbox.jira.ToolboxSettings;
 import hu.rxd.toolbox.qtest.diff.CachedURL;
 import net.rcarz.jiraclient.Attachment;
+import net.rcarz.jiraclient.Comment;
 
 public class TicketUtils {
   static Logger LOG = LoggerFactory.getLogger(TicketUtils.class);
@@ -41,7 +49,9 @@ public class TicketUtils {
     File patchFile = new File(attachment.get().getFileName());
     FileUtils.copyURLToFile(patchURL, patchFile);
 
-    t.getIssue().addAttachment(patchFile);
+    try (Closeable c = t.withAssignedToCurrentUser()) {
+      t.getIssue().addAttachment(patchFile);
+    }
   }
 
   private static void jiraLogin() {
@@ -136,6 +146,59 @@ public class TicketUtils {
     String key = m.group(1);
     LOG.info(currentBranch + " => " + key);
     return key;
+  }
+
+  static class TxProcessor {
+
+    private int nofromat;
+    private List<String> patterns = new ArrayList<>();
+
+    public void process(String line) {
+      if (line.equals("{noformat}")) {
+        nofromat++;
+        return;
+      }
+      if (nofromat == 1) {
+        processTestLine(line);
+      }
+      
+    }
+
+    private void processTestLine(String line) {
+      String parts[] = line.split(" ");
+      String test = parts[0];
+      System.out.println(test);
+      //String testM = test.replaceAll("\\.([^\\.]+)$", "#$1");
+
+      String[] p2 = test.split("\\.");
+      System.out.println(p2.length);
+
+      String testM = p2[p2.length - 2] + "#" + p2[p2.length - 1];
+      patterns.add(testM);
+    }
+
+  }
+
+  public static List<String> getFailed(HiveTicket hiveTicket) {
+    HiveTicket t = hiveTicket;
+    Comment c = t.getLastQAComment();
+
+    String[] lines = c.getBody().split("\n");
+    TxProcessor txp = new TxProcessor();
+    for (String string : lines) {
+      txp.process(string);
+    }
+
+    return txp.patterns;
+    //
+    //      //      TestEntries res2 = res.filterFailed().limit(600);
+    //      //      System.out.println(res2);
+    //      //      String pat = res2.getSimpleMavenTestPattern();
+    //      //      System.out.println("pat len:" + pat.length());
+    //      //      try (PrintStream ps = new PrintStream(args[1])) {
+    //      //        ps.println(pat);
+    //      //      }
+
   }
 
 }
