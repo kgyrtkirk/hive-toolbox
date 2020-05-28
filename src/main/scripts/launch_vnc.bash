@@ -61,10 +61,10 @@ if [ ! -d mat ];then
 fi
 
 if [ ! -d maven ];then
-	wget -c -nv -O maven.tgz https://www-us.apache.org/dist/maven/maven-3/3.6.1/binaries/apache-maven-3.6.1-bin.tar.gz
+	wget -c -nv -O maven.tgz https://www-us.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
 	tar xzf maven.tgz
-	ln -s apache-maven-3.6.1 maven
-	echo 'export PATH="\$PATH:/tools/maven/bin/"' >> ~/.bashrc
+	ln -s apache-maven-3.6.3 maven
+	echo 'export PATH+=":/tools/maven/bin/"' >> ~/.bashrc
 fi
 
 if [ ! -d eclipse ];then
