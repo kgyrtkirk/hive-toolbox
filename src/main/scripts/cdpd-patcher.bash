@@ -5,12 +5,17 @@ set -e
 
 echo "@@@ $0 $*"
 
+tmp=`mktemp`
+trap "unlink $tmp" EXIT
 
 COMPONENT="${1}"
-VERSION="${2//CDH-/}"
+VERSION="$2"
+VERSION="${VERSION:-cdpd-master}"
 case "$VERSION" in
-  cdpd-master|"")
-    VERSION="`curl -s 'http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=cdpd-master'|jq -r .version`"
+  cdpd-master|*-maint)
+    echo "@@@ lookup stackversion for releasline $VERSION"
+    wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=$VERSION"
+    VERSION="`cat $tmp|jq -r .version`"
     ;;
   FENG)
     VERSION=7.0.2.1
@@ -18,10 +23,8 @@ case "$VERSION" in
   *)
 esac
 
+VERSION="${VERSION//CDH-/}"
 echo "@@@ version: $VERSION"
-
-tmp=`mktemp`
-trap "unlink $tmp" EXIT
 
 wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7"
 build="`cat $tmp|jq -r .build`"
