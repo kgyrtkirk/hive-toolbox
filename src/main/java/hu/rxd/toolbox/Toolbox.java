@@ -125,6 +125,18 @@ public class Toolbox {
       }
       return;
     }
+    if (args[0].startsWith("diffapply")) {
+      String url = args[1];
+      TestEntries res = TestEntries.fromJenkinsBuild(url);
+      TestEntries res2 = res.filterFailed().limit(600);
+      System.out.println(res2);
+      //      String pat = res2.getSimpleMavenTestPattern();
+      //      System.out.println("pat len:" + pat.length());
+      //      try (PrintStream ps = new PrintStream(args[1])) {
+      //        ps.println(pat);
+      //      }
+      return;
+    }
     //    if (args[0].equals("")) 
     if (args[0].startsWith("ticketScan")) {
       List<String> failedPats = TicketUtils.getFailed(new HiveTicket(args[2]));
