@@ -139,7 +139,6 @@ public class TestEntries {
     List<TestEntry> ret = new ArrayList<>();
     if (entries.size() > max) {
       throw new RuntimeException(String.format("is everything working fine? orig:%d max:%d", entries.size(), max));
-//      System.err.printf("limiting test list from %d to contain %d elements", entries.size(), max);
     }
     ret.addAll(entries);
     return new TestEntries(ret);
@@ -151,14 +150,6 @@ public class TestEntries {
       String label = testEntry.getLabel();
       label = label.replaceAll(".*\\.hive\\.cli\\.split[0-9]+\\.", "");
       labels.add(label);
-    }
-    return Joiner.on(",").join(labels);
-  }
-
-  public String getSimpleMavenTestPattern2() {
-    List<String> labels = new LinkedList<>();
-    for (TestEntry testEntry : entries) {
-      labels.add(testEntry.getLabel());
     }
     return Joiner.on(",").join(labels);
   }
