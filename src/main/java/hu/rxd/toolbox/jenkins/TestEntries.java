@@ -148,7 +148,9 @@ public class TestEntries {
   public String getSimpleMavenTestPattern() {
     List<String> labels = new LinkedList<>();
     for (TestEntry testEntry : entries) {
-      labels.add(testEntry.getLabel());
+      String label = testEntry.getLabel();
+      label = label.replaceAll(".*\\.hive\\.cli\\.split[0-9]+\\.", "");
+      labels.add(label);
     }
     return Joiner.on(",").join(labels);
   }
