@@ -29,6 +29,15 @@ echo "@@@ version: $VERSION"
 wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7"
 build="`cat $tmp|jq -r .build`"
 echo "@@@ build: $build"
+shopt -s extglob
+case "${build}_$VERSION" in
+  null_7.[0-9].[0-9].[1-9]+([0-9]))
+	newVersion="`sed -r 's/[0-9]+$/0/' <<< ${VERSION}`"
+	echo "@@@ no build info available for $VERSION - and its a hotfix branch; trying base version ($newVersion) instead"
+	exec "$0" "$COMPONENT" "$newVersion"
+	;;
+esac
+
 patch_url="`cat $tmp | jq -r .centos7.patch_url`"
 wget -nv -O $tmp "${patch_url}/${COMPONENT}-source.patch" ||
 wget -nv -O $tmp "${patch_url}/dag_build/${COMPONENT}-source.patch"
@@ -36,6 +45,8 @@ wget -nv -O $tmp "${patch_url}/dag_build/${COMPONENT}-source.patch"
 git apply -p1 -C0 $tmp
 if [[ "$build" < "7.2.1" ]];then
 	sed -i "s/pig.version>0.16.0.*</pig.version>0.16.0.${build}</" pom.xml
+else
+	sed -i "s/pig.version>0.16.0.*</pig.version>0.16.0</" pom.xml
 fi
 
 echo "@@@ patched"
