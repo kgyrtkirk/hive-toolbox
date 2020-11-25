@@ -12,7 +12,7 @@ COMPONENT="${1}"
 VERSION="$2"
 VERSION="${VERSION:-cdpd-master}"
 case "$VERSION" in
-  cdpd-master|*-maint)
+  cdpd-master|*-maint|*.x)
     echo "@@@ lookup stackversion for releasline $VERSION"
     wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=$VERSION"
     VERSION="`cat $tmp|jq -r .version`"
