@@ -31,7 +31,7 @@ build="`cat $tmp|jq -r .build`"
 echo "@@@ build: $build"
 shopt -s extglob
 case "${build}_$VERSION" in
-  null_7.[0-9].[0-9].[1-9]+([0-9]))
+  null_7.[0-9].[0-9].[1-9]*([0-9]))
 	newVersion="`sed -r 's/[0-9]+$/0/' <<< ${VERSION}`"
 	echo "@@@ no build info available for $VERSION - and its a hotfix branch; trying base version ($newVersion) instead"
 	exec "$0" "$COMPONENT" "$newVersion"
