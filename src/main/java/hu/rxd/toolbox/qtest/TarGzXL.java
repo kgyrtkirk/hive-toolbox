@@ -45,6 +45,9 @@ public class TarGzXL implements IInputStreamDispatcher {
               continue;
             }
             String fileName = entry.getName();
+            if (!fileName.endsWith(".xml")) {
+              continue;
+            }
             System.out.println(fileName);
             function.apply(archive);
           }

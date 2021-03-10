@@ -18,11 +18,12 @@ public class LocalFileDispatcher implements IInputStreamDispatcher {
   }
 
   protected void handleArchives(URL url, Function<InputStream, Void> function) throws Exception {
-    if (url.getFile().endsWith("zip")) {
+    String file = url.getFile();
+    if (file.endsWith("zip")) {
       new ZipXL(url).visit(function);
       return;
     }
-    if (url.getFile().endsWith("tar.gz")) {
+    if (file.endsWith("tar.gz") || file.endsWith("tgz")) {
       new TarGzXL(url).visit(function);
       return;
     }

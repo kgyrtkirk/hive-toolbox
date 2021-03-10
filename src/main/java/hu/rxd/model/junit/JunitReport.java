@@ -26,7 +26,11 @@ public    String message;
 
   }
   public static class Skipped{
-public    String message;
+    public String message;
+    public String type;
+    @JacksonXmlText
+    public String value;
+
   }
 
   public static class TestCase {
@@ -49,6 +53,7 @@ public    String message;
   }
 
   public String noNamespaceSchemaLocation;
+  public String version;
   public String schemaLocation;
   public String name;
   public String time;
