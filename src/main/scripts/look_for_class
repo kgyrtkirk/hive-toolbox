@@ -1,0 +1,16 @@
+#!/bin/bash
+set -e
+
+
+[ "$#" -lt 2 ] && echo -e "usage:\n $0 <dir> <classNamePattern>" && exit 1
+
+
+function candidateJars() {
+	[ ! -d "$1" ] && echo "$1 is not a dir" >&2 && exit 1
+#	find "$1" -name "hive*jar" >&2
+	find "$1" -name "hive*jar"
+}
+
+DIR="$1"
+PAT="$2"
+candidateJars "$DIR" | xargs -n1 unzip -t | fgrep -f <(echo Archive:;echo "$PAT") | grep -B1 "$PAT"
