@@ -10,7 +10,9 @@ trap "unlink $tmp" EXIT
 
 COMPONENT="${1}"
 VERSION="$2"
+VERSION="${VERSION:-$GERRIT_BRANCH}"
 VERSION="${VERSION:-cdpd-master}"
+echo "@@@ version: $VERSION"
 case "$VERSION" in
   cdpd-master|*-maint|*.x)
     echo "@@@ lookup stackversion for releasline $VERSION"
