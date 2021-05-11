@@ -13,6 +13,15 @@ VERSION="$2"
 VERSION="${VERSION:-$GERRIT_BRANCH}"
 VERSION="${VERSION:-cdpd-master}"
 echo "@@@ version: $VERSION"
+
+case "$VERSION" in
+  dev-*)
+    echo "@@@ using cdpd-master for version:$VERSION"
+    VERSION=cdpd-master
+    ;;
+  *)
+esac
+
 case "$VERSION" in
   cdpd-master|*-maint|*.x)
     echo "@@@ lookup stackversion for releasline $VERSION"
