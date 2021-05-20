@@ -65,7 +65,7 @@ if [ "$UNPATCHER" == "safe" -a -d .git -a "$GBN" != "" ] ; then
 	echo "@@@ unpatching jenkins commits from $buildHead"
 	git log --oneline --author rel-eng@cloudera.com --pretty=format:%H%n $buildHead..HEAD | while read c;do
 		echo "[!] unpatching: $c"
-		git show $c | git apply -3 -p0 -R
+		git show --no-prefix $c | git apply -3 -p0 -R
 	done
 fi
 
