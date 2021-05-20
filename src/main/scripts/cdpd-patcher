@@ -12,6 +12,8 @@ COMPONENT="${1}"
 VERSION="$2"
 VERSION="${VERSION:-$GERRIT_BRANCH}"
 VERSION="${VERSION:-cdpd-master}"
+UNPATCHER=off
+
 echo "@@@ version: $VERSION"
 
 case "$VERSION" in
@@ -24,12 +26,16 @@ esac
 
 case "$VERSION" in
   cdpd-master|*-maint|*.x)
+    echo "@@@ enabling unpatcher because target version ($VERSION) is a releaseline"
+    UNPATCHER=safe
     echo "@@@ lookup stackversion for releasline $VERSION"
     wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=$VERSION"
     VERSION="`cat $tmp|jq -r .version`"
     ;;
   FENG)
     VERSION=7.0.2.1
+    echo "@@@ enabling unpatcher because target version is a releaseline"
+    UNPATCHER=safe
     ;;
   *)
 esac
@@ -39,7 +45,10 @@ echo "@@@ version: $VERSION"
 
 wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7"
 build="`cat $tmp|jq -r .build`"
+GBN="`cat $tmp|jq -r .gbn`"
+patch_url="`cat $tmp | jq -r .centos7.patch_url`"
 echo "@@@ build: $build"
+echo "@@@ gbn: $GBN"
 shopt -s extglob
 case "${build}_$VERSION" in
   null_7.[0-9].[0-9].[1-9]*([0-9]))
@@ -49,7 +58,17 @@ case "${build}_$VERSION" in
 	;;
 esac
 
-patch_url="`cat $tmp | jq -r .centos7.patch_url`"
+if [ "$UNPATCHER" == "safe" -a -d .git -a "$GBN" != "" ] ; then
+	wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getcomponentsha?component=${COMPONENT}&gbn=${GBN}"
+	buildHead="`cat $tmp | jq -r .commit_id`"
+	echo "$buildHead"
+	echo "@@@ unpatching jenkins commits from $buildHead"
+	git log --oneline --author rel-eng@cloudera.com --pretty=format:%H%n $buildHead..HEAD | while read c;do
+		echo "[!] unpatching: $c"
+		git show $c | git apply -3 -p0 -R
+	done
+fi
+
 wget -nv -O $tmp "${patch_url}/${COMPONENT}-source.patch" ||
 wget -nv -O $tmp "${patch_url}/dag_build/${COMPONENT}-source.patch"
 
