@@ -23,7 +23,7 @@ public class HdpMirrors implements Mirrors {
 
     String u =
         String.format(
-            "http://release.eng.hortonworks.com/hwre-api/latestcompiledbuild?stack=HDP&release=%s&os=centos7",
+            "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=HDP&release=%s&os=centos7",
             version);
     try {
 
@@ -64,6 +64,13 @@ public class HdpMirrors implements Mirrors {
       } catch (Exception e) {
         LOG.warn("unable to download from: " + mirrorRoot, e);
       }
+      try {
+        String artifacts =
+            String.format("%s/centos7/%s.x/BUILDS/%s/artifacts.txt", mirrorRoot, stackChar, stackVersion);
+        return CDPMirrors.determineComponentVerFromArtifactsTxt(artifacts, version, c);
+      } catch (Exception e) {
+        LOG.warn("unable to download from: " + mirrorRoot, e);
+      }
     }
 
     throw new RuntimeException("unable to deteminecomponentversion for " + version);
@@ -71,7 +78,8 @@ public class HdpMirrors implements Mirrors {
 
   private static final List<String> MIRROR_ROOTS =
       Lists.newArrayList("http://public-repo-1.hortonworks.com/HDP",
-          "http://private-repo-1.hortonworks.com/HDP");
+          "http://private-repo-1.hortonworks.com/HDP",
+	"http://s3.amazonaws.com/dev.hortonworks.com/HDP");
 
   @Override
   @Deprecated // pending renames
@@ -85,6 +93,9 @@ public class HdpMirrors implements Mirrors {
     for (String root : MIRROR_ROOTS) {
       String versionRoot =
           String.format("%s/centos7/%s.x/updates/%s/", root, ver.stackVersion.substring(0, 1), ver.stackVersion);
+      ret.add(new HdpMirror(versionRoot));
+      versionRoot =
+          String.format("%s/centos7/%s.x/BUILDS/%s/", root, ver.stackVersion.substring(0, 1), ver.stackVersion);
       ret.add(new HdpMirror(versionRoot));
     }
     return ret;
