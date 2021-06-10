@@ -32,6 +32,13 @@ case "$VERSION" in
     wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=$VERSION"
     VERSION="`cat $tmp|jq -r .version`"
     BASE_VERSION="`cat $tmp|jq -r '."base-version"'`"
+    echo "@@@ stack version: $VERSION"
+    echo "@@@ stack base_version: $BASE_VERSION"
+    if [ "$VERSION" != "$BASE_VERSION" -a "$BASE_VERSION" != "null" ]; then
+      echo "@@@ falling back to BASE_VERSION: $BASE_VERSION"
+      VERSION=$BASE_VERSION
+    fi
+
     ;;
   FENG)
     VERSION=7.0.2.1
@@ -42,16 +49,8 @@ case "$VERSION" in
 esac
 
 VERSION="${VERSION//CDH-/}"
-BASE_VERSION="${BASE_VERSION%%-*}" # e.g. 7.2.11.0-123 ==> 7.2.11.0
 
 echo "@@@ version: $VERSION"
-echo "@@@ base_version: $BASE_VERSION"
-
-# if versions are different and BASE_VERSION is not empty (wasn't null in JSON)
-if [ ! "$VERSION" = "$BASE_VERSION" -a -n "$BASE_VERSION" ]; then
-    echo "VERSION and BASE_VERSION are not equal, falling back to BASE_VERSION: $BASE_VERSION"
-    VERSION=$BASE_VERSION
-fi
 
 wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7"
 build="`cat $tmp|jq -r .build`"
