@@ -13,6 +13,7 @@ VERSION="$2"
 VERSION="${VERSION:-$GERRIT_BRANCH}"
 VERSION="${VERSION:-cdpd-master}"
 UNPATCHER=off
+STACK=CDH
 
 echo "@@@ version: $VERSION"
 
@@ -25,11 +26,15 @@ case "$VERSION" in
 esac
 
 case "$VERSION" in
-  cdpd-master|*-maint|*.x)
+  cdw-master|cdpd-master|*-maint|*.x)
+    if [ "$VERSION" = "cdw-master" ]; then
+      echo "@@@ changing stack to CDWH"
+      STACK=CDWH
+    fi
     echo "@@@ enabling unpatcher because target version ($VERSION) is a releaseline"
     UNPATCHER=safe
     echo "@@@ lookup stackversion for releasline $VERSION"
-    wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=$VERSION"
+    wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=${STACK}&releaseline=$VERSION"
     VERSION="`cat $tmp|jq -r .version`"
     BASE_VERSION="`cat $tmp|jq -r '."base-version"'`"
     echo "@@@ stack version: $VERSION"
@@ -51,8 +56,9 @@ esac
 VERSION="${VERSION//CDH-/}"
 
 echo "@@@ version: $VERSION"
+echo "@@@ stack: $STACK"
 
-wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7"
+wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=${STACK}&release=${VERSION}&os=centos7"
 build="`cat $tmp|jq -r .build`"
 GBN="`cat $tmp|jq -r .gbn`"
 patch_url="`cat $tmp | jq -r .centos7.patch_url`"
