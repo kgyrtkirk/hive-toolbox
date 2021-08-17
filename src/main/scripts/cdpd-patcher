@@ -40,8 +40,13 @@ case "$VERSION" in
     echo "@@@ stack version: $VERSION"
     echo "@@@ stack base_version: $BASE_VERSION"
     if [ "$VERSION" != "$BASE_VERSION" -a "$BASE_VERSION" != "null" ]; then
-      echo "@@@ falling back to BASE_VERSION: $BASE_VERSION"
-      VERSION=$BASE_VERSION
+      wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=${STACK}&release=${VERSION}&os=centos7"
+      build="`cat $tmp|jq -r .build`"
+      if [ $build == "null" ] ; then
+        # we should fall back to $BASE_VERSION only if there is no compiled build for the current version
+        echo "@@@ falling back to BASE_VERSION: $BASE_VERSION"
+        VERSION=$BASE_VERSION
+      fi
     fi
 
     ;;
