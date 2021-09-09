@@ -55,6 +55,10 @@ case "$VERSION" in
     echo "@@@ enabling unpatcher because target version is a releaseline"
     UNPATCHER=safe
     ;;
+  202*)
+    echo "@@@ changing stack to CDWH"
+    STACK=CDWH
+    ;;
   *)
 esac
 
