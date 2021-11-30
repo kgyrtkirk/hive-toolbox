@@ -87,7 +87,7 @@ if [ "$UNPATCHER" == "safe" -a -d .git -a "$GBN" != "" ] ; then
 	buildHead="`cat $tmp | jq -r .commit_id`"
 	echo "$buildHead"
 	echo "@@@ unpatching jenkins commits from $buildHead"
-	git log --oneline --author rel-eng@cloudera.com --pretty=format:%H%n $buildHead..HEAD | while read c;do
+	git log --oneline --author rel-eng@cloudera.com --pretty=format:%H $buildHead..HEAD | while read c;do
 		echo "[!] unpatching: $c"
 		git show --no-prefix $c | git apply -3 -p0 -R
 	done
