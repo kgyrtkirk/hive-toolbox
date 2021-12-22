@@ -27,7 +27,7 @@ fi
 
 
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox screen unzip
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox screen unzip ca-certificates.noarch
 
 if yum list installed nux-dextop-release; then
 	echo nux-ok
@@ -45,6 +45,7 @@ grep -n '^###>' "$0" | while read l;do
 	chmod +x $f
 done
 
+set -x
 mkdir -p /tools
 cd /tools
 if [ ! -d visualvm_14 ];then
@@ -55,20 +56,22 @@ fi
 if [ ! -d mat ];then
 	#wget -c -nv -O mat_17.zip  'http://www.eclipse.org/downloads/download.php?file=/mat/1.7/rcp/MemoryAnalyzer-1.7.0.20170613-linux.gtk.x86_64.zip&r=1' 
 	#unzip mat_17.zip
-	wget -c -nv -O mat_181x.zip  'http://ftp.halifax.rwth-aachen.de/eclipse//mat/1.8.1/rcp/MemoryAnalyzer-1.8.1.20180910-linux.gtk.x86_64.zip'
+	wget -c -nv -O mat_181x.zip  'https://eclipse.mirror.liteserver.nl/mat/1.12.0/rcp/MemoryAnalyzer-1.12.0.20210602-linux.gtk.x86_64.zip'
+	#wget  --no-check-certificate -c -nv -O mat_181x.zip  'https://eclipse.mirror.liteserver.nl/mat/1.12.0/rcp/MemoryAnalyzer-1.12.0.20210602-linux.gtk.x86_64.zip'
 	#wget -c -nv -O mat_181.zip  'https://www.eclipse.org/downloads/download.php?file=/mat/1.8.1/rcp/MemoryAnalyzer-1.8.1.20180910-linux.gtk.x86_64.zip&mirror_id=1045'
 	unzip mat_181x.zip
 fi
-
+echo maven
 if [ ! -d maven ];then
-	wget -c -nv -O maven.tgz https://www-us.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+	wget -c -nv -O maven.tgz https://dlcdn.apache.org/maven/maven-3/3.8.4/binaries/apache-maven-3.8.4-bin.tar.gz
 	tar xzf maven.tgz
-	ln -s apache-maven-3.6.3 maven
+	ln -s apache-maven-3.8.4 maven
 	echo 'export PATH+=":/tools/maven/bin/"' >> ~/.bashrc
 fi
-
+echo ec
 if [ ! -d eclipse ];then
-	wget -c -nv -O eclipse.tgz http://ftp.halifax.rwth-aachen.de/eclipse//technology/epp/downloads/release/2018-09/R/eclipse-java-2018-09-linux-gtk-x86_64.tar.gz
+	wget -c -nv -O eclipse.tgz https://eclipse.mirror.liteserver.nl/technology/epp/downloads/release/2021-12/R/eclipse-java-2021-12-R-linux-gtk-x86_64.tar.gz
+	#http://ftp.halifax.rwth-aachen.de/eclipse//technology/epp/downloads/release/2018-09/R/eclipse-java-2018-09-linux-gtk-x86_64.tar.gz
 	tar xzf eclipse.tgz
 fi
 
@@ -92,9 +95,10 @@ vncserver :1 -depth 24 -geometry 1920x1080
 export DISPLAY=:1
 xhost +localhost
 
-cp -r ~/.ssh ~hive/
-chown -R hive:hive ~hive/.ssh
-chown hive:hive /var/lib/hive/
+#cp -r ~/.ssh ~hive/
+#chown -R hive:hive ~hive/.ssh
+#chown hive:hive /var/lib/hive/
+
 #DISPLAY=:1 icewm &
 #DISPLAY=:1 sudo -u hive xterm -bg black -fg white &
 #DISPLAY=:1 sudo -u hive visualvm_14/bin/visualvm &
