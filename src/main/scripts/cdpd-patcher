@@ -12,25 +12,67 @@ COMPONENT="${1}"
 VERSION="$2"
 VERSION="${VERSION:-$GERRIT_BRANCH}"
 VERSION="${VERSION:-cdpd-master}"
+UNPATCHER=off
+STACK=CDH
+
 echo "@@@ version: $VERSION"
+
 case "$VERSION" in
-  cdpd-master|*-maint|*.x)
+  dev-*)
+    echo "@@@ using cdpd-master for version:$VERSION"
+    VERSION=cdpd-master
+    ;;
+  *)
+esac
+
+case "$VERSION" in
+  cdw-master|cdpd-master|*-maint|*.x)
+    if [ "$VERSION" = "cdw-master" ]; then
+      echo "@@@ changing stack to CDWH"
+      STACK=CDWH
+    fi
+    echo "@@@ enabling unpatcher because target version ($VERSION) is a releaseline"
+    UNPATCHER=safe
     echo "@@@ lookup stackversion for releasline $VERSION"
-    wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=CDH&releaseline=$VERSION"
+    wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getreleaseversion?stack=${STACK}&releaseline=$VERSION"
     VERSION="`cat $tmp|jq -r .version`"
+    BASE_VERSION="`cat $tmp|jq -r '."base-version"'`"
+    echo "@@@ stack version: $VERSION"
+    echo "@@@ stack base_version: $BASE_VERSION"
+    if [ "$VERSION" != "$BASE_VERSION" -a "$BASE_VERSION" != "null" ]; then
+      wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=${STACK}&release=${VERSION}&os=centos7"
+      build="`cat $tmp|jq -r .build`"
+      if [ $build == "null" ] ; then
+        # we should fall back to $BASE_VERSION only if there is no compiled build for the current version
+        echo "@@@ falling back to BASE_VERSION: $BASE_VERSION"
+        VERSION=$BASE_VERSION
+      fi
+    fi
+
     ;;
   FENG)
     VERSION=7.0.2.1
+    echo "@@@ enabling unpatcher because target version is a releaseline"
+    UNPATCHER=safe
+    ;;
+  202*)
+    echo "@@@ changing stack to CDWH"
+    STACK=CDWH
     ;;
   *)
 esac
 
 VERSION="${VERSION//CDH-/}"
-echo "@@@ version: $VERSION"
 
-wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=${VERSION}&os=centos7"
+echo "@@@ version: $VERSION"
+echo "@@@ stack: $STACK"
+
+wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=${STACK}&release=${VERSION}&os=centos7"
 build="`cat $tmp|jq -r .build`"
+GBN="`cat $tmp|jq -r .gbn`"
+patch_url="`cat $tmp | jq -r .centos7.patch_url`"
 echo "@@@ build: $build"
+echo "@@@ gbn: $GBN"
 shopt -s extglob
 case "${build}_$VERSION" in
   null_7.[0-9].[0-9].[1-9]*([0-9]))
@@ -40,7 +82,17 @@ case "${build}_$VERSION" in
 	;;
 esac
 
-patch_url="`cat $tmp | jq -r .centos7.patch_url`"
+if [ "$UNPATCHER" == "safe" -a -d .git -a "$GBN" != "" ] ; then
+	wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getcomponentsha?component=${COMPONENT}&gbn=${GBN}"
+	buildHead="`cat $tmp | jq -r .commit_id`"
+	echo "$buildHead"
+	echo "@@@ unpatching jenkins commits from $buildHead"
+	git log --oneline --author rel-eng@cloudera.com --pretty=format:%H $buildHead..HEAD | while read c;do
+		echo "[!] unpatching: $c"
+		git show --no-prefix $c | git apply -3 -p0 -R
+	done
+fi
+
 wget -nv -O $tmp "${patch_url}/${COMPONENT}-source.patch" ||
 wget -nv -O $tmp "${patch_url}/dag_build/${COMPONENT}-source.patch"
 

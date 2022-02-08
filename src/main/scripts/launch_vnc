@@ -27,7 +27,7 @@ fi
 
 
 
-yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox screen
+yum install -y xterm fluxbox tigervnc-server icewm xclock nano make wget epel-release gcc sysstat tcpdump nmap strace deltarpm xwininfo banner git tree firefox screen unzip
 
 if yum list installed nux-dextop-release; then
 	echo nux-ok
