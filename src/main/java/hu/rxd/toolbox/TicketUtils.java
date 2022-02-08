@@ -4,7 +4,6 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,15 +17,12 @@ import org.eclipse.jgit.lib.ObjectId;
 import org.eclipse.jgit.lib.ObjectReader;
 import org.eclipse.jgit.lib.Repository;
 import org.eclipse.jgit.revwalk.RevCommit;
-import org.eclipse.jgit.revwalk.RevObject;
 import org.eclipse.jgit.revwalk.RevWalk;
 import org.eclipse.jgit.revwalk.filter.RevFilter;
 import org.eclipse.jgit.treewalk.AbstractTreeIterator;
 import org.eclipse.jgit.treewalk.CanonicalTreeParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Joiner;
 
 import hu.rxd.toolbox.jira.HiveTicket;
 import hu.rxd.toolbox.jira.ToolboxSettings;
@@ -79,8 +75,8 @@ public class TicketUtils {
       File patchFile = new File(patchFileName);
 
       ObjectId ref = repo.resolve("apache/master");
-      
-      
+
+
       try (FileOutputStream fos = new FileOutputStream(patchFile)) {
         git.diff().setOldTree(getMergeBase(repo, "apache/master", "HEAD"))
             .setNewTree(getMergeBase(repo, "HEAD", "HEAD"))
@@ -93,7 +89,7 @@ public class TicketUtils {
     }
   }
 
-  private static AbstractTreeIterator getMergeBase(Repository repo, String string, String string2) throws Exception {
+  public static AbstractTreeIterator getMergeBase(Repository repo, String string, String string2) throws Exception {
     try (RevWalk walk = new RevWalk(repo)) {
       RevCommit c1 = walk.parseCommit(repo.resolve(string));
       RevCommit c2 = walk.parseCommit(repo.resolve(string2));
@@ -116,8 +112,9 @@ public class TicketUtils {
   static private AbstractTreeIterator getTreeIterator(String name, Repository repo)
       throws IOException {
     final ObjectId id = repo.resolve(name);
-    if (id == null)
+    if (id == null) {
       throw new IllegalArgumentException(name);
+    }
     final CanonicalTreeParser p = new CanonicalTreeParser();
     try (ObjectReader or = repo.newObjectReader();
       RevWalk rw = new RevWalk(repo)) {
@@ -161,7 +158,7 @@ public class TicketUtils {
       if (nofromat == 1) {
         processTestLine(line);
       }
-      
+
     }
 
     private void processTestLine(String line) {
