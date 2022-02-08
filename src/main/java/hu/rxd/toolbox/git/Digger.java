@@ -59,7 +59,11 @@ public class Digger implements AutoCloseable {
     walk(lBranch, rBranch);
     walk(rBranch, lBranch);
 
+    System.out.println("start:" + new HashSet(mm.values()).size());
+
     enhanceWithAliases();
+
+    fuseSameLabels();
 
     System.out.println(mm.keySet().size());
     identifySimple();
@@ -69,9 +73,47 @@ public class Digger implements AutoCloseable {
 
     processUpstreamOnly(lBranch, "HIVE");
     System.out.println(mm.keySet().size());
-    System.out.println(new HashSet(mm.values()).size());
+    System.out.println("fin:" + new HashSet(mm.values()).size());
 
     show(10);
+  }
+
+  private void fuseSameLabels() {
+    int cnt = 0;
+    Set<PCommit> toRemove = new HashSet<>();
+    for (Label l : mm.keySet()) {
+      if (l.type != LabelType.ticket) {
+        continue;
+      }
+      Collection<PCommit> commits0 = mm.get(l);
+
+      if (commits0.size() < 2) {
+        continue;
+      }
+
+      List<PCommit> li = new ArrayList<>(commits0);
+      for (int i = 0; i < li.size() - 1; i++) {
+        PCommit ci = li.get(i);
+        if (toRemove.contains(ci)) {
+          continue;
+        }
+        for (int j = i + 1; j < li.size(); j++) {
+          PCommit cj = li.get(j);
+          if (toRemove.contains(cj)) {
+            continue;
+          }
+          if (ci.get(LabelType.branch).equals(cj.get(LabelType.branch))
+              && ci.get(LabelType.ticket).equals(cj.get(LabelType.ticket))) {
+            ci.fuse(cj);
+            toRemove.add(cj);
+            cnt++;
+          }
+        }
+      }
+    }
+    removeAll(toRemove);
+
+    System.out.println("fused: " + cnt);
   }
 
   private void enhanceWithAliases() throws Exception {
@@ -83,8 +125,8 @@ public class Digger implements AutoCloseable {
           if (c.labels.contains(a)) {
             continue;
           }
-          //          c.labels.add(a);
-          //          mm.put(a, c);
+          c.labels.add(a);
+          mm.put(a, c);
         }
       }
     }
@@ -275,6 +317,7 @@ public class Digger implements AutoCloseable {
     private final ObjectId id;
     private final Set<Label> labels;
     private final String branch;
+    private Set<PCommit> fused = new HashSet<>();
 
     public PCommit(String branch0, RevCommit revCommit) {
       this.branch = branch0;
@@ -291,6 +334,11 @@ public class Digger implements AutoCloseable {
       for (String t : extractTickets(message)) {
         labels.add(new Label(LabelType.ticket, t));
       }
+
+    }
+
+    public void fuse(PCommit cj) {
+      fused.add(cj);
 
     }
 
