@@ -6,7 +6,8 @@ import org.slf4j.LoggerFactory;
 public class Version {
 
   public enum Type {
-    APACHE(new ApacheMirrors()), HDP(new HdpMirrors()), DEV(new DevMirrors()), CDP(new CDPMirrors());
+    APACHE(new ApacheMirrors()), HDP(new HdpMirrors()), DEV(new DevMirrors()), CDP(new CDPMirrors()), HTTP(
+        new ExplicitHttpMirrors());
 
     public Mirrors mirrors;
 
@@ -21,8 +22,11 @@ public class Version {
   }
 
   Version.Type type;
+  /** Full versionStr; 3.1.2.7.1.2.2-11  */
   private String versionStr;
+  /** stackVersion; 7.1.2.2-11 - for 3.1.2.7.1.2.2-11 */
   String stackVersion;
+  private String url;
 
   public Version(String versionStr) {
     this.versionStr = versionStr;
@@ -34,6 +38,11 @@ public class Version {
     } else if (versionStr.startsWith("CDP")) {
       this.type = Type.CDP;
       this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(4));
+    } else if (versionStr.startsWith("http")) {
+      this.type = Type.HTTP;
+      this.url = versionStr;
+      // FIXME: ugly
+      this.versionStr = type.mirrors.decodeStackVersion(versionStr);
     } else {
       this.type = Type.APACHE;
     }
@@ -49,11 +58,15 @@ public class Version {
   static Logger LOG = LoggerFactory.getLogger(Version.class);
 
   /** Supposed to be the qualified version string
-   * 
+   *
    * probably something like HDP-3.1
    */
   public String getVerStr() {
     return versionStr;
+  }
+
+  public String getUrl() {
+    return url;
   }
 
   @Override
