@@ -85,9 +85,9 @@ esac
 if [ "$UNPATCHER" == "safe" -a -d .git -a "$GBN" != "" ] ; then
 	wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getcomponentsha?component=${COMPONENT}&gbn=${GBN}"
 	buildHead="`cat $tmp | jq -r .commit_id`"
-	echo "$buildHead"
 	echo "@@@ unpatching jenkins commits from $buildHead"
-	git log --oneline --author rel-eng@cloudera.com --pretty=format:%H $buildHead..HEAD | while read c;do
+	h="`git log --oneline --author rel-eng@cloudera.com --pretty=format:%H $buildHead..HEAD`"
+	for c in $h;do
 		echo "[!] unpatching: $c"
 		git show --no-prefix $c | git apply -3 -p0 -R
 	done
