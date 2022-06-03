@@ -26,7 +26,7 @@ case "$VERSION" in
 esac
 
 case "$VERSION" in
-  cdw-master|cdpd-master|*-maint|*.x)
+  cdw-master|cdpd-master|*-maint|*.x|CDH-7.1.7.*)
     if [ "$VERSION" = "cdw-master" ]; then
       echo "@@@ changing stack to CDWH"
       STACK=CDWH
