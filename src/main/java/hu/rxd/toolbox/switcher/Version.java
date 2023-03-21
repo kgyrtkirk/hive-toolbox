@@ -6,8 +6,12 @@ import org.slf4j.LoggerFactory;
 public class Version {
 
   public enum Type {
-    APACHE(new ApacheMirrors()), HDP(new HdpMirrors()), DEV(new DevMirrors()), CDP(new CDPMirrors()), HTTP(
-        new ExplicitHttpMirrors());
+    APACHE(new ApacheMirrors()),
+    HDP(new HdpMirrors()),
+    DEV(new DevMirrors()),
+    CDP(new CDPMirrors()),
+    CDWH(new CDWHMirrors()),
+    HTTP(new ExplicitHttpMirrors());
 
     public Mirrors mirrors;
 
@@ -38,6 +42,9 @@ public class Version {
     } else if (versionStr.startsWith("CDP")) {
       this.type = Type.CDP;
       this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(4));
+    } else if (versionStr.startsWith("CDWH")) {
+      this.type = Type.CDWH;
+      this.stackVersion = type.mirrors.decodeStackVersion(versionStr.substring(5));
     } else if (versionStr.startsWith("http")) {
       this.type = Type.HTTP;
       this.url = versionStr;

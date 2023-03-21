@@ -33,6 +33,7 @@ class TezComponent extends GenericComponent {
     switch (ver.type) {
     case HDP:
     case CDP:
+    case CDWH:
       LOG.info("downloading: {}", ver);
       // simulate the tez "release" process
       // expand "minimal" as root 

@@ -23,16 +23,18 @@ import hu.rxd.toolbox.qtest.diff.CachedURL;
 
 public class CDPMirrors implements Mirrors {
 
+  public static final String CDP_ARTIFACTS = "http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/%s/cdh/7.x/redhat7/yum/artifacts.txt";
+  public static final String CDP_RELEASES = "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=%s&os=centos7";
   static Logger LOG = LoggerFactory.getLogger(CDPMirrors.class);
 
   @Override
   public String getComponentVersion(Version version, Component c) throws Exception {
-    String artifacts =
-        String.format(
-            "http://cloudera-build-us-west-1.vpc.cloudera.com/s3/build/%s/cdh/7.x/redhat7/yum/artifacts.txt",
-            version.stackVersion);
+    String artifacts = String.format(getArtifacts(), version.stackVersion);
     return determineComponentVerFromArtifactsTxt(artifacts, version, c);
+  }
 
+  protected String getArtifacts() {
+    return CDP_ARTIFACTS;
   }
 
   private static final List<String> MIRROR_ROOTS =
@@ -78,13 +80,14 @@ public class CDPMirrors implements Mirrors {
 
   }
 
+  protected String getReleases() {
+    return CDP_RELEASES;
+  }
+
   @Override
   public String decodeStackVersion(String version) {
 
-    String u =
-        String.format(
-            "http://release.infra.cloudera.com/hwre-api/latestcompiledbuild?stack=CDH&release=%s&os=centos7",
-            version);
+    String u = String.format(getReleases(), version);
     try {
 
       Path path = new CachedURL(new URL(u), 600).getFile().toPath();
