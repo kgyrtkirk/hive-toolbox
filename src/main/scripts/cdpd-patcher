@@ -87,7 +87,7 @@ if [ "$UNPATCHER" == "safe" -a -d .git -a "$GBN" != "" ] ; then
 	wget -nv -O $tmp "http://release.infra.cloudera.com/hwre-api/getcomponentsha?component=${COMPONENT}&gbn=${GBN}"
 	buildHead="`cat $tmp | jq -r .commit_id`"
 	echo "@@@ unpatching jenkins commits from $buildHead"
-	h="`git log --oneline --author rel-eng@cloudera.com --pretty=format:%H $buildHead..HEAD`"
+	h="`git log --oneline --author rel-eng@cloudera.com --pretty=format:%H $buildHead..HEAD`" || { echo "There is a problem with figuring out a git revision, you should probably rebase your patch on top of the target branch!"; exit 1; }
 	for c in $h;do
 		echo "[!] unpatching: $c"
 		git show --no-prefix $c | git apply -3 -p0 -R
