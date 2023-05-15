@@ -26,6 +26,8 @@ case "$VERSION" in
   *)
 esac
 
+# Need to add extglob to enable using pattern matching like *(pattern-list)
+# *([[:digit:]]) - matched 0 or more occurrences of any digit
 shopt -s extglob
 case "$VERSION" in
   cdw-master|CDWH-*|cdpd-master|*-maint|*.*([[:digit:]])x|CDH-7.1.7.*|CDH-7.1.8.*)
