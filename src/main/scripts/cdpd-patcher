@@ -26,8 +26,9 @@ case "$VERSION" in
   *)
 esac
 
+shopt -s extglob
 case "$VERSION" in
-  cdw-master|CDWH-*|cdpd-master|*-maint|*.x|CDH-7.1.7.*|CDH-7.1.8.*)
+  cdw-master|CDWH-*|cdpd-master|*-maint|*.*([[:digit:]])x|CDH-7.1.7.*|CDH-7.1.8.*)
     if [[ "$VERSION" = "cdw-master" || "$VERSION" = "CDWH-"* ]]; then
       echo "@@@ changing stack to CDWH"
       STACK=CDWH
